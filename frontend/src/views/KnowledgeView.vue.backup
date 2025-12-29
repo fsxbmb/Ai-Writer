@@ -1,0 +1,628 @@
+<template>
+  <div class="knowledge-view">
+    <n-layout has-sider style="height: calc(100vh - 120px)">
+      <!-- 左侧知识库列表 -->
+      <n-layout-sider
+        bordered
+        :width="280"
+        content-style="padding: 16px;"
+      >
+        <n-space vertical size="large">
+          <!-- 标题和新建按钮 -->
+          <n-space justify="space-between" align="center">
+            <n-text strong>知识库</n-text>
+            <n-button size="small" type="primary" @click="showCreateFolderModal = true">
+              <template #icon>
+                <n-icon :component="AddIcon" />
+              </template>
+              新建
+            </n-button>
+          </n-space>
+
+          <!-- 知识库列表 -->
+          <n-list v-if="folders.length > 0" hoverable clickable>
+            <n-list-item
+              v-for="folder in folders"
+              :key="folder.id"
+              :class="{ 'is-active': currentFolderId === folder.id }"
+              @click="selectFolder(folder.id)"
+            >
+              <template #prefix>
+                <n-icon :component="FolderIcon" />
+              </template>
+              <n-text>{{ folder.name }}</n-text>
+            </n-list-item>
+          </n-list>
+
+          <n-empty v-else description="暂无知识库" size="small">
+            <template #extra>
+              <n-button size="small" @click="showCreateFolderModal = true">
+                创建第一个知识库
+              </n-button>
+            </template>
+          </n-empty>
+        </n-space>
+      </n-layout-sider>
+
+      <!-- 右侧文档列表 -->
+      <n-layout content-style="padding: 16px;">
+        <n-space vertical size="large">
+          <!-- 顶部工具栏 -->
+          <n-space justify="space-between">
+            <n-space>
+              <n-input
+                v-model:value="searchQuery"
+                placeholder="搜索文档..."
+                clearable
+                style="width: 300px"
+                @input="handleSearch"
+              >
+                <template #prefix>
+                  <n-icon :component="SearchIcon" />
+                </template>
+              </n-input>
+            </n-space>
+
+            <n-space>
+              <n-button
+                type="primary"
+                :disabled="!currentFolderId"
+                @click="handleUploadClick"
+              >
+                <template #icon>
+                  <n-icon :component="UploadIcon" />
+                </template>
+                上传文档
+              </n-button>
+            </n-space>
+          </n-space>
+
+          <!-- 当前知识库信息 -->
+          <n-card v-if="currentFolder" size="small">
+            <n-space>
+              <n-icon :component="FolderIcon" />
+              <n-text strong>{{ currentFolder.name }}</n-text>
+              <n-text depth="3">
+                {{ filteredDocuments.length }} 个文档
+              </n-text>
+            </n-space>
+          </n-card>
+
+          <!-- 文档列表 -->
+          <n-spin :show="isLoading">
+            <div v-if="!currentFolderId" class="empty-state">
+              <n-empty description="请选择或创建一个知识库">
+                <template #icon>
+                  <n-icon :component="FolderOpenIcon" />
+                </template>
+                <template #extra>
+                  <n-button type="primary" @click="showCreateFolderModal = true">
+                    创建知识库
+                  </n-button>
+                </template>
+              </n-empty>
+            </div>
+
+            <div v-else-if="filteredDocuments.length === 0" class="empty-state">
+              <n-empty description="此知识库暂无文档">
+                <template #icon>
+                  <n-icon :component="DocumentIcon" />
+                </template>
+                <template #extra>
+                  <n-button type="primary" @click="handleUploadClick">
+                    上传第一个文档
+                  </n-button>
+                </template>
+              </n-empty>
+            </div>
+
+            <div v-else class="document-list">
+              <div
+                v-for="doc in filteredDocuments"
+                :key="doc.id"
+                class="document-item"
+                @click="handleViewDocument(doc)"
+              >
+                <n-space justify="space-between" align="center" style="width: 100%">
+                  <n-space align="center" vertical style="align-items: flex-start">
+                    <n-space align="center">
+                      <n-icon :component="FileIcon" :size="20" />
+                      <n-text strong>{{ doc.title }}</n-text>
+                    </n-space>
+                    <n-text depth="3" style="font-size: 12px">
+                      {{ doc.fileName }}
+                    </n-text>
+                  </n-space>
+
+                  <n-space align="center" vertical style="align-items: flex-end">
+                    <n-tag
+                      :type="doc.parsed ? 'success' : 'default'"
+                      size="small"
+                      :bordered="false"
+                    >
+                      {{ doc.parsed ? '已解析' : '待解析' }}
+                    </n-tag>
+                    <n-text depth="3" style="font-size: 12px">
+                      {{ formatTime(doc.uploadTime) }}
+                    </n-text>
+                  </n-space>
+                </n-space>
+              </div>
+            </div>
+          </n-spin>
+        </n-space>
+      </n-layout>
+    </n-layout>
+
+    <!-- 新建知识库对话框 -->
+    <n-modal v-model:show="showCreateFolderModal" preset="card" title="新建知识库" style="width: 500px">
+      <n-input
+        v-model:value="newFolderName"
+        placeholder="请输入知识库名称"
+        @keydown.enter="handleCreateFolder"
+      />
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="showCreateFolderModal = false">取消</n-button>
+          <n-button type="primary" @click="handleCreateFolder">创建</n-button>
+        </n-space>
+      </template>
+    </n-modal>
+
+    <!-- 上传文档对话框 -->
+    <n-modal v-model:show="showUploadModal" preset="card" title="上传文档" style="width: 600px">
+      <n-space vertical>
+        <n-form-item label="选择目标知识库" label-placement="top" required>
+          <n-select
+            v-model:value="selectedFolderForUpload"
+            :options="folderOptions"
+            placeholder="请选择知识库"
+          />
+        </n-form-item>
+
+        <n-alert v-if="selectedFolderForUpload" type="info" :closable="false">
+          将上传到：<strong>{{ getFolderName(selectedFolderForUpload) }}</strong>
+        </n-alert>
+
+        <n-spin :show="isUploading">
+          <file-uploader :disabled="!selectedFolderForUpload" @upload="handleUpload" />
+        </n-spin>
+      </n-space>
+    </n-modal>
+
+    <!-- 文档详情抽屉 -->
+    <n-drawer v-model:show="showDocumentDrawer" :width="1200" placement="right">
+      <template #header>
+        <n-space align="center">
+          <n-icon :component="FileIcon" />
+          <n-text strong>{{ selectedDocument?.title }}</n-text>
+        </n-space>
+      </template>
+
+      <n-tabs type="line" animated>
+        <n-tab-pane name="pdf" tab="PDF 预览">
+          <div v-if="selectedDocument" class="pdf-viewer-container">
+            <pdf-viewer :document="selectedDocument" />
+          </div>
+        </n-tab-pane>
+
+        <n-tab-pane name="content" tab="解析内容">
+          <div v-if="selectedDocument && selectedDocument.markdownContent" class="markdown-content">
+            <div v-html="renderMarkdown(selectedDocument.markdownContent)"></div>
+          </div>
+          <n-empty v-else description="暂无解析内容" />
+        </n-tab-pane>
+
+        <n-tab-pane name="info" tab="文档信息">
+          <n-descriptions v-if="selectedDocument" :column="2" bordered>
+            <n-descriptions-item label="文档标题">
+              {{ selectedDocument.title }}
+            </n-descriptions-item>
+            <n-descriptions-item label="文件名">
+              {{ selectedDocument.fileName }}
+            </n-descriptions-item>
+            <n-descriptions-item label="文件类型">
+              {{ selectedDocument.fileType.toUpperCase() }}
+            </n-descriptions-item>
+            <n-descriptions-item label="文件大小">
+              {{ formatFileSize(selectedDocument.fileSize) }}
+            </n-descriptions-item>
+            <n-descriptions-item label="上传时间">
+              {{ formatFullTime(selectedDocument.uploadTime) }}
+            </n-descriptions-item>
+            <n-descriptions-item label="解析状态">
+              <n-tag
+                :type="selectedDocument.parsed ? 'success' : 'warning'"
+                size="small"
+              >
+                {{ selectedDocument.parsed ? '已解析' : '待解析' }}
+              </n-tag>
+            </n-descriptions-item>
+            <n-descriptions-item label="标签" v-if="selectedDocument.tags.length > 0">
+              <n-space>
+                <n-tag
+                  v-for="tag in selectedDocument.tags"
+                  :key="tag"
+                  size="small"
+                  type="info"
+                >
+                  {{ tag }}
+                </n-tag>
+              </n-space>
+            </n-descriptions-item>
+          </n-descriptions>
+        </n-tab-pane>
+      </n-tabs>
+
+      <template #footer>
+        <n-space justify="space-between">
+          <n-space>
+            <n-button
+              v-if="!selectedDocument?.parsed"
+              type="primary"
+              @click="handleParse(selectedDocument)"
+            >
+              解析文档
+            </n-button>
+            <n-button
+              v-if="selectedDocument?.parsed"
+              @click="handleExportMarkdown"
+            >
+              导出 Markdown
+            </n-button>
+          </n-space>
+          <n-button @click="showDocumentDrawer = false">关闭</n-button>
+        </n-space>
+      </template>
+    </n-drawer>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useMessage, useDialog } from 'naive-ui'
+import { useDocumentStore } from '@/stores/document'
+import type { Document, Folder } from '@/types/document'
+import { documentApi } from '@/api/document'
+import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js/lib/core'
+import python from 'highlight.js/lib/languages/python'
+import javascript from 'highlight.js/lib/languages/javascript'
+import typescript from 'highlight.js/lib/languages/typescript'
+import 'highlight.js/styles/github.css'
+import {
+  SearchOutline as SearchIcon,
+  CloudUploadOutline as UploadIcon,
+  FolderOutline as FolderIcon,
+  FolderOpenOutline as FolderOpenIcon,
+  DocumentTextOutline as DocumentIcon,
+  AddOutline as AddIcon,
+  DocumentOutline as FileIcon,
+} from '@vicons/ionicons5'
+import FileUploader from '@/components/knowledge/FileUploader.vue'
+import PdfViewer from '@/components/knowledge/PdfViewer.vue'
+
+// 配置 Markdown 渲染器
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight: (str, lang) => {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value
+      } catch (__) {}
+    }
+    return ''
+  },
+})
+
+// 注册语言
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('typescript', typescript)
+
+const message = useMessage()
+const dialog = useDialog()
+const documentStore = useDocumentStore()
+
+const searchQuery = ref('')
+const showCreateFolderModal = ref(false)
+const showUploadModal = ref(false)
+const showDocumentDrawer = ref(false)
+const newFolderName = ref('')
+const currentFolderId = ref<string | null>(null)
+const selectedFolderForUpload = ref<string | null>(null)
+const isLoading = ref(false)
+const isUploading = ref(false)
+const selectedDocument = ref<Document | null>(null)
+
+const folders = computed(() => documentStore.folders.filter((f) => f.id !== 'root'))
+const currentFolder = computed(() =>
+  documentStore.folders.find((f) => f.id === currentFolderId.value)
+)
+const filteredDocuments = computed(() => documentStore.filteredDocuments)
+const documents = computed(() => documentStore.documents)
+
+const folderOptions = computed(() =>
+  folders.value.map((f) => ({ label: f.name, value: f.id }))
+)
+
+function getFolderName(folderId: string | null) {
+  if (!folderId) return ''
+  const folder = folders.value.find((f) => f.id === folderId)
+  return folder?.name || ''
+}
+
+function selectFolder(folderId: string) {
+  currentFolderId.value = folderId
+  documentStore.setCurrentFolder(folderId)
+  loadDocuments()
+}
+
+async function loadDocuments() {
+  try {
+    isLoading.value = true
+    const result = await documentApi.list({
+      folder: currentFolderId.value || undefined,
+    })
+    documentStore.setDocuments(result.documents)
+  } catch (error) {
+    message.error('加载文档列表失败')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function loadFolders() {
+  try {
+    const folderList = await documentApi.listFolders()
+    documentStore.setFolders(folderList)
+
+    if (folderList.length > 0 && !currentFolderId.value) {
+      const userFolder = folderList.find((f) => f.id !== 'root')
+      if (userFolder) {
+        selectFolder(userFolder.id)
+      }
+    }
+  } catch (error) {
+    message.error('加载知识库列表失败')
+  }
+}
+
+async function handleCreateFolder() {
+  if (!newFolderName.value.trim()) {
+    message.warning('请输入知识库名称')
+    return
+  }
+
+  try {
+    const folder = await documentApi.createFolder(newFolderName.value)
+    documentStore.addFolder(folder)
+    showCreateFolderModal.value = false
+    newFolderName.value = ''
+    message.success('知识库创建成功')
+
+    selectFolder(folder.id)
+  } catch (error) {
+    message.error('创建知识库失败')
+  }
+}
+
+function handleUploadClick() {
+  selectedFolderForUpload.value = currentFolderId.value
+  showUploadModal.value = true
+}
+
+function handleSearch(query: string) {
+  documentStore.updateFilter({ searchQuery: query })
+}
+
+function handleViewDocument(doc: Document) {
+  selectedDocument.value = doc
+  showDocumentDrawer.value = true
+}
+
+function formatTime(timestamp: string) {
+  const date = new Date(timestamp)
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days = Math.floor(diff / 86400000)
+
+  if (minutes < 1) return '刚刚'
+  if (minutes < 60) return `${minutes} 分钟前`
+  if (hours < 24) return `${hours} 小时前`
+  if (days < 7) return `${days} 天前`
+  return date.toLocaleDateString('zh-CN')
+}
+
+function formatFullTime(timestamp: string) {
+  const date = new Date(timestamp)
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function formatFileSize(bytes: number) {
+  if (bytes === 0) return '0 B'
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
+}
+
+function renderMarkdown(content: string) {
+  return md.render(content)
+}
+
+function handleExportMarkdown() {
+  if (!selectedDocument.value?.markdownContent) {
+    message.warning('暂无 Markdown 内容')
+    return
+  }
+
+  const content = selectedDocument.value.markdownContent
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${selectedDocument.value.title}.md`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+
+  message.success('导出成功')
+}
+
+async function handleParse(doc: Document) {
+  try {
+    documentStore.updateDocument(doc.id, { parseStatus: 'parsing' })
+    message.info('开始解析文档...')
+
+    await documentApi.parse(doc.id)
+    await loadDocuments()
+    message.success('解析成功')
+  } catch (error) {
+    message.error('解析失败')
+    documentStore.updateDocument(doc.id, { parseStatus: 'error' })
+  }
+}
+
+async function handleDelete(doc: Document) {
+  try {
+    await documentApi.delete(doc.id)
+    documentStore.removeDocument(doc.id)
+    message.success('删除成功')
+  } catch (error) {
+    message.error('删除失败')
+  }
+}
+
+async function handleUpload(file: File) {
+  if (!selectedFolderForUpload.value) {
+    message.error('请选择目标知识库')
+    return
+  }
+
+  try {
+    isUploading.value = true
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('folderId', selectedFolderForUpload.value)
+
+    const response = await fetch('/api/documents/upload', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error('上传失败')
+    }
+
+    message.success('上传成功')
+    showUploadModal.value = false
+    selectedFolderForUpload.value = null
+
+    await loadDocuments()
+  } catch (error) {
+    console.error('上传错误:', error)
+    message.error('上传失败')
+  } finally {
+    isUploading.value = false
+  }
+}
+
+onMounted(() => {
+  loadFolders()
+})
+</script>
+
+<style scoped>
+.knowledge-view {
+  height: 100%;
+}
+
+.is-active {
+  background-color: var(--n-color-modal);
+  border-radius: 8px;
+}
+
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.document-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.document-item {
+  padding: 12px 16px;
+  background-color: var(--n-color);
+  border: 1px solid var(--n-border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.document-item:hover {
+  background-color: var(--n-color-modal);
+  border-color: var(--n-border-color-hover);
+}
+
+.pdf-viewer-container {
+  width: 100%;
+  height: calc(100vh - 200px);
+}
+
+.markdown-content {
+  padding: 16px;
+  line-height: 1.8;
+}
+
+.markdown-content :deep(h1) {
+  font-size: 2em;
+  margin: 0.5em 0;
+  border-bottom: 1px solid var(--n-border-color);
+  padding-bottom: 0.3em;
+}
+
+.markdown-content :deep(h2) {
+  font-size: 1.5em;
+  margin: 0.5em 0;
+  border-bottom: 1px solid var(--n-border-color);
+  padding-bottom: 0.3em;
+}
+
+.markdown-content :deep(pre) {
+  background-color: var(--n-color-modal);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.markdown-content :deep(code) {
+  background-color: var(--n-color-modal);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+}
+</style>

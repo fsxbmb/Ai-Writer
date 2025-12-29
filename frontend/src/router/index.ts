@@ -1,0 +1,47 @@
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import MainLayout from '@/layouts/MainLayout.vue'
+import KnowledgeView from '@/views/KnowledgeView.vue'
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    component: MainLayout,
+    children: [
+      {
+        path: '',
+        redirect: '/knowledge',
+      },
+      {
+        path: 'knowledge',
+        name: 'Knowledge',
+        component: KnowledgeView,
+        meta: { title: '知识库管理', icon: 'database' },
+      },
+      {
+        path: 'chat',
+        name: 'Chat',
+        component: () => import('@/views/ChatView.vue'),
+        meta: { title: '知识问答', icon: 'chat' },
+      },
+      {
+        path: 'document',
+        name: 'Document',
+        component: () => import('@/views/DocumentView.vue'),
+        meta: { title: '文档生成', icon: 'document' },
+      },
+      {
+        path: 'history',
+        name: 'History',
+        component: () => import('@/views/HistoryView.vue'),
+        meta: { title: '历史案例', icon: 'history' },
+      },
+    ],
+  },
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+export default router

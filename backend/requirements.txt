@@ -1,0 +1,14 @@
+# FastAPI Web Framework
+# 使用兼容 mineru 环境的版本
+fastapi>=0.115.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.18
+
+# Data Validation
+# 兼容已有包的版本
+pydantic>=2.9.0
+pydantic-settings>=2.2.0
+
+# Utilities
+aiofiles>=23.2.0
+python-dotenv>=1.0.1

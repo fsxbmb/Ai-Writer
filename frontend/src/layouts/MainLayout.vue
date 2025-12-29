@@ -1,0 +1,113 @@
+<template>
+  <n-layout has-sider style="height: 100vh">
+    <!-- 侧边栏 -->
+    <n-layout-sider
+      bordered
+      show-trigger
+      :collapsed-width="64"
+      :width="280"
+      :collapsed="appStore.sidebarCollapsed"
+      @collapse="appStore.setSidebarCollapsed(true)"
+      @expand="appStore.setSidebarCollapsed(false)"
+    >
+      <div class="logo">
+        <h2 v-if="!appStore.sidebarCollapsed">AI Writer</h2>
+        <h2 v-else>AI</h2>
+      </div>
+
+      <n-menu
+        :collapsed="appStore.sidebarCollapsed"
+        :collapsed-width="64"
+        :collapsed-icon-size="22"
+        :options="menuOptions"
+        :value="currentRoute"
+        @update:value="handleMenuSelect"
+      />
+    </n-layout-sider>
+
+    <!-- 主内容区 -->
+    <n-layout>
+      <n-layout-header bordered style="height: 60px; padding: 0 24px; display: flex; align-items: center;">
+        <n-space align="center">
+          <n-breadcrumb>
+            <n-breadcrumb-item>{{ currentRouteMeta?.title || '首页' }}</n-breadcrumb-item>
+          </n-breadcrumb>
+        </n-space>
+      </n-layout-header>
+
+      <n-layout-content content-style="padding: 24px;">
+        <router-view />
+      </n-layout-content>
+    </n-layout>
+  </n-layout>
+</template>
+
+<script setup lang="ts">
+import { computed, h, Component } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { NIcon } from 'naive-ui'
+import type { MenuOption } from 'naive-ui'
+import {
+  FolderOpenOutline as FolderIcon,
+  ChatbubbleEllipsesOutline as ChatIcon,
+  DocumentTextOutline as DocIcon,
+  TimeOutline as HistoryIcon,
+} from '@vicons/ionicons5'
+import { useAppStore } from '@/stores/app'
+
+const router = useRouter()
+const route = useRoute()
+const appStore = useAppStore()
+
+const currentRoute = computed(() => route.name as string)
+const currentRouteMeta = computed(() => route.meta as { title?: string; icon?: string })
+
+const renderIcon = (icon: Component) => {
+  return () => h(NIcon, null, { default: () => h(icon) })
+}
+
+const menuOptions: MenuOption[] = [
+  {
+    label: '知识库管理',
+    key: 'Knowledge',
+    icon: renderIcon(FolderIcon),
+  },
+  {
+    label: '知识问答',
+    key: 'Chat',
+    icon: renderIcon(ChatIcon),
+  },
+  {
+    label: '文档生成',
+    key: 'Document',
+    icon: renderIcon(DocIcon),
+  },
+  {
+    label: '历史案例',
+    key: 'History',
+    icon: renderIcon(HistoryIcon),
+  },
+]
+
+function handleMenuSelect(key: string) {
+  router.push({ name: key })
+}
+</script>
+
+<style scoped>
+.logo {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--n-border-color);
+  margin-bottom: 8px;
+}
+
+.logo h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--n-text-color);
+}
+</style>
