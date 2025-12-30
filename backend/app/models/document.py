@@ -66,6 +66,8 @@ class DocumentStorage:
             "uploadTime": datetime.now().isoformat(),
             "parsed": False,
             "parseStatus": ParseStatus.PENDING.value,
+            "chunked": False,  # 初始分块状态为未分块
+            "vectorizeStatus": "pending",  # 向量化状态
             "tags": data.tags,
             "folderId": data.folderId,
             "filePath": file_path,
@@ -180,6 +182,38 @@ class DocumentStorage:
                 if error_message is not None:
                     doc["errorMessage"] = error_message
 
+                documents[i] = doc
+                self._save_documents(documents)
+                return doc
+
+        return None
+
+    def update_chunked_status(self, document_id: str, chunked: bool = True) -> Optional[Dict]:
+        """更新分块状态"""
+        documents = self._load_documents()
+
+        for i, doc in enumerate(documents):
+            if doc["id"] == document_id:
+                doc["chunked"] = chunked
+                documents[i] = doc
+                self._save_documents(documents)
+                return doc
+
+        return None
+
+    def update_vectorize_status(
+        self, document_id: str, status: str, chunk_count: int = None
+    ) -> Optional[Dict]:
+        """更新向量化状态"""
+        documents = self._load_documents()
+
+        for i, doc in enumerate(documents):
+            if doc["id"] == document_id:
+                doc["vectorizeStatus"] = status
+                if status == "success":
+                    doc["chunked"] = True
+                if chunk_count is not None:
+                    doc["chunkCount"] = chunk_count
                 documents[i] = doc
                 self._save_documents(documents)
                 return doc

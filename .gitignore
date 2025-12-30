@@ -71,3 +71,6 @@ tmp/
 # Parsed output and screenshots
 backend/parsed_output/
 *.png
+
+# Vector database volumes
+milvus/

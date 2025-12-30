@@ -141,13 +141,23 @@
                   </n-space>
 
                   <n-space align="center">
-                    <n-tag
-                      :type="doc.parsed ? 'success' : 'default'"
-                      size="small"
-                      :bordered="false"
-                    >
-                      {{ doc.parsed ? '已解析' : '待解析' }}
-                    </n-tag>
+                    <n-space :size="4">
+                      <n-tag
+                        :type="doc.parsed ? 'success' : 'default'"
+                        size="small"
+                        :bordered="false"
+                      >
+                        {{ doc.parsed ? '已解析' : '待解析' }}
+                      </n-tag>
+                      <n-tag
+                        v-if="doc.parsed && doc.chunked"
+                        type="info"
+                        size="small"
+                        :bordered="false"
+                      >
+                        已分块
+                      </n-tag>
+                    </n-space>
                     <n-text depth="3" style="font-size: 12px">
                       {{ formatTime(doc.uploadTime) }}
                     </n-text>

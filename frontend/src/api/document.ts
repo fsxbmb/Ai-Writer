@@ -114,4 +114,90 @@ export const documentApi = {
   deleteFolder: async (folderId: string): Promise<void> => {
     await apiClient.delete(`/folders/${folderId}`)
   },
+
+  // ==================== RAG 分块相关接口 ====================
+
+  // 分块文档
+  chunk: async (documentId: string): Promise<{
+    documentId: string
+    chunkCount: number
+    chunks: Chunk[]
+  }> => {
+    const response = await apiClient.post<{
+      documentId: string
+      chunkCount: number
+      chunks: Chunk[]
+    }>(`/documents/${documentId}/chunk`)
+    return response
+  },
+
+  // 获取文档分块
+  getChunks: async (documentId: string): Promise<{
+    documentId: string
+    chunkCount: number
+    chunks: Chunk[]
+  }> => {
+    const response = await apiClient.get<{
+      documentId: string
+      chunkCount: number
+      chunks: Chunk[]
+    }>(`/documents/${documentId}/chunks`)
+    return response
+  },
+
+  // 向量化文档(启动后台任务)
+  vectorize: async (documentId: string): Promise<{
+    taskId: string
+    message: string
+  }> => {
+    const response = await apiClient.post<{
+      taskId: string
+      message: string
+    }>(`/documents/${documentId}/vectorize`, {}, { timeout: 300000 }) // 5分钟超时
+    return response
+  },
+
+  // 获取向量化状态
+  getVectorizeStatus: async (documentId: string): Promise<{
+    documentId: string
+    status: string
+    chunked: boolean
+    chunkCount?: number
+  }> => {
+    const response = await apiClient.get<{
+      documentId: string
+      status: string
+      chunked: boolean
+      chunkCount?: number
+    }>(`/documents/${documentId}/vectorize/status`)
+    return response
+  },
+
+  // 搜索分块
+  searchChunks: async (documentId: string, query: string, topK?: number): Promise<{
+    query: string
+    documentId: string
+    resultCount: number
+    results: any[]
+  }> => {
+    const response = await apiClient.post<{
+      query: string
+      documentId: string
+      resultCount: number
+      results: any[]
+    }>(`/documents/${documentId}/search`, null, {
+      params: { query, top_k: topK || 10 }
+    })
+    return response
+  },
+}
+
+// 类型定义
+export interface Chunk {
+  id: string
+  content: string
+  title: string
+  level: number
+  chunk_index: number
+  document_id: string
 }

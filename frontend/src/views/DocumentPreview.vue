@@ -23,6 +23,12 @@
           </template>
           解析文档
         </n-button>
+        <n-button @click="handleChunk" :loading="isChunking" :disabled="!document || !document.parsed">
+          <template #icon>
+            <n-icon :component="GridIcon" />
+          </template>
+          分块
+        </n-button>
         <n-button v-if="!isPreviewMode" type="primary" @click="handleSave" :loading="isSaving">
           <template #icon>
             <n-icon :component="SaveIcon" />
@@ -79,6 +85,71 @@
         </div>
       </div>
     </n-layout-content>
+
+    <!-- 分块预览抽屉 -->
+    <n-drawer v-model:show="showChunkDrawer" :width="800" placement="right">
+      <template #header>
+        <n-space align="center">
+          <n-icon :component="GridIcon" />
+          <n-text strong>文档分块预览</n-text>
+          <n-tag v-if="chunks.length > 0" type="info" size="small">
+            {{ chunks.length }} 个块
+          </n-tag>
+        </n-space>
+      </template>
+
+      <n-spin :show="isChunking">
+        <div v-if="chunks.length === 0 && !isChunking" class="empty-chunks">
+          <n-empty description="暂无分块数据">
+            <template #extra>
+              <n-button @click="handleChunk" type="primary">
+                开始分块
+              </n-button>
+            </template>
+          </n-empty>
+        </div>
+
+        <div v-else class="chunks-list">
+          <n-collapse>
+            <n-collapse-item
+              v-for="chunk in chunks"
+              :key="chunk.id"
+              :title="`${chunk.title || '无标题'} (Level ${chunk.level})`"
+            >
+              <template #header-extra>
+                <n-tag size="tiny" :bordered="false">
+                  #{{ chunk.chunk_index }}
+                </n-tag>
+              </template>
+
+              <div class="chunk-content">
+                <n-descriptions :column="2" size="small" bordered>
+                  <n-descriptions-item label="块标题">
+                    {{ chunk.title }}
+                  </n-descriptions-item>
+                  <n-descriptions-item label="层级">
+                    Level {{ chunk.level }}
+                  </n-descriptions-item>
+                </n-descriptions>
+
+                <n-divider />
+
+                <div class="chunk-text">
+                  <pre>{{ chunk.content }}</pre>
+                </div>
+              </div>
+            </n-collapse-item>
+          </n-collapse>
+        </div>
+      </n-spin>
+
+      <template #footer>
+        <n-space justify="space-between">
+          <n-text depth="3">提示：点击分块按钮开始分析文档结构</n-text>
+          <n-button @click="showChunkDrawer = false">关闭</n-button>
+        </n-space>
+      </template>
+    </n-drawer>
   </div>
 </template>
 
@@ -94,8 +165,9 @@ import {
   ArrowBackOutline as ArrowBackIcon,
   RefreshOutline as RefreshIcon,
   SaveOutline as SaveIcon,
+  GridOutline as GridIcon,
 } from '@vicons/ionicons5'
-import { documentApi } from '@/api/document'
+import { documentApi, type Chunk } from '@/api/document'
 import type { Document } from '@/types/document'
 import PDFViewer from '@/components/common/PDFViewer.vue'
 
@@ -125,6 +197,11 @@ const isSaving = ref(false)
 const isParsing = ref(false)
 const isLoading = ref(false)
 const isPreviewMode = ref(false)
+
+// 分块相关状态
+const isChunking = ref(false)
+const showChunkDrawer = ref(false)
+const chunks = ref<Chunk[]>([])
 
 // 轮询定时器
 let pollingInterval: number | null = null
@@ -227,6 +304,104 @@ async function handleParse() {
   }
 }
 
+async function handleChunk() {
+  if (!document.value) return
+
+  // 防止重复点击
+  if (isChunking.value) {
+    message.warning('向量化任务正在进行中，请耐心等待...')
+    return
+  }
+
+  // 清除之前的轮询
+  if (pollingInterval !== null) {
+    clearInterval(pollingInterval)
+    pollingInterval = null
+  }
+
+  // 添加完成标志，防止重复弹窗
+  const hasCompleted = ref(false)
+
+  try {
+    isChunking.value = true
+    // 只在控制台显示，不弹窗打扰用户
+    console.log('向量化任务已启动，正在后台处理...')
+
+    // 启动向量化任务
+    await documentApi.vectorize(document.value.id)
+
+    // 开始轮询向量化状态
+    pollVectorizeStatus(hasCompleted)
+  } catch (error) {
+    console.error('启动向量化任务失败:', error)
+    message.error('启动向量化任务失败：' + (error as Error).message)
+    isChunking.value = false
+  }
+}
+
+// 轮询向量化状态
+function pollVectorizeStatus(hasCompleted: Ref<boolean>) {
+  if (!document.value) return
+
+  const maxAttempts = 300 // 最多轮询10分钟（每2秒一次）
+  let attempts = 0
+  let consecutiveErrors = 0 // 连续错误次数
+
+  pollingInterval = setInterval(async () => {
+    attempts++
+
+    try {
+      const status = await documentApi.getVectorizeStatus(document.value.id)
+
+      console.log('向量化状态:', status)
+
+      // 重置错误计数
+      consecutiveErrors = 0
+
+      // 更新文档状态
+      if (document.value) {
+        document.value.vectorizeStatus = status.status
+        document.value.chunked = status.chunked
+      }
+
+      if ((status.status === 'success' || status.chunked) && !hasCompleted.value) {
+        // 标记为已完成，防止重复弹窗
+        hasCompleted.value = true
+
+        stopPolling()
+        const chunkCount = status.chunkCount || 0
+        message.success(`向量化完成！共生成 ${chunkCount} 个块,已存储到向量数据库`)
+        await loadDocument()
+        // 获取分块结果预览
+        try {
+          const chunksResult = await documentApi.chunk(document.value.id)
+          chunks.value = chunksResult.chunks || []
+          showChunkDrawer.value = true
+        } catch (error) {
+          console.error('获取分块结果失败:', error)
+          // 即使获取分块失败也继续
+        }
+      } else if (status.status === 'error') {
+        stopPolling()
+        message.error('向量化失败，请查看日志')
+      } else if (attempts >= maxAttempts) {
+        stopPolling()
+        message.warning('向量化时间较长，请稍后手动刷新查看结果')
+      }
+    } catch (error) {
+      consecutiveErrors++
+      console.log(`获取向量化状态中... (${consecutiveErrors}/5)`) // 只在控制台显示，不弹窗
+
+      // 连续失败5次才停止轮询（容错处理）
+      if (consecutiveErrors >= 5) {
+        stopPolling()
+        message.error('获取向量化状态失败，请稍后重试')
+      }
+      // 否则继续轮询，不弹窗
+    }
+  }, 2000) // 每2秒轮询一次
+}
+
 // 轮询解析状态
 function pollParseStatus() {
   if (!document.value) return
@@ -283,7 +458,9 @@ function stopPolling() {
     clearInterval(pollingInterval)
     pollingInterval = null
   }
+  // 同时停止解析和分块的加载状态
   isParsing.value = false
+  isChunking.value = false
 }
 
 onMounted(() => {
@@ -477,5 +654,35 @@ watch(() => route.params.id, (newId) => {
 
 .markdown-editor::placeholder {
   color: #999;
+}
+
+/* 分块相关样式 */
+.empty-chunks {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.chunks-list {
+  padding: 16px;
+}
+
+.chunk-content {
+  padding: 12px 0;
+}
+
+.chunk-text {
+  margin-top: 12px;
+}
+
+.chunk-text pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: var(--n-color-modal);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-y: auto;
 }
 </style>

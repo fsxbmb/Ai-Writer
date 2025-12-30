@@ -13,6 +13,9 @@ export interface Document {
   uploadTime: string
   parsed: boolean
   parseStatus: ParseStatus
+  chunked: boolean  // 是否已分块
+  vectorizeStatus?: string  // 向量化状态
+  chunkCount?: number  // 分块数量
   markdownContent?: string
   tags: string[]
   folderId: string

@@ -51,6 +51,7 @@ class DocumentResponse(DocumentBase):
     uploadTime: datetime
     parsed: bool
     parseStatus: ParseStatus
+    chunked: bool = False  # 是否已分块
     markdownContent: Optional[str] = None
     thumbnail: Optional[str] = None
     errorMessage: Optional[str] = None

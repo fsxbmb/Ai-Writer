@@ -350,3 +350,231 @@ async def get_document_image(document_id: str, image_name: str):
         image_path,
         media_type=media_type
     )
+
+
+# ==================== RAG 分块和向量化相关接口 ====================
+
+from app.services.chunker import chunker
+from app.services.embedding import embedding_service
+from app.services.vector_store import vector_store
+
+
+@router.post("/{document_id}/chunk")
+async def chunk_document(document_id: str):
+    """
+    对文档进行分块
+
+    将 Markdown 文档按标题层级和内容智能分块
+    """
+    doc = storage.get_document(document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="文档不存在")
+
+    markdown_content = doc.get("markdownContent")
+    if not markdown_content:
+        raise HTTPException(status_code=400, detail="文档未解析，无法分块")
+
+    try:
+        # 执行分块
+        chunks = chunker.chunk(markdown_content, document_id)
+
+        # 转换为字典格式
+        chunk_dicts = []
+        for chunk in chunks:
+            chunk_dicts.append({
+                "id": chunk.id,
+                "content": chunk.content,
+                "title": chunk.title,
+                "level": chunk.level,
+                "chunk_index": chunk.chunk_index,
+                "document_id": document_id
+            })
+
+        # 更新分块状态
+        storage.update_chunked_status(document_id, True)
+
+        return {
+            "documentId": document_id,
+            "chunkCount": len(chunk_dicts),
+            "chunks": chunk_dicts
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"分块失败: {str(e)}")
+
+
+@router.get("/{document_id}/chunks")
+async def get_document_chunks(document_id: str):
+    """
+    获取文档的所有分块
+
+    返回已存储在向量数据库中的文档块
+    """
+    try:
+        # 确保向量数据库已连接
+        if not vector_store.connected:
+            vector_store.connect()
+
+        chunks = vector_store.get_document_chunks(document_id)
+
+        return {
+            "documentId": document_id,
+            "chunkCount": len(chunks),
+            "chunks": chunks
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取分块失败: {str(e)}")
+
+
+@router.post("/{document_id}/vectorize")
+async def vectorize_document(document_id: str):
+    """
+    对文档进行分块并向量化存储（后台任务）
+
+    流程：
+    1. 对 Markdown 文档分块
+    2. 使用 Ollama 生成向量
+    3. 存储到 Milvus 向量数据库
+    """
+    doc = storage.get_document(document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="文档不存在")
+
+    markdown_content = doc.get("markdownContent")
+    if not markdown_content:
+        raise HTTPException(status_code=400, detail="文档未解析，无法分块")
+
+    # 更新状态为处理中
+    storage.update_vectorize_status(document_id, "processing")
+
+    # 提交后台任务
+    task_id = f"vectorize_{document_id}"
+
+    async def vectorize_task():
+        """向量化任务"""
+        try:
+            # 1. 分块
+            chunks_data = chunker.chunk(markdown_content, document_id)
+
+            if not chunks_data:
+                storage.update_vectorize_status(document_id, "error")
+                return
+
+            # 2. 生成向量（同时返回成功的索引）
+            texts = [chunk.content for chunk in chunks_data]
+            successful_indices, embeddings = embedding_service.encode_with_indices(texts)
+
+            # 检查是否有成功编码的向量
+            if len(embeddings) == 0:
+                storage.update_vectorize_status(document_id, "error")
+                print("向量化任务失败: 没有成功编码任何文本")
+                return
+
+            # 只保留成功编码的分块
+            successful_chunks = [chunks_data[i] for i in successful_indices]
+
+            # 3. 存储到向量数据库
+            if not vector_store.connected:
+                vector_store.connect()
+
+            # 创建集合（如果不存在）
+            vector_store.create_collection(
+                dimension=embedding_service.dimension,
+                drop_existing=False
+            )
+
+            # 准备数据（只包含成功编码的分块）
+            chunk_dicts = [
+                {
+                    "id": chunk.id,
+                    "document_id": document_id,
+                    "chunk_index": idx,
+                    "title": chunk.title,
+                    "content": chunk.content,
+                    "level": chunk.level
+                }
+                for idx, chunk in enumerate(successful_chunks)
+            ]
+
+            # 插入向量
+            vector_store.insert_chunks(chunk_dicts, embeddings.tolist())
+
+            # 更新状态为成功
+            storage.update_vectorize_status(document_id, "success", len(chunk_dicts))
+
+            # 4. 释放 GPU 显存
+            embedding_service.unload_model()
+
+        except Exception as e:
+            storage.update_vectorize_status(document_id, "error")
+            print(f"向量化任务失败: {e}")
+            import traceback
+            traceback.print_exc()
+            # 即使失败也尝试释放GPU
+            try:
+                embedding_service.unload_model()
+            except:
+                pass
+
+    # 提交到后台任务管理器
+    from app.services.task_manager import task_manager
+    await task_manager.submit_task(task_id, vectorize_task)
+
+    return {
+        "taskId": task_id,
+        "message": "向量化任务已提交，正在后台处理"
+    }
+
+
+@router.get("/{document_id}/vectorize/status")
+async def get_vectorize_status(document_id: str):
+    """获取向量化任务状态"""
+    doc = storage.get_document(document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="文档不存在")
+
+    return {
+        "documentId": document_id,
+        "status": doc.get("vectorizeStatus", "pending"),
+        "chunked": doc.get("chunked", False),
+        "chunkCount": doc.get("chunkCount")
+    }
+
+
+@router.post("/{document_id}/search")
+async def search_chunks(
+    document_id: str,
+    query: str = Query(..., description="搜索查询文本"),
+    top_k: int = Query(10, description="返回结果数量")
+):
+    """
+    在文档中搜索相关内容
+
+    使用向量相似度搜索文档块
+    """
+    try:
+        # 测试 Ollama 连接
+        if not embedding_service.test_connection():
+            raise HTTPException(status_code=503, detail="Ollama 服务不可用")
+
+        # 生成查询向量
+        query_vector = embedding_service.encode_single(query)
+
+        # 向量搜索
+        if not vector_store.connected:
+            vector_store.connect()
+
+        results = vector_store.search(query_vector, top_k, document_id)
+
+        return {
+            "query": query,
+            "documentId": document_id,
+            "resultCount": len(results),
+            "results": results
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"搜索失败: {str(e)}")
