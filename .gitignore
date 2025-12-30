@@ -73,4 +73,4 @@ backend/parsed_output/
 *.png
 
 # Vector database volumes
-milvus/
+milvus/volumes/
