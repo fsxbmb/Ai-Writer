@@ -67,3 +67,7 @@ uploads/
 temp/
 tmp/
 *.tmp
+
+# Parsed output and screenshots
+backend/parsed_output/
+*.png

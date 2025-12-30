@@ -7,13 +7,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      'pdfjs-dist': resolve(__dirname, 'node_modules/pdfjs-dist'),
     },
   },
   server: {
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8001',
         changeOrigin: true,
       },
     },

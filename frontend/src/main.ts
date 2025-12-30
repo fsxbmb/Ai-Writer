@@ -51,6 +51,7 @@ import {
   NTabPane,
   NDescriptions,
   NDescriptionsItem,
+  NSwitch,
 } from 'naive-ui'
 
 const naive = create({
@@ -96,6 +97,7 @@ const naive = create({
     NTabPane,
     NDescriptions,
     NDescriptionsItem,
+    NSwitch,
   ],
 })
 

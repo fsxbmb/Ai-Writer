@@ -30,7 +30,19 @@
               <template #prefix>
                 <n-icon :component="FolderIcon" />
               </template>
-              <n-text>{{ folder.name }}</n-text>
+              <n-space justify="space-between" align="center" style="width: 100%">
+                <n-text>{{ folder.name }}</n-text>
+                <n-button
+                  size="tiny"
+                  quaternary
+                  type="error"
+                  @click.stop="handleDeleteFolder(folder)"
+                >
+                  <template #icon>
+                    <n-icon :component="TrashIcon" />
+                  </template>
+                </n-button>
+              </n-space>
             </n-list-item>
           </n-list>
 
@@ -139,6 +151,17 @@
                     <n-text depth="3" style="font-size: 12px">
                       {{ formatTime(doc.uploadTime) }}
                     </n-text>
+                    <n-button
+                      size="tiny"
+                      quaternary
+                      type="error"
+                      class="delete-btn"
+                      @click.stop="handleDeleteDocument(doc)"
+                    >
+                      <template #icon>
+                        <n-icon :component="TrashIcon" />
+                      </template>
+                    </n-button>
                   </n-space>
                 </n-space>
               </div>
@@ -261,6 +284,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useMessage } from 'naive-ui'
+import { useRouter } from 'vue-router'
 import { useDocumentStore } from '@/stores/document'
 import type { Document, Folder } from '@/types/document'
 import { documentApi } from '@/api/document'
@@ -272,10 +296,12 @@ import {
   DocumentTextOutline as DocumentIcon,
   AddOutline as AddIcon,
   DocumentOutline as FileIcon,
+  TrashOutline as TrashIcon,
 } from '@vicons/ionicons5'
 import FileUploader from '@/components/knowledge/FileUploader.vue'
 
 const message = useMessage()
+const router = useRouter()
 const documentStore = useDocumentStore()
 
 const searchQuery = ref('')
@@ -331,8 +357,7 @@ function handleSearch(query: string) {
 }
 
 function handleViewDocument(doc: Document) {
-  selectedDocument.value = doc
-  showDocumentDrawer.value = true
+  router.push({ name: 'DocumentPreview', params: { id: doc.id } })
 }
 
 function formatFullTime(timestamp: string) {
@@ -456,6 +481,49 @@ async function handleUpload(file: File) {
   }
 }
 
+async function handleDeleteDocument(doc: Document) {
+  if (!confirm(`确定要删除文档"${doc.title}"吗？此操作不可恢复。`)) {
+    return
+  }
+
+  try {
+    await documentApi.delete(doc.id)
+    message.success('删除成功')
+
+    // 如果删除的是当前打开的文档，关闭抽屉
+    if (selectedDocument.value?.id === doc.id) {
+      showDocumentDrawer.value = false
+      selectedDocument.value = null
+    }
+
+    await loadDocuments()
+  } catch (error) {
+    message.error('删除失败')
+  }
+}
+
+async function handleDeleteFolder(folder: Folder) {
+  if (!confirm(`确定要删除知识库"${folder.name}"吗？此操作将同时删除该知识库下的所有文档，且不可恢复。`)) {
+    return
+  }
+
+  try {
+    await documentApi.deleteFolder(folder.id)
+    message.success('知识库删除成功')
+
+    // 如果删除的是当前选中的知识库，清空选择
+    if (currentFolderId.value === folder.id) {
+      currentFolderId.value = null
+      documentStore.setCurrentFolder(null)
+      documentStore.setDocuments([])
+    }
+
+    await loadFolders()
+  } catch (error) {
+    message.error('删除失败')
+  }
+}
+
 onMounted(() => {
   loadFolders()
 })
@@ -512,5 +580,23 @@ onMounted(() => {
 .markdown-content {
   padding: 16px;
   line-height: 1.8;
+}
+
+.document-item {
+  position: relative;
+  transition: all 0.2s;
+}
+
+.delete-btn {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1 !important;
+}
+
+.document-item:hover .delete-btn {
+  opacity: 0.8;
 }
 </style>

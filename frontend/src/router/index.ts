@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
 import KnowledgeView from '@/views/KnowledgeView.vue'
+import DocumentPreview from '@/views/DocumentPreview.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -36,6 +37,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '历史案例', icon: 'history' },
       },
     ],
+  },
+  {
+    path: '/document/:id',
+    name: 'DocumentPreview',
+    component: DocumentPreview,
+    meta: { title: '文档预览' },
   },
 ]
 

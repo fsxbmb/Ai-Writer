@@ -40,9 +40,15 @@ export const documentApi = {
     return response
   },
 
-  // 解析文档
-  parse: async (documentId: string): Promise<ParseResponse> => {
-    const response = await apiClient.post<ParseResponse>(`/documents/${documentId}/parse`)
+  // 解析文档（启动后台任务）
+  parse: async (documentId: string): Promise<{ taskId: string; message: string }> => {
+    const response = await apiClient.post<{ taskId: string; message: string }>(`/documents/${documentId}/parse`)
+    return response
+  },
+
+  // 获取解析状态
+  getParseStatus: async (documentId: string): Promise<{ documentId: string; status: string; parsed: boolean }> => {
+    const response = await apiClient.get<{ documentId: string; status: string; parsed: boolean }>(`/documents/${documentId}/parse/status`)
     return response
   },
 

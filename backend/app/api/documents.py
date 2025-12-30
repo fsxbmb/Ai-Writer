@@ -3,6 +3,7 @@
 """
 import os
 import shutil
+import base64
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Query, Depends
@@ -74,10 +75,12 @@ async def upload_document(
     )
 
 
-@router.post("/{document_id}/parse", response_model=ParseResponse)
+@router.post("/{document_id}/parse")
 async def parse_document(document_id: str):
     """
-    解析文档（调用 MinerU）
+    启动文档解析（后台任务）
+
+    返回任务ID，前端可以轮询任务状态
     """
     doc = storage.get_document(document_id)
     if not doc:
@@ -94,27 +97,53 @@ async def parse_document(document_id: str):
         )
         raise HTTPException(status_code=404, detail="文件不存在")
 
-    # 调用 MinerU 解析
-    markdown_content, error_message, images = await mineru_service.parse_pdf(
-        file_path, document_id
-    )
+    # 提交后台任务
+    task_id = f"parse_{document_id}"
 
-    # 更新解析结果
-    if error_message:
-        storage.update_parse_status(
-            document_id, ParseStatus.ERROR, error_message=error_message
-        )
-        raise HTTPException(status_code=500, detail=f"解析失败: {error_message}")
+    async def parse_task():
+        """解析任务"""
+        try:
+            markdown_content, error_message, images = await mineru_service.parse_pdf(
+                file_path, document_id
+            )
 
-    storage.update_parse_status(
-        document_id, ParseStatus.SUCCESS, markdown_content=markdown_content
-    )
+            if error_message:
+                storage.update_parse_status(
+                    document_id, ParseStatus.ERROR, error_message=error_message
+                )
+            else:
+                storage.update_parse_status(
+                    document_id, ParseStatus.SUCCESS, markdown_content=markdown_content
+                )
+        except Exception as e:
+            storage.update_parse_status(
+                document_id, ParseStatus.ERROR, error_message=str(e)
+            )
 
-    return ParseResponse(
-        documentId=document_id,
-        markdownContent=markdown_content,
-        images=images,
-    )
+    # 提交到后台任务管理器
+    from app.services.task_manager import task_manager
+    await task_manager.submit_task(task_id, parse_task)
+
+    return {
+        "taskId": task_id,
+        "message": "解析任务已提交，请稍后查询结果"
+    }
+
+
+@router.get("/{document_id}/parse/status")
+async def get_parse_status(document_id: str):
+    """
+    获取解析任务状态
+    """
+    doc = storage.get_document(document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="文档不存在")
+
+    return {
+        "documentId": document_id,
+        "status": doc.get("parseStatus", "pending"),
+        "parsed": doc.get("parsed", False)
+    }
 
 
 @router.get("", response_model=DocumentListResponse)
@@ -161,13 +190,14 @@ async def update_document(document_id: str, data: DocumentUpdate):
 
 @router.put("/{document_id}/content", response_model=DocumentResponse)
 async def update_document_content(
-    document_id: str, markdownContent: str
+    document_id: str, data: dict
 ):
     """
     更新文档内容
     """
+    markdown_content = data.get("markdownContent", "")
     doc = storage.update_document(
-        document_id, DocumentUpdate(markdownContent=markdownContent)
+        document_id, DocumentUpdate(markdownContent=markdown_content)
     )
     if not doc:
         raise HTTPException(status_code=404, detail="文档不存在")
@@ -189,10 +219,12 @@ async def delete_document(document_id: str):
 
 @router.get("/{document_id}/download")
 async def download_document(
-    document_id: str, format: str = Query("markdown", description="下载格式：pdf, markdown")
+    document_id: str,
+    format: str = Query("markdown", description="下载格式：pdf, markdown"),
+    disposition: str = Query("attachment", description=" disposition：inline(预览) 或 attachment(下载)")
 ):
     """
-    下载文档
+    下载或预览文档
     """
     doc = storage.get_document(document_id)
     if not doc:
@@ -216,16 +248,105 @@ async def download_document(
         )
 
     elif format == "pdf":
-        # 下载原始 PDF 文件
+        # 预览或下载原始 PDF 文件
         file_path = doc.get("filePath")
         if not file_path or not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="文件不存在")
 
-        return FileResponse(
-            file_path,
-            media_type="application/pdf",
-            filename=doc["fileName"],
-        )
+        # 设置 Content-Disposition
+        content_disposition = "inline" if disposition == "inline" else "attachment"
+
+        # 对于inline预览，不设置filename以避免浏览器下载
+        if disposition == "inline":
+            return FileResponse(
+                file_path,
+                media_type="application/pdf",
+                headers={"Content-Disposition": "inline"}
+            )
+        else:
+            return FileResponse(
+                file_path,
+                media_type="application/pdf",
+                filename=doc["fileName"]
+            )
 
     else:
         raise HTTPException(status_code=400, detail="不支持的格式")
+
+
+@router.get("/{document_id}/pdf-base64")
+async def get_pdf_base64(document_id: str):
+    """
+    获取PDF的base64编码（用于前端渲染）
+    """
+    doc = storage.get_document(document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="文档不存在")
+
+    file_path = doc.get("filePath")
+    if not file_path or not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="文件不存在")
+
+    # 读取PDF文件并转换为base64
+    with open(file_path, "rb") as f:
+        pdf_data = f.read()
+
+    base64_data = base64.b64encode(pdf_data).decode("utf-8")
+
+    return {
+        "base64": base64_data,
+        "size": len(pdf_data)
+    }
+
+
+@router.get("/{document_id}/images/{image_name}")
+async def get_document_image(document_id: str, image_name: str):
+    """
+    获取文档解析后的图片
+    """
+    doc = storage.get_document(document_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="文档不存在")
+
+    # 构建图片路径
+    # MinerU 输出目录结构: parsed_output/{文件名}/vlm/images/{image_name}
+    # 需要从文件名中提取时间戳和文件名
+    file_path = doc.get("filePath", "")
+    file_name = Path(file_path).stem  # 获取不带扩展名的文件名
+
+    # 尝试多个可能的路径
+    possible_paths = [
+        # 使用完整文件名
+        os.path.join(settings.MINERU_OUTPUT_DIR, file_name, "vlm", "images", image_name),
+        os.path.join(settings.MINERU_OUTPUT_DIR, file_name, "auto", "images", image_name),
+        # 直接在输出目录下搜索
+    ]
+
+    image_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            image_path = path
+            break
+
+    # 如果没找到，尝试在整个输出目录中搜索
+    if not image_path:
+        for root, dirs, files in os.walk(settings.MINERU_OUTPUT_DIR):
+            if image_name in files:
+                image_path = os.path.join(root, image_name)
+                break
+
+    if not image_path or not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail=f"图片不存在: {image_name}")
+
+    # 根据文件扩展名确定媒体类型
+    ext = Path(image_path).suffix.lower()
+    media_type = "image/jpeg"
+    if ext == ".png":
+        media_type = "image/png"
+    elif ext == ".gif":
+        media_type = "image/gif"
+
+    return FileResponse(
+        image_path,
+        media_type=media_type
+    )

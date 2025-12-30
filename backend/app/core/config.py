@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE: int = 104857600  # 100MB
 
     # MinerU 配置
-    MINERU_BACKEND: str = "pipeline"
+    MINERU_BACKEND: str = "pipeline"  # 使用 pipeline 进行快速轻量级解析
     MINERU_OUTPUT_DIR: str = "./parsed_output"
     MINERU_LANG: str = "ch"
 
