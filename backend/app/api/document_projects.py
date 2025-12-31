@@ -8,6 +8,7 @@ from typing import List, Optional
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn  # 用于设置字体
 import io
 from urllib.parse import quote
 
@@ -109,8 +110,11 @@ async def update_outline(project_id: str, request: UpdateOutlineRequest):
         if not project:
             raise HTTPException(status_code=404, detail="项目不存在")
 
-        # 检查大纲是否已锁定
-        if project.get("outlineLocked", False):
+        current_locked = project.get("outlineLocked", False)
+
+        # 只有在当前已锁定且请求保持锁定状态时才拒绝修改
+        # 允许解锁操作（locked=False）或首次锁定
+        if current_locked and request.locked:
             raise HTTPException(status_code=400, detail="大纲已锁定，无法修改")
 
         updated_project = document_project_storage.update_outline(
@@ -409,6 +413,13 @@ async def export_word(project_id: str):
         # 小四号字体 = 12磅
         font_size_small4 = Pt(12)
 
+        # 设置文档默认样式（Normal 样式）
+        style = doc.styles['Normal']
+        style.font.name = 'Times New Roman'
+        style.font.size = font_size_small4
+        # 设置中文字体
+        style._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+
         # 设置文档标题
         title = project.get("title", "文档")
         title_heading = doc.add_heading(title, 0)
@@ -419,20 +430,15 @@ async def export_word(project_id: str):
             run.font.size = font_size_small4
             run.font.bold = True
             run.font.color.rgb = RGBColor(0, 0, 0)
-            # 移除下划线
             run.font.underline = False
-
-            # 设置字体：英文用Times New Roman，中文用宋体
-            rFonts = run._element.get_or_add_rPr()
-            rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}ascii', 'Times New Roman')
-            rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hAnsi', 'Times New Roman')
-            rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}eastAsia', '宋体')
-            rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}cs', 'Times New Roman')
+            # 使用 qn 设置字体
+            run.font.name = 'Times New Roman'
+            run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
 
         # 移除段落边框
         try:
             pPr = title_heading._element.get_or_add_pPr()
-            pBdr = pPr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}pBdr')
+            pBdr = pPr.find(qn('w:pBdr'))
             if pBdr is not None:
                 pPr.remove(pBdr)
         except:
@@ -458,23 +464,18 @@ async def export_word(project_id: str):
 
                 # 设置标题格式
                 for run in heading.runs:
-                    run.font.size = font_size_small4  # 小四号字体
-                    run.font.bold = True  # 加粗
-                    run.font.color.rgb = RGBColor(0, 0, 0)  # 黑色
-                    # 移除下划线
+                    run.font.size = font_size_small4
+                    run.font.bold = True
+                    run.font.color.rgb = RGBColor(0, 0, 0)
                     run.font.underline = False
-
-                    # 设置字体：英文用Times New Roman，中文用宋体
-                    rFonts = run._element.get_or_add_rPr()
-                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}ascii', 'Times New Roman')
-                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hAnsi', 'Times New Roman')
-                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}eastAsia', '宋体')
-                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}cs', 'Times New Roman')
+                    # 使用 qn 设置字体
+                    run.font.name = 'Times New Roman'
+                    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
 
                 # 移除段落边框
                 try:
                     pPr = heading._element.get_or_add_pPr()
-                    pBdr = pPr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}pBdr')
+                    pBdr = pPr.find(qn('w:pBdr'))
                     if pBdr is not None:
                         pPr.remove(pBdr)
                 except:
@@ -512,14 +513,10 @@ async def export_word(project_id: str):
 
                                 # 设置正文字体
                                 for run in para.runs:
-                                    run.font.size = font_size_small4  # 小四号字体
-
-                                    # 设置字体：英文用Times New Roman，中文用宋体
-                                    rFonts = run._element.get_or_add_rPr()
-                                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}ascii', 'Times New Roman')
-                                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}hAnsi', 'Times New Roman')
-                                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}eastAsia', '宋体')
-                                    rFonts.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}cs', 'Times New Roman')
+                                    run.font.size = font_size_small4
+                                    # 使用 qn 设置字体
+                                    run.font.name = 'Times New Roman'
+                                    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
 
                                 # 设置段落格式：首行缩进两字符（约0.8厘米），行距1.5倍，段前段后0行
                                 para.paragraph_format.first_line_indent = Inches(0.32)  # 首行缩进两字符
@@ -578,13 +575,30 @@ async def preview_html(project_id: str):
         sections = project.get("sections", {})
 
         # 生成HTML
-        html_content = f"""
-<!DOCTYPE html>
+        html_content = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>{title}</title>
     <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+
+        @page {{
+            size: A4;
+            margin: 20mm;
+        }}
+
+        html, body {{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }}
+
         body {{
             font-family: 'Times New Roman', '宋体', serif;
             font-size: 12pt;
@@ -595,44 +609,47 @@ async def preview_html(project_id: str):
             background: white;
         }}
 
+        h1, h2, h3 {{
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            color: #000;
+            line-height: 1.5;
+            text-align: left;
+        }}
+
         h1 {{
             text-align: center;
-            font-size: 12pt;
-            font-weight: bold;
-            margin: 0;
-            margin-bottom: 12pt;
-            color: #000;
-        }}
-
-        h2 {{
-            font-size: 12pt;
-            font-weight: bold;
-            margin: 0;
-            margin-bottom: 12pt;
-            color: #000;
-        }}
-
-        h3 {{
-            font-size: 12pt;
-            font-weight: bold;
-            margin: 0;
-            margin-bottom: 12pt;
-            color: #000;
         }}
 
         p {{
             text-align: justify;
             text-indent: 2em;
             margin: 0;
-            margin-bottom: 12pt;
+            margin-top: 0;
+            margin-bottom: 0;
+            padding: 0;
+            padding-top: 0;
+            padding-bottom: 0;
             line-height: 1.5;
             font-size: 12pt;
+            page-break-inside: avoid;
         }}
 
         @media print {{
             body {{
                 margin: 0;
                 padding: 20mm;
+            }}
+
+            h1, h2, h3, p {{
+                margin: 0 !important;
+                padding: 0 !important;
             }}
         }}
     </style>
@@ -650,11 +667,11 @@ async def preview_html(project_id: str):
 
                 # 根据层级选择标题标签
                 if level == 1:
-                    html += f"<h2>{label}</h2>\n"
+                    html += f"<h2>{label}</h2>"
                 elif level == 2:
-                    html += f"<h3>{label}</h3>\n"
+                    html += f"<h3>{label}</h3>"
                 else:
-                    html += f"<h3>{label}</h3>\n"
+                    html += f"<h3>{label}</h3>"
 
                 # 添加章节内容
                 if node_id and node_id in sections:
@@ -675,7 +692,7 @@ async def preview_html(project_id: str):
                                     para_text = para_text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                                     # 将换行符转为<br>
                                     para_text = para_text.replace('\n', '<br>')
-                                    html += f"<p>{para_text}</p>\n"
+                                    html += f"<p>{para_text}</p>"
 
                 # 递归处理子节点
                 children = node.get("children", [])
@@ -687,10 +704,16 @@ async def preview_html(project_id: str):
         if outline:
             html_content += add_outline_html(outline)
 
-        html_content += """
+        html_content += """    <script>
+        // 页面加载完成后自动触发打印对话框
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        };
+    </script>
 </body>
-</html>
-"""
+</html>"""
 
         return HTMLResponse(content=html_content)
 

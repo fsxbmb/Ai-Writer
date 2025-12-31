@@ -36,12 +36,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/DocumentView.vue'),
         meta: { title: '文档生成', icon: 'document' },
       },
-      {
-        path: 'history',
-        name: 'History',
-        component: () => import('@/views/HistoryView.vue'),
-        meta: { title: '历史案例', icon: 'history' },
-      },
     ],
   },
   {

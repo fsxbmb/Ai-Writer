@@ -70,12 +70,12 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <n-text strong>文档大纲</n-text>
               <n-button
-                v-if="outline.length > 0 && !outlineLocked"
-                type="primary"
+                v-if="outline.length > 0"
+                :type="outlineLocked ? 'warning' : 'primary'"
                 size="tiny"
-                @click="handleLockOutline"
+                @click="handleToggleLock"
               >
-                确认并锁定
+                {{ outlineLocked ? '解锁大纲' : '确认并锁定' }}
               </n-button>
             </div>
           </template>
@@ -120,13 +120,16 @@
 
       <!-- 右侧：内容生成区 -->
       <n-layout content-style="display: flex; flex-direction: column; height: 100%;">
-        <div v-if="!outlineLocked" style="flex: 1; padding: 24px; overflow-y: auto;">
-          <n-empty description="请先锁定大纲，然后开始生成内容" style="margin-top: 100px" />
-        </div>
+        <div style="flex: 1; padding: 24px; overflow-y: auto;" id="content-area">
+          <!-- 未锁定且未生成内容时的提示 -->
+          <n-card v-if="!outlineLocked && generatedSections.length === 0" size="small">
+            <n-space vertical>
+              <n-text>请先锁定大纲，然后开始生成内容</n-text>
+            </n-space>
+          </n-card>
 
-        <div v-else style="flex: 1; padding: 24px; overflow-y: auto;" id="content-area">
           <!-- 生成按钮和导出按钮 -->
-          <n-card v-if="generatedSections.length === 0" size="small">
+          <n-card v-if="outlineLocked && generatedSections.length === 0" size="small">
             <n-space vertical>
               <n-text>大纲已锁定，开始生成文档内容</n-text>
               <n-space>
@@ -149,7 +152,7 @@
           </n-card>
 
           <!-- 已有内容时显示导出按钮 -->
-          <div v-else style="margin-bottom: 16px;">
+          <div v-if="generatedSections.length > 0" style="margin-bottom: 16px;">
             <n-space>
               <n-button
                 type="primary"
@@ -186,7 +189,26 @@
               <n-card size="small">
                 <template #header>
                   <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <n-text strong style="font-size: 18px;">{{ section.title }}</n-text>
+                    <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                      <n-text v-if="!section.isEditing" strong style="font-size: 18px;">{{ section.title }}</n-text>
+                      <n-input
+                        v-else
+                        v-model:value="section.editingTitle"
+                        size="small"
+                        @blur="handleSectionTitleBlur(section)"
+                        @keydown.enter="handleSectionTitleEnter(section, $event)"
+                        ref="titleInput"
+                        style="max-width: 300px;"
+                      />
+                      <n-button
+                        v-if="!outlineLocked"
+                        text
+                        size="tiny"
+                        @click="toggleSectionEdit(section)"
+                      >
+                        {{ section.isEditing ? '取消' : '编辑' }}
+                      </n-button>
+                    </div>
                     <n-space>
                       <n-button
                         v-if="section.paragraphs && section.paragraphs.length > 0"
@@ -633,6 +655,35 @@ async function handleLockOutline() {
   }
 }
 
+// 切换锁定/解锁状态
+async function handleToggleLock() {
+  if (!currentProjectId.value || outline.value.length === 0) return
+
+  try {
+    const newLockedState = !outlineLocked.value
+
+    const updatedProject = await documentProjectApi.updateOutline(
+      currentProjectId.value,
+      outline.value,
+      newLockedState
+    )
+
+    outlineLocked.value = newLockedState
+
+    if (newLockedState) {
+      message.success('大纲已锁定')
+    } else {
+      message.success('大纲已解锁，现在可以编辑')
+    }
+
+    // 刷新项目列表
+    await loadProjects()
+  } catch (error: any) {
+    message.error(error.response?.data?.detail || '切换锁定状态失败')
+    console.error(error)
+  }
+}
+
 function handleSelectNode(keys: string[]) {
   console.log('handleSelectNode called with keys:', keys)
   console.log('selectedKeys before:', selectedKeys.value)
@@ -672,7 +723,9 @@ function flattenOutline(nodes: OutlineNode[], parentPath: string[] = []): any[] 
       title: node.label,
       sectionId: node.id,
       contextSections: parentPath,
-      paragraphs: null
+      paragraphs: null,
+      isEditing: false,
+      editingTitle: ''
     })
     if (node.children && node.children.length > 0) {
       sections.push(...flattenOutline(node.children, currentPath))
@@ -933,6 +986,85 @@ function handlePrintPdf() {
   message.info('在新窗口中打开，使用浏览器打印功能保存为PDF')
 }
 
+// 切换章节标题编辑状态
+function toggleSectionEdit(section: any) {
+  if (section.isEditing) {
+    // 取消编辑
+    section.isEditing = false
+    section.editingTitle = ''
+  } else {
+    // 开始编辑
+    section.isEditing = true
+    section.editingTitle = section.title
+    // 下一帧自动聚焦输入框
+    nextTick(() => {
+      const inputs = document.querySelectorAll('input[value]')
+      inputs.forEach((input) => {
+        if (input.value === section.title) {
+          input.focus()
+          input.select()
+        }
+      })
+    })
+  }
+}
+
+// 处理章节标题失焦
+function handleSectionTitleBlur(section: any) {
+  if (section.isEditing && section.editingTitle) {
+    updateSectionTitle(section, section.editingTitle)
+  }
+  section.isEditing = false
+}
+
+// 处理章节标题按Enter
+function handleSectionTitleEnter(section: any, event: KeyboardEvent) {
+  if (section.editingTitle) {
+    updateSectionTitle(section, section.editingTitle)
+  }
+  section.isEditing = false
+}
+
+// 更新章节标题
+async function updateSectionTitle(section: any, newTitle: string) {
+  if (!newTitle.trim()) {
+    message.warning('标题不能为空')
+    return
+  }
+
+  if (newTitle === section.title) {
+    return
+  }
+
+  const oldTitle = section.title
+  section.title = newTitle
+
+  // 更新大纲树中的标题
+  updateOutlineNodeTitle(section.sectionId, newTitle)
+
+  message.success(`标题已更新: "${oldTitle}" → "${newTitle}"`)
+}
+
+// 递归更新大纲节点标题
+function updateOutlineNodeTitle(nodeId: string, newTitle: string) {
+  const updateNode = (nodes: OutlineNode[]): boolean => {
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === nodeId) {
+        nodes[i].label = newTitle
+        return true
+      }
+      if (nodes[i].children && nodes[i].children.length > 0) {
+        if (updateNode(nodes[i].children!)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  updateNode(outline.value)
+}
+
 // 加载项目列表
 async function loadProjects() {
   try {
@@ -976,7 +1108,9 @@ async function loadProject(project: any) {
 
         return {
           ...section,
-          paragraphs: sectionData && sectionData.paragraphs ? sectionData.paragraphs : null
+          paragraphs: sectionData && sectionData.paragraphs ? sectionData.paragraphs : null,
+          isEditing: false,
+          editingTitle: ''
         }
       })
     } else {

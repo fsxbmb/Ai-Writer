@@ -51,7 +51,6 @@ import {
   FolderOpenOutline as FolderIcon,
   ChatbubbleEllipsesOutline as ChatIcon,
   DocumentTextOutline as DocIcon,
-  TimeOutline as HistoryIcon,
 } from '@vicons/ionicons5'
 import { useAppStore } from '@/stores/app'
 
@@ -81,11 +80,6 @@ const menuOptions: MenuOption[] = [
     label: '文档生成',
     key: 'Document',
     icon: renderIcon(DocIcon),
-  },
-  {
-    label: '历史案例',
-    key: 'History',
-    icon: renderIcon(HistoryIcon),
   },
 ]
 
