@@ -564,14 +564,15 @@ onMounted(() => {
 
 .document-item {
   padding: 8px 12px;
-  background-color: #fff;
+  background-color: var(--n-card-color);
   border: 1px solid var(--n-border-color);
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .document-item:hover {
-  background-color: #fff;
+  background-color: var(--n-color-hover);
   border-color: var(--n-border-color);
 }
 

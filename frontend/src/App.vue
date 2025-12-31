@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme-overrides="themeOverrides">
+  <n-config-provider :theme="isDark ? darkTheme : null" :theme-overrides="themeOverrides">
     <n-message-provider>
       <n-dialog-provider>
         <router-view />
@@ -9,7 +9,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { darkTheme } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore()
+const isDark = computed(() => appStore.isDark)
 
 // Gemini 风格主题配置
 const themeOverrides: GlobalThemeOverrides = {

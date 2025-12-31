@@ -11,7 +11,7 @@
       @expand="appStore.setSidebarCollapsed(false)"
     >
       <div class="logo">
-        <h2 v-if="!appStore.sidebarCollapsed">AI Writer</h2>
+        <h2 v-if="!appStore.sidebarCollapsed">军文智写助手</h2>
         <h2 v-else>AI</h2>
       </div>
 
@@ -23,6 +23,31 @@
         :value="currentRoute"
         @update:value="handleMenuSelect"
       />
+
+      <!-- 主题切换按钮 -->
+      <div class="theme-toggle">
+        <n-tooltip placement="right" :disabled="!appStore.sidebarCollapsed">
+          <template #trigger>
+            <n-button
+              text
+              size="large"
+              :style="{ width: appStore.sidebarCollapsed ? '100%' : 'auto' }"
+              @click="appStore.toggleTheme"
+            >
+              <template #icon>
+                <n-icon>
+                  <SunnyOutline v-if="appStore.isDark" />
+                  <MoonOutline v-else />
+                </n-icon>
+              </template>
+              <span v-if="!appStore.sidebarCollapsed">
+                {{ appStore.isDark ? '浅色主题' : '深色主题' }}
+              </span>
+            </n-button>
+          </template>
+          切换主题
+        </n-tooltip>
+      </div>
     </n-layout-sider>
 
     <!-- 主内容区 -->
@@ -51,6 +76,8 @@ import {
   FolderOpenOutline as FolderIcon,
   ChatbubbleEllipsesOutline as ChatIcon,
   DocumentTextOutline as DocIcon,
+  SunnyOutline,
+  MoonOutline,
 } from '@vicons/ionicons5'
 import { useAppStore } from '@/stores/app'
 
@@ -103,5 +130,15 @@ function handleMenuSelect(key: string) {
   font-size: 20px;
   font-weight: 600;
   color: var(--n-text-color);
+}
+
+.theme-toggle {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 8px;
 }
 </style>
