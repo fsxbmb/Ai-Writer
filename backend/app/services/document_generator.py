@@ -449,7 +449,8 @@ class DocumentGeneratorService:
         section_title: str,
         section_id: str,
         document_ids: List[str],
-        context_sections: List[str] = None
+        context_sections: List[str] = None,
+        custom_prompt: str = None
     ) -> Dict:
         """
         生成章节内容
@@ -459,6 +460,7 @@ class DocumentGeneratorService:
             section_id: 章节ID
             document_ids: 知识库文档ID列表
             context_sections: 上下文章节（父级章节标题列表）
+            custom_prompt: 自定义生成需求
 
         Returns:
             生成的内容和引用
@@ -495,7 +497,7 @@ class DocumentGeneratorService:
                     logger.info(f"找到 {len(chunks)} 个相关片段，使用最相关的1个")
 
             # 3. 构建提示词
-            prompt = self._build_content_prompt(section_title, sources, context_sections)
+            prompt = self._build_content_prompt(section_title, sources, context_sections, custom_prompt)
 
             # 4. 调用 LLM 生成内容
             response = self.client.post(
@@ -545,7 +547,8 @@ class DocumentGeneratorService:
         section_title: str,
         section_id: str,
         document_ids: List[str],
-        context_sections: List[str] = None
+        context_sections: List[str] = None,
+        custom_prompt: str = None
     ) -> Dict:
         """
         重新生成段落（用于段落重新生成功能）
@@ -556,14 +559,16 @@ class DocumentGeneratorService:
             section_title=section_title,
             section_id=section_id,
             document_ids=document_ids,
-            context_sections=context_sections
+            context_sections=context_sections,
+            custom_prompt=custom_prompt
         )
 
     def _build_content_prompt(
         self,
         section_title: str,
         sources: List[Dict],
-        context_sections: List[str] = None
+        context_sections: List[str] = None,
+        custom_prompt: str = None
     ) -> str:
         """构建内容生成提示词"""
         # 构建上下文路径
@@ -586,6 +591,18 @@ class DocumentGeneratorService:
         else:
             reference = "参考资料：无（请基于通用知识撰写）"
 
+        # 基础要求
+        requirements = """1. 内容要详实、准确、有条理
+2. 如果有参考资料，请充分参考资料内容
+3. 使用清晰的段落结构
+4. 字数控制在 500-1000 字
+5. 不要包含章节标题本身"""
+
+        # 如果有自定义需求，添加到要求中
+        if custom_prompt and custom_prompt.strip():
+            requirements = f"""{requirements}
+6. 特殊要求：{custom_prompt.strip()}"""
+
         prompt = f"""请为文档的以下章节撰写内容：
 
 章节路径：{context_path}
@@ -593,11 +610,7 @@ class DocumentGeneratorService:
 {reference}
 
 要求：
-1. 内容要详实、准确、有条理
-2. 如果有参考资料，请充分参考资料内容
-3. 使用清晰的段落结构
-4. 字数控制在 500-1000 字
-5. 不要包含章节标题本身
+{requirements}
 
 请撰写内容："""
 

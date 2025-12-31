@@ -122,9 +122,16 @@
       <n-layout content-style="display: flex; flex-direction: column; height: 100%;">
         <div style="flex: 1; padding: 24px; overflow-y: auto;" id="content-area">
           <!-- 未锁定且未生成内容时的提示 -->
-          <n-card v-if="!outlineLocked && generatedSections.length === 0" size="small">
+          <n-card v-if="!outlineLocked && generatedSections.length === 0 && outline.length > 0" size="small">
             <n-space vertical>
               <n-text>请先锁定大纲，然后开始生成内容</n-text>
+            </n-space>
+          </n-card>
+
+          <!-- 空项目提示 -->
+          <n-card v-if="outline.length === 0" size="small">
+            <n-space vertical>
+              <n-text>在下方输入研究主题，选择知识库，开始生成文档大纲</n-text>
             </n-space>
           </n-card>
 
@@ -210,15 +217,24 @@
                       </n-button>
                     </div>
                     <n-space>
-                      <n-button
+                      <n-dropdown
                         v-if="section.paragraphs && section.paragraphs.length > 0"
-                        size="tiny"
-                        @click="regenerateSection(section)"
-                        :loading="regeneratingSectionId === section.sectionId"
+                        trigger="click"
+                        :options="[
+                          { label: '直接重新生成', key: 'direct' },
+                          { label: '自定义需求重新生成', key: 'custom' }
+                        ]"
+                        @select="(key) => handleRegenerateSelect(key, section)"
                         :disabled="isGeneratingAll"
                       >
-                        重新生成
-                      </n-button>
+                        <n-button
+                          size="tiny"
+                          :loading="regeneratingSectionId === section.sectionId"
+                          :disabled="isGeneratingAll"
+                        >
+                          重新生成
+                        </n-button>
+                      </n-dropdown>
                     </n-space>
                   </div>
                 </template>
@@ -343,7 +359,7 @@
                 type="primary"
                 size="small"
                 closable
-                :disabled="outlineLocked"
+                :disabled="outline.length > 0 && outlineLocked"
                 @close="handleRemoveFolder(folderId)"
                 style="margin: 2px;"
               >
@@ -355,11 +371,11 @@
                 trigger="click"
                 :options="folderOptions.filter(opt => !selectedFolderIds.includes(opt.value))"
                 placement="top-start"
-                @select="handleAddFolder"
+                @select="(key: string) => { console.log('下拉菜单选择 key:', key); handleAddFolder(key) }"
               >
                 <n-button
                   size="small"
-                  :disabled="outlineLocked || selectedFolderIds.length >= folderOptions.length"
+                  :disabled="(outline.length > 0 && outlineLocked) || selectedFolderIds.length >= folderOptions.length"
                   style="margin: 2px;"
                 >
                   <template #icon>
@@ -380,14 +396,14 @@
               type="textarea"
               placeholder="输入研究主题或需求描述，例如：撰写一篇关于计算机视觉中目标检测算法的综述文档"
               :autosize="{ minRows: 2, maxRows: 4 }"
-              :disabled="isGenerating || outlineLocked"
+              :disabled="isGenerating || (outline.length > 0 && outlineLocked)"
               @keydown.enter.ctrl.prevent="handleGenerate"
             />
             <n-button
               type="primary"
               @click="handleGenerate"
               :loading="isGenerating"
-              :disabled="!topicInput.trim() || selectedFolderIds.length === 0 || outlineLocked"
+              :disabled="!topicInput.trim() || selectedFolderIds.length === 0 || (outline.length > 0 && outlineLocked)"
               style="align-self: flex-end;"
             >
               {{ isGenerating ? '生成中...' : '发送' }}
@@ -446,12 +462,35 @@
         </template>
       </n-drawer-content>
     </n-drawer>
+
+    <!-- 自定义需求对话框 -->
+    <n-modal v-model:show="showCustomPromptDialog" preset="dialog" title="自定义生成需求">
+      <n-space vertical>
+        <n-text>请输入您的特殊需求，AI将根据您的需求生成内容：</n-text>
+        <n-input
+          v-model:value="customPromptInput"
+          type="textarea"
+          placeholder="例如：更加详细地介绍技术细节、增加实际案例分析、调整语言风格等..."
+          :rows="4"
+          maxlength="500"
+          show-count
+        />
+      </n-space>
+      <template #action>
+        <n-space>
+          <n-button @click="showCustomPromptDialog = false">取消</n-button>
+          <n-button type="primary" @click="confirmCustomPrompt" :loading="!!regeneratingSectionId">
+            开始生成
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, h } from 'vue'
-import { useMessage, useDialog, NText } from 'naive-ui'
+import { ref, computed, onMounted, nextTick, h, watch } from 'vue'
+import { useMessage, useDialog, NText, NScrollbar } from 'naive-ui'
 import { documentApi } from '@/api/document'
 import { documentProjectApi, type OutlineNode, type Source } from '@/api/documentProject'
 
@@ -516,6 +555,11 @@ const selectedSource = ref<Source | null>(null)
 // 预览模式
 const previewMode = ref(false)
 
+// 自定义需求对话框
+const showCustomPromptDialog = ref(false)
+const customPromptInput = ref('')
+const regeneratingSection = ref<any>(null)
+
 // 转换大纲数据为树形结构
 const treeData = computed(() => {
   const convertToTree = (nodes: OutlineNode[], parentKey = ''): any[] => {
@@ -553,6 +597,7 @@ const normalizedOutline = computed(() => {
 const folderOptions = computed(() => {
   return folders.value.map(folder => ({
     label: folder.name,
+    key: folder.id,
     value: folder.id
   }))
 })
@@ -563,10 +608,19 @@ function getFolderName(folderId: string) {
   return folder ? folder.name : folderId
 }
 
+// 监控选择的知识库变化
+watch(selectedFolderIds, (newVal) => {
+  console.log('selectedFolderIds 变化:', newVal)
+  console.log('folders 数据:', folders.value)
+}, { deep: true })
+
 // 添加知识库
 function handleAddFolder(value: string) {
+  console.log('添加知识库:', value)
+  console.log('当前已选择:', selectedFolderIds.value)
   if (!selectedFolderIds.value.includes(value)) {
     selectedFolderIds.value.push(value)
+    console.log('添加后的已选择:', selectedFolderIds.value)
   }
 }
 
@@ -583,9 +637,10 @@ async function loadFolders() {
     isLoadingFolders.value = true
     const result = await documentApi.listFolders()
     folders.value = result
+    console.log('知识库列表加载成功:', result)
   } catch (error) {
     message.error('加载知识库列表失败')
-    console.error(error)
+    console.error('加载知识库失败:', error)
   } finally {
     isLoadingFolders.value = false
   }
@@ -605,9 +660,14 @@ async function handleGenerate() {
   try {
     isGenerating.value = true
 
+    console.log('准备创建项目，主题:', topic)
+    console.log('选择的知识库ID:', selectedFolderIds.value)
+    console.log('选择的知识库详情:', selectedFolderIds.value.map(id => getFolderName(id)))
+
     // 1. 创建项目
     const project = await documentProjectApi.create(topic, selectedFolderIds.value)
     currentProjectId.value = project.id
+    console.log('项目创建成功，ID:', project.id)
 
     // 2. 生成大纲
     const updatedProject = await documentProjectApi.generateOutline(project.id, topic)
@@ -627,8 +687,12 @@ async function handleGenerate() {
     // 刷新项目列表
     await loadProjects()
   } catch (error: any) {
-    message.error(error.response?.data?.detail || '生成大纲失败')
-    console.error(error)
+    console.error('生成大纲失败，完整错误:', error)
+    console.error('响应数据:', error.response?.data)
+    const errorMsg = error.response?.data?.detail
+      ? error.response.data.detail
+      : (error.message || '生成大纲失败')
+    message.error(typeof errorMsg === 'string' ? errorMsg : '生成大纲失败，请查看控制台')
   } finally {
     isGenerating.value = false
   }
@@ -786,7 +850,7 @@ async function generateSection(section: any) {
 }
 
 // 重新生成章节
-async function regenerateSection(section: any) {
+async function regenerateSection(section: any, customPrompt?: string) {
   if (!currentProjectId.value) return
 
   regeneratingSectionId.value = section.sectionId
@@ -796,7 +860,8 @@ async function regenerateSection(section: any) {
       currentProjectId.value,
       section.sectionId,
       section.title,
-      section.contextSections
+      section.contextSections,
+      customPrompt
     )
 
     // 更新 paragraphs（添加新段落到末尾）
@@ -817,6 +882,42 @@ async function regenerateSection(section: any) {
     console.error(error)
   } finally {
     regeneratingSectionId.value = null
+  }
+}
+
+// 处理重新生成下拉菜单选择
+function handleRegenerateSelect(key: string, section: any) {
+  if (key === 'direct') {
+    // 直接重新生成
+    regenerateSection(section)
+  } else if (key === 'custom') {
+    // 显示自定义需求对话框
+    regeneratingSection.value = section
+    customPromptInput.value = ''
+    showCustomPromptDialog.value = true
+  }
+}
+
+// 确认自定义需求并开始生成
+async function confirmCustomPrompt() {
+  if (!regeneratingSection.value) return
+
+  const customPrompt = customPromptInput.value.trim()
+  // 如果有输入才传递，否则传undefined
+  const promptToUse = customPrompt ? customPrompt : undefined
+
+  console.log('开始自定义生成，需求:', promptToUse)
+  console.log('当前章节:', regeneratingSection.value)
+
+  try {
+    await regenerateSection(regeneratingSection.value, promptToUse)
+    // 关闭对话框
+    showCustomPromptDialog.value = false
+    regeneratingSection.value = null
+    customPromptInput.value = ''
+  } catch (error) {
+    console.error('自定义生成失败:', error)
+    message.error('生成失败，请重试')
   }
 }
 

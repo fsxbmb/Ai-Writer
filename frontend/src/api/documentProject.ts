@@ -135,7 +135,8 @@ export const documentProjectApi = {
     projectId: string,
     sectionId: string,
     sectionTitle: string,
-    contextSections?: string[]
+    contextSections?: string[],
+    customPrompt?: string
   ): Promise<{
     paragraph_id: string
     section_id: string
@@ -154,7 +155,8 @@ export const documentProjectApi = {
     }>(`/document-projects/${projectId}/regenerate-paragraph`, {
       sectionId,
       sectionTitle,
-      contextSections: contextSections || []
+      contextSections: contextSections || [],
+      customPrompt: customPrompt || ''
     }, { timeout: 120000 })
     return response
   },

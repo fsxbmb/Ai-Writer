@@ -193,6 +193,7 @@ class GenerateContentRequest(BaseModel):
     sectionId: str = Field(..., description="章节ID")
     sectionTitle: str = Field(..., description="章节标题")
     contextSections: List[str] = Field(default=[], description="上下文章节路径")
+    customPrompt: str = Field(default="", description="自定义生成需求")
 
 
 class RegenerateParagraphRequest(BaseModel):
@@ -200,6 +201,7 @@ class RegenerateParagraphRequest(BaseModel):
     sectionId: str = Field(..., description="章节ID")
     sectionTitle: str = Field(..., description="章节标题")
     contextSections: List[str] = Field(default=[], description="上下文章节路径")
+    customPrompt: str = Field(default="", description="自定义生成需求")
 
 
 class UpdateParagraphRequest(BaseModel):
@@ -233,7 +235,8 @@ async def generate_section_content(project_id: str, request: GenerateContentRequ
             section_title=request.sectionTitle,
             section_id=request.sectionId,
             document_ids=document_ids,
-            context_sections=request.contextSections if request.contextSections else None
+            context_sections=request.contextSections if request.contextSections else None,
+            custom_prompt=request.customPrompt if request.customPrompt else None
         )
 
         # 保存到项目
@@ -294,7 +297,8 @@ async def regenerate_paragraph(project_id: str, request: RegenerateParagraphRequ
             section_title=request.sectionTitle,
             section_id=request.sectionId,
             document_ids=document_ids,
-            context_sections=request.contextSections if request.contextSections else None
+            context_sections=request.contextSections if request.contextSections else None,
+            custom_prompt=request.customPrompt if request.customPrompt else None
         )
 
         # 如果有当前段落，保存到版本历史

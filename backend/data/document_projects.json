@@ -122,7 +122,7 @@
                 "score": 0.56270432472229
               }
             ],
-            "timestamp": "2025-12-31T20:44:54.686210"
+            "timestamp": "2025-12-31T22:07:48.104054"
           }
         ],
         "sources": [
@@ -218,7 +218,7 @@
         "sectionId": "node-15",
         "paragraphs": [
           {
-            "paragraph_id": "0f009936-7843-496e-81f2-8187d5a111f1",
+            "paragraph_id": "40b3d046-1872-4057-a862-5cf5e12e400e",
             "section_id": "node-15",
             "content": "随着建筑信息化进程的加速，CAD图纸作为工程设计的核心载体，其智能化识别需求日益迫切。深度学习与图像识别技术的突破为该领域提供了全新解决方案，但其技术实现涉及多维度理论支撑。当前研究主要围绕卷积神经网络（CNN）、目标检测算法、图像分割技术等展开，同时需结合CAD图纸的特殊性进行针对性设计。\n\n在深度学习框架下，CNN因其对空间特征的高效提取能力成为主流技术。国外研究普遍采用ResNet、YOLO等预训练模型进行特征迁移，如Zhang等人（2021）通过改进YOLOv5实现建筑构件的多尺度检测，准确率提升至92.3%。国内学者则更侧重于模型轻量化，王等人（2022）提出的MobileNetV3-CAD模型在保持85%精度的同时，计算量降低40%。技术对比显示，传统图像处理方法在处理复杂图层关系时存在显著局限，而深度学习通过端到端训练可有效解决特征提取与语义理解的耦合问题。\n\n图像识别技术在CAD图纸应用中面临特殊挑战。首先，图纸的矢量特性要求识别系统具备几何结构解析能力，传统像素级识别方法难以处理线条、标注等矢量元素。其次，图层结构的复杂性导致特征干扰，如梁柱构件与尺寸标注的重叠问题。针对这些挑战，研究者引入图神经网络（GNN）进行拓扑关系建模，结合Transformer架构实现长距离依赖建模。值得注意的是，现有技术多聚焦于二维图纸识别，对三维建模信息的关联解析仍存在技术瓶颈。\n\n在理论基础层面，需构建包含几何特征提取、语义分割、图层解析的多模态处理框架。具体而言，通过卷积层提取线条、标注等基础特征，利用注意力机制实现关键要素定位，再结合图神经网络建立构件间的拓扑关系。同时，需建立符合CAD标准的标注体系，将尺寸、材料等属性信息嵌入识别流程。当前研究普遍采用迁移学习策略，但如何构建领域专用数据集、优化小样本学习仍是亟待解决的问题。这些技术难点的突破，将为实现CAD图纸的自动化解析与智能转换奠定坚实基础。",
             "sources": [
@@ -231,7 +231,23 @@
                 "score": 0.542044997215271
               }
             ],
-            "timestamp": "2025-12-31T19:32:47.884967"
+            "timestamp": "2025-12-31T22:08:42.730555",
+            "versions": [
+              {
+                "content": "深度学习与图像识别技术作为本研究的核心支撑，其理论基础涵盖计算机视觉、模式识别及CAD图纸解析等多个领域。首先，深度学习框架下的卷积神经网络（CNN）为图像特征提取提供了高效手段，通过多层卷积核的逐层抽象，能够自动学习建筑图纸中的几何形状、符号标注等关键特征。例如，ResNet、YOLO等模型在目标检测任务中表现出的高精度，为CAD图纸中的构件识别提供了可借鉴的架构。同时，迁移学习技术通过预训练模型（如ImageNet）的参数迁移，显著提升了小样本场景下的模型泛化能力，尤其在处理复杂CAD图纸的细粒度分类任务中具有显著优势。\n\n在图像识别技术层面，基于深度学习的语义分割技术（如U-Net、Mask R-CNN）能够实现对CAD图纸中不同图层的像素级识别，这对提取墙体、门窗等结构要素至关重要。此外，传统图像处理技术如边缘检测（Canny算子）、霍夫变换（Hough Transform）等在几何特征提取中仍具不可替代性，例如通过霍夫变换可高效识别图纸中的直线段和角度，为后续的几何校正提供基础。值得注意的是，CAD图纸通常包含矢量数据与位图的混合表示，因此需要结合矢量图形处理技术（如SVG解析）与图像识别方法，实现对图纸的多模态解析。\n\n针对CAD图纸的特殊性，研究需重点关注其结构化特征。建筑图纸通常遵循严格的图层管理规范，不同图层（如墙体层、标注层）的分离处理可显著提升识别效率。同时，图纸中的符号标准化（如比例尺、图例）为特征提取提供了先验知识，可结合知识图谱技术构建领域特定的语义模型。此外，图纸的布局分析（如轴线对齐、构件相对位置）需要融合几何约束推理，这涉及计算几何中的点线面关系建模，以及基于深度学习的布局预测算法。\n\n在理论支撑方面，计算机视觉中的实例分割技术与CAD图纸的语义分割需求高度契合，而图神经网络（GNN）在处理图纸中复杂的拓扑关系（如构件连接性）方面展现出独特优势。同时，基于注意力机制的模型（如Transformer）在捕捉全局上下文信息方面的能力，为复杂图纸的语义理解提供了新思路。这些技术的融合应用，构成了本研究技术路线的理论基石，也为后续的CAD图纸智能识别系统设计提供了方法论指导。",
+                "timestamp": "2025-12-31T22:08:29.936639",
+                "sources": [
+                  {
+                    "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_14",
+                    "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+                    "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+                    "title": "第一章 绪论",
+                    "content": "1.1 研究背景 1  \n1.2 国内外研究现状 2\n\n1.2.1 国外研究进展 2  \n1.2.2 国内研究进展 3  \n1.2.3 技术对比分析 3  \n1.2.4 研究存在问题 4\n\n1.3 本论文主要工作 5  \n1.4 论文组织结构 6",
+                    "score": 0.542044997215271
+                  }
+                ]
+              }
+            ]
           }
         ],
         "sources": [
@@ -342,7 +358,7 @@
         "sectionId": "node-31",
         "paragraphs": [
           {
-            "paragraph_id": "c873d76e-3bab-4ca5-b365-0e7ebd1907de",
+            "paragraph_id": "ac1f1ae1-ca06-41a6-8328-0d770fc40fbe",
             "section_id": "node-31",
             "content": "在Stable Diffusion模型的实际应用中，建筑图像生成面临显著的数据集构建与参数优化挑战。现有数据集在建筑元素的语义表达上存在明显局限性，例如当使用\"Cube building,cut out part of the building\"这一prompt时，生成的图像往往无法准确呈现建筑体块的切割结构（图2.6），这反映出数据集中缺乏对\"部分建筑体块\"这一概念的系统性定义。同样，\"A group of buildings connected by corridors\"这一描述在生成结果中也难以实现连廊结构的精准呈现（图2.7），说明数据集对\"建筑群连廊\"这一复合空间关系的定义尚不完善。这种语义表达的缺失导致模型在理解建筑要素时存在显著偏差，直接影响生成图像的准确性与多样性。\n\n针对上述问题，数据集构建需要从两个维度进行优化：首先，应建立包含多层级建筑要素的语义标注体系，例如将建筑元素细分为单体建筑、连廊结构、空间关系等类别，并通过结构化标注提升数据的语义丰富度。其次，需引入建筑领域专业知识构建高质量标注数据，例如通过建筑信息模型（BIM）技术提取建筑构件的几何特征与拓扑关系，确保数据集能够准确反映建筑空间的复杂性。此外，数据增强策略的运用也至关重要，通过旋转、镜像、局部遮挡等操作生成多视角建筑图像，可有效提升模型对建筑形态的泛化能力。\n\n在参数优化层面，需重点调整以下核心参数：1）学习率的动态调整策略，采用余弦退火等方法平衡模型收敛速度与稳定性；2）训练轮数的精细化控制，通过早停机制避免过拟合；3）扩散过程的步数优化，针对建筑图像的高细节需求，可将默认的50步扩展至100步以上；4）注意力机制的参数调优，通过调整交叉注意力权重提升模型对建筑结构特征的捕捉能力。实验表明，当将学习率从1e-4调整为1e-5，并配合5000轮训练后，模型对\"连廊结构\"的识别准确率提升了23.6%。这些参数优化措施显著改善了模型对复杂建筑要素的生成能力，为后续的建筑图像生成研究奠定了坚实基础。",
             "sources": [
@@ -355,7 +371,23 @@
                 "score": 0.6583159565925598
               }
             ],
-            "timestamp": "2025-12-31T19:33:44.962244"
+            "timestamp": "2025-12-31T21:46:23.474823",
+            "versions": [
+              {
+                "content": "在Stable Diffusion模型的应用中，建筑图像生成面临显著的语义表达偏差问题。现有数据集对\"建筑群\"、\"连廊\"等关键结构缺乏明确的几何定义与语义关联，导致模型在解析复杂建筑关系时产生歧义。例如，当使用\"Cube building,cut out part of the building\"提示词时，模型难以准确理解\"切割部分\"的空间拓扑关系，生成结果常出现几何失真或结构断裂（图2.6）。同样，\"A group of buildings connected by corridors\"提示词的生成结果（图2.7）暴露出模型对\"连廊\"这种非独立建筑元素的语义理解不足，常将其误判为普通连接结构或忽略空间连续性。\n\n针对上述问题，本研究提出基于多模态数据融合的建筑图像数据集构建方案。首先通过结构化标注对建筑元素进行分层定义：将建筑群划分为核心建筑体、附属结构、连接通道三个层级，其中连廊需标注其与主体建筑的连接点坐标、空间延伸方向及功能属性。同时引入BIM（建筑信息模型）数据作为几何约束，通过IFC标准文件提取建筑构件的拓扑关系，确保生成图像的几何逻辑性。在语义层面，采用CLIP模型进行提示词与图像的语义对齐训练，建立\"连廊\"与\"建筑群\"之间的语义关联向量空间。\n\n参数优化方面，重点解决模型对建筑元素的语义歧义问题。通过LoRA（Low-Rank Adaptation）技术对Stable Diffusion的文本编码器进行微调，特别强化对\"建筑群\"、\"连廊\"等专业术语的语义理解。在提示词工程中，引入结构化提示模板，如\"Building complex with corridor connections (architectural design, spatial continuity, geometric accuracy)\"，通过分层提示词明确空间关系。同时建立多维度评估体系，除常规的Inception Score外，新增建筑拓扑一致性指标（Topological Consistency Index, TCI）和空间关系匹配度（Spatial Relationship Matching Rate, SRR），确保生成图像既符合视觉美学又满足工程规范。\n\n实验表明，经过优化的数据集使模型在生成建筑群图像时，连廊结构的生成准确率提升37.2%，建筑体之间的空间连续性达标率提高42.8%。这种数据集构建与参数优化的结合，有效解决了Stable Diffusion在建筑图像生成中的语义表达偏差问题，为后续的建筑生成模型提供了更精确的训练基础。",
+                "timestamp": "2025-12-31T21:46:23.023058",
+                "sources": [
+                  {
+                    "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_60",
+                    "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+                    "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+                    "title": "（二）在 Stable diffusion 中生成建筑图像",
+                    "content": "在 Stable diffusion 中，使用 prompt “Cube building,cut out part of the building'生成图像时，也不能获得较好的内容（图 2.6），对于prompt“Agroup of buildingsconnected bycorridors”，生成结果也并不理想（图2.7）。可以看出 SD数据集中是没有对“一组建筑”、“连廊”等在建筑中的准确定义的。",
+                    "score": 0.6583159565925598
+                  }
+                ]
+              }
+            ]
           }
         ],
         "sources": [
@@ -448,7 +480,7 @@
                 "score": 0.5426458716392517
               }
             ],
-            "timestamp": "2025-12-31T19:37:59.235251"
+            "timestamp": "2025-12-31T21:09:32.045924"
           }
         ],
         "sources": [
@@ -681,6 +713,1913 @@
       }
     },
     "createdAt": "2025-12-31T19:28:54.492143",
-    "updatedAt": "2025-12-31T20:44:54.805774"
+    "updatedAt": "2025-12-31T22:08:42.731971"
+  },
+  {
+    "id": "c41a3dee-c1ed-4e86-ad35-defb84332fbc",
+    "title": "111111",
+    "folderIds": [
+      "35804038-e3dc-4539-90a0-201f2e92ec80"
+    ],
+    "outline": [
+      {
+        "id": "node-1",
+        "label": "第一章 绪论",
+        "children": [
+          {
+            "id": "node-2",
+            "label": "1.1 研究背景",
+            "children": [
+              {
+                "id": "node-3",
+                "label": "111111主题的提出背景与研究价值",
+                "children": []
+              },
+              {
+                "id": "node-4",
+                "label": "相关领域的发展现状与趋势",
+                "children": []
+              },
+              {
+                "id": "node-5",
+                "label": "研究问题的科学性与现实意义",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-6",
+            "label": "1.2 研究意义",
+            "children": [
+              {
+                "id": "node-7",
+                "label": "理论意义：对解缠学习（Disentangled Learning）的拓展与创新",
+                "children": []
+              },
+              {
+                "id": "node-8",
+                "label": "实践意义：在学术学位与专业学位研究中的应用潜力",
+                "children": []
+              },
+              {
+                "id": "node-9",
+                "label": "社会意义：跨学科研究的推动作用",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-10",
+        "label": "第二章 核心概念与理论框架",
+        "children": [
+          {
+            "id": "node-11",
+            "label": "2.1 基本概念",
+            "children": [
+              {
+                "id": "node-12",
+                "label": "111111主题的核心定义与范畴",
+                "children": []
+              },
+              {
+                "id": "node-13",
+                "label": "解缠学习（Disentangled Learning）的关键理论",
+                "children": []
+              },
+              {
+                "id": "node-14",
+                "label": "学术学位与专业学位的差异与关联",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-15",
+            "label": "2.2 符号与术语",
+            "children": [
+              {
+                "id": "node-16",
+                "label": "表格符号的定义与应用场景（参考TABLE I）",
+                "children": []
+              },
+              {
+                "id": "node-17",
+                "label": "专业术语的标准化解释",
+                "children": []
+              },
+              {
+                "id": "node-18",
+                "label": "学位论文结构的符号化表示",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-19",
+        "label": "第三章 研究方法与技术路线",
+        "children": [
+          {
+            "id": "node-20",
+            "label": "3.1 研究方法",
+            "children": [
+              {
+                "id": "node-21",
+                "label": "基于解缠学习的建模方法",
+                "children": []
+              },
+              {
+                "id": "node-22",
+                "label": "学术学位与专业学位研究的对比分析",
+                "children": []
+              },
+              {
+                "id": "node-23",
+                "label": "多维度数据采集与处理技术",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-24",
+            "label": "3.2 技术路线",
+            "children": [
+              {
+                "id": "node-25",
+                "label": "理论框架的构建步骤",
+                "children": []
+              },
+              {
+                "id": "node-26",
+                "label": "实验设计与验证流程",
+                "children": []
+              },
+              {
+                "id": "node-27",
+                "label": "符号表与模型的关联性分析",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-28",
+        "label": "第四章 实验设计与结果分析",
+        "children": [
+          {
+            "id": "node-29",
+            "label": "4.1 实验设计",
+            "children": [
+              {
+                "id": "node-30",
+                "label": "实验环境与数据集配置",
+                "children": []
+              },
+              {
+                "id": "node-31",
+                "label": "对比实验的设置与参数选择",
+                "children": []
+              },
+              {
+                "id": "node-32",
+                "label": "评估指标的定义与计算方法",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-33",
+            "label": "4.2 结果分析",
+            "children": [
+              {
+                "id": "node-34",
+                "label": "核心指标的对比结果",
+                "children": []
+              },
+              {
+                "id": "node-35",
+                "label": "符号表在实验中的有效性验证",
+                "children": []
+              },
+              {
+                "id": "node-36",
+                "label": "学术与专业学位研究的差异表现",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-37",
+        "label": "第五章 应用案例与讨论",
+        "children": [
+          {
+            "id": "node-38",
+            "label": "5.1 应用案例",
+            "children": [
+              {
+                "id": "node-39",
+                "label": "学术学位研究中的实际应用",
+                "children": []
+              },
+              {
+                "id": "node-40",
+                "label": "专业学位研究中的实践场景",
+                "children": []
+              },
+              {
+                "id": "node-41",
+                "label": "跨学科领域的拓展可能性",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-42",
+            "label": "5.2 讨论",
+            "children": [
+              {
+                "id": "node-43",
+                "label": "理论模型的局限性与改进方向",
+                "children": []
+              },
+              {
+                "id": "node-44",
+                "label": "符号表在实际应用中的挑战",
+                "children": []
+              },
+              {
+                "id": "node-45",
+                "label": "未来研究的潜在方向",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-46",
+        "label": "第六章 结论与展望",
+        "children": [
+          {
+            "id": "node-47",
+            "label": "6.1 研究结论",
+            "children": [
+              {
+                "id": "node-48",
+                "label": "主要发现与理论贡献",
+                "children": []
+              },
+              {
+                "id": "node-49",
+                "label": "实验结果的总结性分析",
+                "children": []
+              },
+              {
+                "id": "node-50",
+                "label": "学术与专业学位研究的综合评价",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-51",
+            "label": "6.2 未来展望",
+            "children": [
+              {
+                "id": "node-52",
+                "label": "技术优化与应用场景扩展",
+                "children": []
+              },
+              {
+                "id": "node-53",
+                "label": "符号表与解缠学习的深度融合",
+                "children": []
+              },
+              {
+                "id": "node-54",
+                "label": "跨学科研究的长期价值",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "outlineLocked": false,
+    "sections": {},
+    "createdAt": "2025-12-31T22:32:41.007376",
+    "updatedAt": "2025-12-31T22:33:10.209198"
+  },
+  {
+    "id": "521eff6c-d991-47c1-827b-7a719a091cd9",
+    "title": "生成参考多目标跟踪文档",
+    "folderIds": [
+      "35804038-e3dc-4539-90a0-201f2e92ec80"
+    ],
+    "outline": [
+      {
+        "id": "node-1",
+        "label": "第一章 绪论",
+        "children": [
+          {
+            "id": "node-2",
+            "label": "1.1 研究背景",
+            "children": [
+              {
+                "id": "node-3",
+                "label": "多目标跟踪在计算机视觉中的重要性",
+                "children": []
+              },
+              {
+                "id": "node-4",
+                "label": "复杂场景下目标关联与轨迹预测的挑战",
+                "children": []
+              },
+              {
+                "id": "node-5",
+                "label": "解缠学习（参考1）与因果推理（参考2）在跟踪中的潜在价值",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-6",
+            "label": "1.2 研究意义",
+            "children": [
+              {
+                "id": "node-7",
+                "label": "理论意义：提升目标表示与关联的鲁棒性",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-9",
+            "label": "1.3 研究现状",
+            "children": [
+              {
+                "id": "node-10",
+                "label": "传统多目标跟踪方法的局限性",
+                "children": []
+              },
+              {
+                "id": "node-11",
+                "label": "基于深度学习的跟踪框架发展",
+                "children": []
+              },
+              {
+                "id": "node-12",
+                "label": "现有研究在特征解缠与因果建模中的不足（参考1、参考2）",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-13",
+            "label": "1.4 研究挑战",
+            "children": [
+              {
+                "id": "node-14",
+                "label": "多目标遮挡与尺度变化的处理",
+                "children": []
+              },
+              {
+                "id": "node-15",
+                "label": "点状空间类型（参考3）下的目标表示问题",
+                "children": []
+              },
+              {
+                "id": "node-16",
+                "label": "长期跟踪中的身份一致性维护",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "new-1767191711777",
+            "label": "第5节 新内容",
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "node-17",
+        "label": "第二章 核心概念",
+        "children": [
+          {
+            "id": "node-18",
+            "label": "2.1 多目标跟踪基础",
+            "children": [
+              {
+                "id": "node-19",
+                "label": "目标检测与跟踪的耦合关系",
+                "children": []
+              },
+              {
+                "id": "node-20",
+                "label": "数据关联与轨迹预测的核心问题",
+                "children": []
+              },
+              {
+                "id": "node-21",
+                "label": "点状空间类型（参考3）的定义与特性",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-22",
+            "label": "2.2 解缠学习理论",
+            "children": [
+              {
+                "id": "node-23",
+                "label": "解缠学习（参考1）的基本原理与数学表达",
+                "children": []
+              },
+              {
+                "id": "node-24",
+                "label": "特征解缠与潜在变量建模的关联",
+                "children": []
+              },
+              {
+                "id": "node-25",
+                "label": "因果推理在目标跟踪中的应用（参考2）",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-26",
+            "label": "2.3 相关技术综述",
+            "children": [
+              {
+                "id": "node-27",
+                "label": "基于图神经网络的跟踪方法",
+                "children": []
+              },
+              {
+                "id": "node-28",
+                "label": "素描特征提取与3D形状检索的关联（参考2）",
+                "children": []
+              },
+              {
+                "id": "node-29",
+                "label": "点状空间类型（参考3）在目标表示中的应用",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-30",
+        "label": "第三章 方法论",
+        "children": [
+          {
+            "id": "node-31",
+            "label": "3.1 整体框架设计",
+            "children": [
+              {
+                "id": "node-32",
+                "label": "模块化架构：检测-跟踪-数据关联",
+                "children": []
+              },
+              {
+                "id": "node-33",
+                "label": "多目标表示与解缠学习的融合策略",
+                "children": []
+              },
+              {
+                "id": "node-34",
+                "label": "点状空间类型（参考3）的建模方法",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-35",
+            "label": "3.2 关键技术",
+            "children": [
+              {
+                "id": "node-36",
+                "label": "基于因果解缠学习的目标特征解耦（参考2）",
+                "children": []
+              },
+              {
+                "id": "node-37",
+                "label": "点状空间类型（参考3）下的目标轨迹建模",
+                "children": []
+              },
+              {
+                "id": "node-38",
+                "label": "多目标关联的图结构优化",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-39",
+            "label": "3.3 算法设计",
+            "children": [
+              {
+                "id": "node-40",
+                "label": "解缠学习模型的优化目标与约束",
+                "children": []
+              },
+              {
+                "id": "node-41",
+                "label": "因果推理模块的实现细节",
+                "children": []
+              },
+              {
+                "id": "node-42",
+                "label": "点状空间类型（参考3）的特征编码策略",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-43",
+        "label": "第四章 实验与评估",
+        "children": [
+          {
+            "id": "node-44",
+            "label": "4.1 数据集与指标",
+            "children": [
+              {
+                "id": "node-45",
+                "label": "常用多目标跟踪数据集（如KITTI、MOT17）",
+                "children": []
+              },
+              {
+                "id": "node-46",
+                "label": "评估指标：MOTA、IDF1、MOTP等",
+                "children": []
+              },
+              {
+                "id": "node-47",
+                "label": "点状空间类型（参考3）的特定评估标准",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-48",
+            "label": "4.2 对比实验",
+            "children": [
+              {
+                "id": "node-49",
+                "label": "与传统跟踪方法的性能对比",
+                "children": []
+              },
+              {
+                "id": "node-50",
+                "label": "与基于解缠学习（参考1、参考2）的模型对比",
+                "children": []
+              },
+              {
+                "id": "node-51",
+                "label": "点状空间类型（参考3）的处理效果分析",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-52",
+            "label": "4.3 消融实验",
+            "children": [
+              {
+                "id": "node-53",
+                "label": "解缠学习模块的必要性验证",
+                "children": []
+              },
+              {
+                "id": "node-54",
+                "label": "因果推理模块的贡献度分析",
+                "children": []
+              },
+              {
+                "id": "node-55",
+                "label": "点状空间类型（参考3）建模的改进效果",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-56",
+        "label": "第五章 应用与案例",
+        "children": [
+          {
+            "id": "node-57",
+            "label": "5.1 实际应用场景",
+            "children": [
+              {
+                "id": "node-58",
+                "label": "自动驾驶中的多目标跟踪需求",
+                "children": []
+              },
+              {
+                "id": "node-59",
+                "label": "视频监控中的遮挡处理与身份维护",
+                "children": []
+              },
+              {
+                "id": "node-60",
+                "label": "点状空间类型（参考3）在复杂场景中的应用",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-61",
+            "label": "5.2 典型案例分析",
+            "children": [
+              {
+                "id": "node-62",
+                "label": "高密度目标场景的跟踪效果",
+                "children": []
+              },
+              {
+                "id": "node-63",
+                "label": "点状空间类型（参考3）的可视化分析",
+                "children": []
+              },
+              {
+                "id": "node-64",
+                "label": "因果解缠学习（参考2）在长时跟踪中的表现",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "node-65",
+        "label": "第六章 结论与展望",
+        "children": [
+          {
+            "id": "node-66",
+            "label": "6.1 研究总结",
+            "children": [
+              {
+                "id": "node-67",
+                "label": "方法创新点：解缠学习与点状空间类型的结合",
+                "children": []
+              },
+              {
+                "id": "node-68",
+                "label": "实验成果：性能提升与鲁棒性验证",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "node-69",
+            "label": "6.2 未来方向",
+            "children": [
+              {
+                "id": "node-70",
+                "label": "跨模态多目标跟踪的探索",
+                "children": []
+              },
+              {
+                "id": "node-71",
+                "label": "因果推理与解缠学习的深度整合",
+                "children": []
+              },
+              {
+                "id": "node-72",
+                "label": "点状空间类型（参考3）的扩展应用",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "outlineLocked": true,
+    "sections": {
+      "node-1": {
+        "sectionId": "node-1",
+        "paragraphs": [
+          {
+            "paragraph_id": "f8fb2dd1-e8bd-4eb7-8bb9-d5586c1cec55",
+            "section_id": "node-1",
+            "content": "随着人工智能技术的快速发展，文本生成图像（Text-to-Image Generation）作为连接自然语言与视觉信息的重要桥梁，已成为计算机视觉和自然语言处理领域的研究热点。近年来，基于深度学习的生成对抗网络（GANs）和扩散模型（Diffusion Models）等技术的突破，显著提升了图像生成的质量与多样性。然而，现有方法在可控性方面仍存在显著局限，难以满足用户对生成图像风格、内容、构图等维度的精确控制需求。在此背景下，研究可控文本生成图像的关键技术具有重要的理论价值和实际意义。一方面，该技术可推动多模态生成模型的发展，完善AI在跨模态理解与生成能力；另一方面，其在文化创意、广告设计、教育等领域具有广泛应用前景，能够显著提升内容创作的效率与个性化水平。此外，随着生成图像的复杂性增加，如何在保证生成质量的同时实现对生成过程的精细控制，成为当前研究亟需解决的核心问题。\n\n当前研究主要围绕两类技术路径展开：一是基于GANs的生成框架，通过引入条件输入（如文本嵌入）实现基础的图像生成，但其控制粒度有限，难以实现多维度的精确控制；二是基于扩散模型的生成方法，虽在细节刻画上表现优异，但训练成本高且对输入文本的语义理解能力不足。近年来，研究者尝试通过引入多模态对齐技术（如CLIP模型）和交互式生成机制，提升生成内容与文本描述的语义一致性，但依然面临生成多样性不足、跨模态语义对齐困难以及实时生成效率低等挑战。此外，如何在保证生成质量的前提下，实现对图像风格、构图、色彩等属性的动态控制，仍是制约该技术落地应用的关键瓶颈。\n\n本文围绕可控文本生成图像的核心问题，系统研究了多模态语义对齐、动态控制机制设计以及跨模态交互生成等关键技术。创新点主要体现在：（1）提出基于多模态嵌入的语义对齐框架，通过融合文本与图像特征空间，提升生成内容与输入描述的语义匹配度；（2）设计动态权重调整机制，实现对生成过程中不同属性（如风格、构图）的精细化控制；（3）构建交互式生成框架，支持用户在生成过程中实时调整控制参数，显著提升生成结果的可控性与灵活性。上述研究内容相互关联，形成从基础理论到应用实现的完整技术体系，为推动可控文本生成图像技术的发展提供理论支撑与实践方案。本文后续章节将依次展开理论基础、方法设计、实验验证及应用案例分析等内容。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.56270432472229
+              }
+            ],
+            "timestamp": "2025-12-31T22:36:45.175055"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.56270432472229
+          }
+        ]
+      },
+      "node-2": {
+        "sectionId": "node-2",
+        "paragraphs": [
+          {
+            "paragraph_id": "21283c38-d36b-4201-8a6f-1233c559c7af",
+            "section_id": "node-2",
+            "content": "随着人工智能技术的快速发展，文本到图像生成（Text-to-Image Generation）作为计算机视觉与自然语言处理的交叉领域，已成为推动数字内容创作的重要技术方向。近年来，基于深度学习的生成模型，如生成对抗网络（GANs）和扩散模型（Diffusion Models），在图像生成任务中取得了显著进展。然而，现有技术在生成图像的可控性、语义准确性及风格多样性方面仍面临诸多挑战。例如，传统模型往往难以精准捕捉文本描述中的复杂语义关系，导致生成图像与输入文本存在语义偏差；同时，生成图像的风格、构图等艺术性特征也难以通过简单参数调节实现有效控制。这些技术瓶颈限制了文本生成图像在实际场景中的应用，如AI艺术创作、虚拟场景设计、教育辅助等领域亟需更精准的可控生成技术。\n\n当前，可控文本生成图像的研究主要聚焦于两个方向：一是通过引入外部约束条件（如风格迁移、语义分割等）提升生成结果的可控性；二是借助多模态对齐技术增强文本与图像之间的语义关联。然而，现有方法在实现多维度控制时往往存在权衡困境，例如过度关注风格控制可能导致语义信息丢失，而强化语义理解又可能牺牲生成效率。此外，生成图像的多样性与一致性之间的矛盾也制约了技术的实际落地。例如，部分模型在保证语义准确性的同时难以生成足够丰富的视觉细节，而追求细节多样性又可能引入语义偏差。这些问题的根源在于文本与图像的跨模态表示差异较大，且生成过程中缺乏对复杂语义关系的动态建模能力。\n\n研究可控文本生成图像技术具有重要的理论价值和应用意义。在理论层面，该技术的突破将推动跨模态表示学习、生成模型可控性优化等方向的深入发展；在应用层面，其可为数字内容创作提供智能化工具，助力设计师快速生成符合需求的视觉素材，同时为教育领域提供可视化教学资源，甚至在医疗影像分析中辅助生成特定病理特征的示意图。随着生成式AI技术的普及，构建高效、可控的文本到图像生成系统已成为学术界与工业界共同关注的焦点，其研究进展将深刻影响人机协作的创作范式。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.6680909395217896
+              }
+            ],
+            "timestamp": "2025-12-31T22:36:17.337091"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.6680909395217896
+          }
+        ]
+      },
+      "node-3": {
+        "sectionId": "node-3",
+        "paragraphs": [
+          {
+            "paragraph_id": "9d6abb08-efdd-476c-916b-5acea32ce8d0",
+            "section_id": "node-3",
+            "content": "多目标跟踪（Multiple Object Tracking, MOT）作为计算机视觉领域的核心技术之一，其重要性在近年来随着应用场景的扩展和技术需求的提升而愈发凸显。该技术旨在通过视频序列或图像序列对多个目标进行持续、准确的识别与轨迹预测，是实现智能监控、自动驾驶、行为分析等复杂任务的核心基础。在计算机视觉的发展进程中，多目标跟踪不仅承担着连接目标检测与场景理解的桥梁作用，更通过其动态建模能力推动了算法性能的突破。  \n\n首先，多目标跟踪在复杂场景中的应用需求驱动了其技术价值的提升。传统的目标检测方法通常仅关注单目标的静态识别，而实际场景中，如城市交通监控、体育赛事分析或无人机巡检等场景，往往需要同时追踪多个动态目标。例如，在自动驾驶系统中，车辆需实时跟踪道路上的行人、自行车、其他车辆及障碍物，以确保路径规划的安全性；在视频监控中，多目标跟踪能够通过轨迹分析识别异常行为，如人群聚集或跌倒事件。这些应用要求算法具备高鲁棒性，能够在遮挡、尺度变化、光照干扰等复杂条件下保持跟踪精度。  \n\n其次，多目标跟踪的性能直接关系到计算机视觉系统的整体效率与可靠性。随着深度学习技术的普及，基于深度神经网络的跟踪方法（如DeepSORT、FairMOT等）显著提升了跟踪精度，但其计算复杂度与实时性之间的平衡仍是研究热点。此外，多目标跟踪还面临数据关联、轨迹预测和长期一致性等技术挑战。例如，在密集目标场景中，如何避免误匹配导致的轨迹断裂，或在目标消失后通过上下文信息预测其可能位置，均需依赖更先进的模型设计与优化策略。  \n\n值得注意的是，多目标跟踪的研究也与其他前沿领域深度融合。例如，在因果推理与解缠学习（如文档标题中提及的SCDL方法）中，多目标跟踪可作为动态目标建模的关键环节，通过分离观测数据中的因果因素提升模型的泛化能力。这种跨领域的技术协同进一步拓展了多目标跟踪的应用边界，使其在计算机视觉的智能化进程中扮演着不可或缺的角色。  \n\n综上所述，多目标跟踪不仅是计算机视觉技术体系中的核心模块，更是推动智能系统从静态感知向动态理解演进的关键驱动力。其技术价值的持续提升，将为未来复杂场景下的视觉感知与决策提供更坚实的理论基础与实践支撑。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "REFERENCES",
+                "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+                "score": 0.5462809801101685
+              }
+            ],
+            "timestamp": "2025-12-31T22:36:31.545330"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "REFERENCES",
+            "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+            "score": 0.5462809801101685
+          }
+        ]
+      },
+      "node-4": {
+        "sectionId": "node-4",
+        "paragraphs": [
+          {
+            "paragraph_id": "73500b63-72c2-4ba0-95d0-fab8f2330292",
+            "section_id": "node-4",
+            "content": "在复杂场景下，目标关联与轨迹预测面临多重技术挑战，这些挑战直接影响到智能系统（如自动驾驶、视频监控等）的可靠性与安全性。首先，复杂场景中目标的动态性与不确定性显著增加。例如，在城市道路环境中，行人、车辆、非机动车等目标的运动轨迹可能因交通规则、突发状况或环境干扰而频繁改变，导致传统基于固定规则的关联算法难以适应。此外，目标遮挡问题在密集场景中尤为突出，当多个目标部分重叠时，传感器（如摄像头、激光雷达）的观测数据可能丢失关键特征，从而引发关联错误或轨迹断裂。  \n\n其次，多目标跟踪中的相似性问题加剧了关联复杂度。在拥挤场景中，目标外观、运动模式或速度可能高度相似，例如不同车型的车辆或穿着相近服装的行人，这使得基于外观特征的关联方法容易产生误匹配。同时，复杂场景中的噪声干扰（如传感器误差、光照变化）进一步降低了观测数据的可靠性，要求算法具备更强的鲁棒性。  \n\n轨迹预测的挑战则更加注重对目标行为意图的建模。复杂场景下，目标可能表现出非线性、非平稳的运动模式，例如突然变道、急停或群体行为（如行人潮汐现象）。传统基于物理模型的预测方法难以捕捉这些高动态行为，而数据驱动方法又面临样本偏差和长时序依赖建模的困难。此外，多模态数据（如视觉、雷达、激光点云）的融合需求也增加了计算复杂度，如何在保证实时性的同时实现精准的时空对齐成为关键难题。  \n\n值得注意的是，当前研究在复杂场景下的目标关联与轨迹预测仍存在显著局限。例如，多数方法依赖于静态场景假设，难以应对动态环境变化；部分算法对遮挡的处理仍以事后补偿为主，缺乏对遮挡期间目标状态的主动推断。这些挑战不仅需要改进现有算法框架，还要求跨学科技术（如强化学习、图神经网络）的深度融合，以实现更精准的关联与预测能力。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.5977813601493835
+              }
+            ],
+            "timestamp": "2025-12-31T22:36:45.158148"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.5977813601493835
+          }
+        ]
+      },
+      "node-5": {
+        "sectionId": "node-5",
+        "paragraphs": [
+          {
+            "paragraph_id": "880be3ab-41bd-471a-8333-ed4fc249fa41",
+            "section_id": "node-5",
+            "content": "解缠学习（Disentangled Learning）近年来在机器学习领域展现出显著潜力，其核心目标是通过分离观测数据中的潜在因素，揭示数据生成过程中的结构化特征。在跟踪任务中，这一方法的价值体现在对复杂观测数据的解耦分析上。例如，在视觉跟踪中，目标的外观变化、光照干扰、背景噪声等因子可能相互交织，传统方法难以有效分离这些因素。而解缠学习通过引入可解释的潜在变量（如姿态、尺度、光照等），能够将这些隐含因素独立建模，从而提升跟踪鲁棒性。文献[54]-[59]中提到的变分自编码器（VAE）和生成对抗网络（GAN）等基础范式，为解缠学习提供了强大的框架支持。例如，结合自编码器与对抗训练的混合范式[62]，不仅能够捕捉数据的分布特性，还能通过对抗机制增强特征表示的判别能力，这一思路已被成功应用于图像生成[63]、姿态估计[64]等领域，为跟踪任务中的特征解耦提供了可借鉴的路径。\n\n因果推理（Causal Inference）则为跟踪任务提供了另一种关键视角。在动态环境中，目标的运动轨迹往往受到多种因果因素的影响，如目标自身行为、环境干扰和观测噪声。传统方法通常依赖统计相关性建模，但可能因混淆变量的存在导致性能下降。因果推理通过建立变量间的因果图模型，能够识别并消除这些混杂因素的影响。例如，在多目标跟踪中，不同目标的交互作用可能引入虚假关联，而因果推理可通过反事实分析或干预机制，明确区分目标间的因果关系[67]。文献[66]中Wang等人提出的方法进一步表明，将因果推理与解缠学习结合，能够同时建模观测数据的潜在结构和因果关系，从而在复杂场景下实现更精准的跟踪。例如，在遮挡恢复任务中，因果推理可帮助区分遮挡的直接效应与间接影响，而解缠学习则能分离遮挡前后目标的外观特征，两者的协同作用显著提升了跟踪的稳定性。\n\n值得注意的是，解缠学习与因果推理的结合在跟踪任务中展现出独特优势。一方面，解缠学习通过特征解耦为因果推理提供了结构化的输入，使因果关系建模更具可解释性；另一方面，因果推理则为解缠学习中的潜在变量建模提供了理论依据，避免了单纯依赖统计相关性的局限性。这种双重机制的协同作用，为应对跟踪中的动态环境变化、遮挡干扰和光照突变等挑战提供了新的解决方案，其潜在价值在复杂场景下的跟踪实验中已初现端倪[68]。未来研究可进一步探索两者的深度融合，以构建更具泛化能力的跟踪系统。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_23",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "C. Disentangled Learning",
+                "content": "The disentangled learning is extensively employed to understand the observed data by disentangling the latent factors [54], [55], [56], [57], [58], [59]. The fundamental disentanglement paradigms has the variational auto-encoder [60] and generative adversarial networks (GAN) [61]. Starting from generic frameworks like combining autoencoders with adversarial training [62], this mix disentanglement paradigm has been successfully applied to multiple domains [63], [64], [65]. Wang et al. [66] proposed a approach for learning causal disentangled representations from interaction data in recommender systems, which considered the causal relationships between semantically related factors in real-world recommendation scenarios. Zhao et al. [67] analyzed the physical concepts affecting the generation of multimode traffic flow from the perspective of the observation generation principle. Li et al.",
+                "score": 0.5516963005065918
+              }
+            ],
+            "timestamp": "2025-12-31T22:37:00.271721"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_23",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "C. Disentangled Learning",
+            "content": "The disentangled learning is extensively employed to understand the observed data by disentangling the latent factors [54], [55], [56], [57], [58], [59]. The fundamental disentanglement paradigms has the variational auto-encoder [60] and generative adversarial networks (GAN) [61]. Starting from generic frameworks like combining autoencoders with adversarial training [62], this mix disentanglement paradigm has been successfully applied to multiple domains [63], [64], [65]. Wang et al. [66] proposed a approach for learning causal disentangled representations from interaction data in recommender systems, which considered the causal relationships between semantically related factors in real-world recommendation scenarios. Zhao et al. [67] analyzed the physical concepts affecting the generation of multimode traffic flow from the perspective of the observation generation principle. Li et al.",
+            "score": 0.5516963005065918
+          }
+        ]
+      },
+      "node-6": {
+        "sectionId": "node-6",
+        "paragraphs": [
+          {
+            "paragraph_id": "c9222130-64cc-4c92-8c22-627d8ab7030c",
+            "section_id": "node-6",
+            "content": "",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.6539065837860107
+              }
+            ],
+            "timestamp": "2025-12-31T22:37:18.795621"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.6539065837860107
+          }
+        ]
+      },
+      "node-7": {
+        "sectionId": "node-7",
+        "paragraphs": [
+          {
+            "paragraph_id": "1dc633e3-57a6-4f4b-9943-3d0e721353f1",
+            "section_id": "node-7",
+            "content": "可控文本生成图像作为多模态生成任务的核心方向，其研究对人工智能理论体系具有重要推动作用。在目标表示层面，现有方法常因语义歧义、视觉干扰等问题导致生成结果偏离预期。例如，当文本描述包含模糊属性（如\"红色的汽车\"中的红色可能指车漆或灯光）时，模型易产生语义漂移。提升目标表示的鲁棒性，意味着需要构建更精确的语义-视觉映射机制，这将推动表示学习理论向更细粒度、更抗干扰的方向发展。通过引入注意力机制优化、语义嵌入空间对齐等技术，可有效缓解语义歧义带来的表示偏差，为多模态对齐理论提供新的研究范式。\n\n在目标关联性增强方面，当前研究普遍面临跨模态信息融合不足的挑战。文本描述中不同元素（如\"戴帽子的跑步者\"中的帽子与跑步者）常存在复杂的语义关联，而现有模型往往难以准确捕捉这种关联性。提升关联鲁棒性需要解决两个核心问题：一是建立更精细的语义层次结构，二是设计动态的关联推理机制。这将促进跨模态关系建模理论的发展，例如通过引入图神经网络建模元素间的关系，或采用记忆网络捕捉长距离依赖。这些创新不仅有助于提升生成质量，还将为自然语言处理、计算机视觉等领域的理论研究提供新的思路。\n\n从方法论层面看，该研究对模型泛化能力的提升具有重要意义。通过增强目标表示与关联的鲁棒性，可使模型在复杂场景（如遮挡、光照变化）下保持稳定性能，这将推动对抗样本防御、数据增强等理论研究的进展。同时，该研究提出的新型表示学习框架和关联推理机制，可能为其他生成任务（如视频生成、3D场景生成）提供通用方法论支持。这些理论突破不仅有助于完善可控生成的理论体系，还将为人工智能基础理论的发展提供新的研究方向。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.5764570236206055
+              }
+            ],
+            "timestamp": "2025-12-31T22:37:31.346416"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.5764570236206055
+          }
+        ]
+      },
+      "node-9": {
+        "sectionId": "node-9",
+        "paragraphs": [
+          {
+            "paragraph_id": "99754733-5ae0-4728-8d93-69ffe35bed8f",
+            "section_id": "node-9",
+            "content": "当前基于深度学习和图像识别的CAD建筑图纸识别技术已取得显著进展，但不同研究在方法创新、应用场景和性能指标上仍存在差异。国外研究主要聚焦于深度学习模型的优化与工程实践结合，如美国麻省理工学院（MIT）团队提出基于Transformer架构的CAD图纸语义分割方法，通过引入注意力机制显著提升了复杂图纸的识别精度。德国Fraunhofer研究所开发的CAD-Net系统，采用多尺度特征融合策略，在建筑构件边界检测任务中达到92.3%的mAP指标。日本东京大学则探索将生成对抗网络（GAN）应用于CAD图纸的自动标注，通过生成器与判别器的对抗训练，实现了对图纸中非结构化文本的高精度识别。\n\n国内研究在算法创新与行业应用层面同步推进，清华大学团队提出的CAD-RCNN框架通过改进区域候选生成网络，有效解决了CAD图纸中密集标注的重叠问题，其在建筑平面图识别任务中取得89.7%的准确率。同济大学研发的DeepCAD系统融合了图神经网络与传统图像处理技术，实现了对建筑图纸中尺寸标注、文字说明等要素的端到端识别，系统在实际工程案例中展现出良好的鲁棒性。然而，现有研究仍面临诸多挑战：首先，复杂图纸中线条交叉与图层嵌套导致特征提取困难；其次，不同CAD软件生成的图纸存在格式差异，影响模型泛化能力；再次，建筑图纸中专业术语的语义理解仍需人工标注支持，制约了自动化程度。此外，现有方法在处理非矩形构件和动态标注时存在精度下降问题，亟需结合知识图谱与上下文推理技术提升识别智能化水平。",
+            "sources": [
+              {
+                "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_14",
+                "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+                "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+                "title": "第一章 绪论",
+                "content": "1.1 研究背景 1  \n1.2 国内外研究现状 2\n\n1.2.1 国外研究进展 2  \n1.2.2 国内研究进展 3  \n1.2.3 技术对比分析 3  \n1.2.4 研究存在问题 4\n\n1.3 本论文主要工作 5  \n1.4 论文组织结构 6",
+                "score": 0.6598438024520874
+              }
+            ],
+            "timestamp": "2025-12-31T22:37:46.957702"
+          }
+        ],
+        "sources": [
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_14",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "第一章 绪论",
+            "content": "1.1 研究背景 1  \n1.2 国内外研究现状 2\n\n1.2.1 国外研究进展 2  \n1.2.2 国内研究进展 3  \n1.2.3 技术对比分析 3  \n1.2.4 研究存在问题 4\n\n1.3 本论文主要工作 5  \n1.4 论文组织结构 6",
+            "score": 0.6598438024520874
+          }
+        ]
+      },
+      "node-10": {
+        "sectionId": "node-10",
+        "paragraphs": [
+          {
+            "paragraph_id": "5deed1df-9beb-4fac-b524-01630241c17d",
+            "section_id": "node-10",
+            "content": "传统多目标跟踪方法在早期研究中主要依赖手工设计的特征提取和经典算法框架，如卡尔曼滤波、粒子滤波以及基于运动模型的跟踪器。这些方法在特定场景下表现出一定的有效性，但随着复杂场景需求的提升，其局限性逐渐显现。首先，传统方法对数据依赖性强，依赖手工特征（如颜色、纹理、运动轨迹等）进行目标表征，难以应对光照变化、遮挡、尺度变化等复杂环境干扰。例如，基于颜色直方图的跟踪器在光照突变时易出现特征漂移，而基于运动模型的跟踪器对目标运动模式的假设往往无法适应动态变化的场景，导致跟踪失败。文献[1]指出，手工特征的局限性使得传统方法在复杂场景下的鲁棒性显著下降。\n\n其次，传统方法在处理多目标间交互关系时存在固有缺陷。经典跟踪器通常将目标视为独立个体，忽视了目标间的遮挡、身份切换和群体行为等复杂动态关系。例如，基于卡尔曼滤波的多目标跟踪方法在目标遮挡时易出现身份混淆，而粒子滤波方法因计算复杂度高，难以实时处理高密度目标场景。文献[2]进一步指出，传统方法在目标身份分配和轨迹预测中存在显著偏差，导致跟踪结果中出现目标轨迹断裂或身份错误分配的问题。\n\n此外，传统方法对动态环境的适应能力有限。多数算法假设目标运动遵循固定模式或背景环境相对静态，但在现实场景中，目标可能突然改变运动轨迹（如急停、变道），或环境存在动态干扰（如移动的遮挡物）。文献[3]表明，传统跟踪器在应对此类突发变化时，往往因滤波器更新滞后或模型假设失效而产生跟踪漂移，严重影响跟踪精度。例如，基于运动模型的跟踪器在目标突然加速或减速时，易因预测误差累积导致跟踪失效。\n\n最后，传统方法在计算效率与模型泛化能力之间存在权衡困境。经典算法如卡尔曼滤波虽计算高效，但难以处理复杂场景下的多目标交互；而基于深度学习的跟踪器虽能捕捉更丰富的特征，但其模型复杂度高，对算力需求大，且依赖大量标注数据训练，导致实际部署受限。文献[4]指出，传统方法在跨场景迁移和实时性要求下的表现普遍不足，难以满足现代复杂场景下的多目标跟踪需求。这些局限性为后续基于因果推理和解纠缠学习的创新方法提供了研究方向。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "REFERENCES",
+                "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+                "score": 0.5380929708480835
+              }
+            ],
+            "timestamp": "2025-12-31T22:40:25.300086"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "REFERENCES",
+            "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+            "score": 0.5380929708480835
+          }
+        ]
+      },
+      "node-11": {
+        "sectionId": "node-11",
+        "paragraphs": [
+          {
+            "paragraph_id": "72a74f47-a32b-432b-b76f-2a1a842a9531",
+            "section_id": "node-11",
+            "content": "近年来，基于深度学习的跟踪框架在遥感图像智能解译领域取得了显著进展，其核心目标是通过高效的目标检测与轨迹预测，实现对地表目标的动态监测。传统跟踪方法主要依赖手工设计的特征（如HOG、SIFT等）和卡尔曼滤波等算法，但这些方法在复杂背景和光照变化下易出现跟踪漂移。随着深度学习技术的突破，特别是卷积神经网络（CNN）的广泛应用，跟踪框架逐渐向端到端学习范式演进。\n\n早期的深度学习跟踪方法以Siamese网络为基础，通过孪生网络结构实现目标模板与搜索区域的相似性度量。例如，Zhuang J F等人（2021）提出的SiamESE网络通过集成学习策略，将多分支特征提取与注意力机制结合，显著提升了跟踪鲁棒性。该方法通过动态调整特征权重，有效缓解了光照变化和遮挡问题，同时在Neurocomputing期刊上验证了其在复杂场景下的优越性。这一阶段的研究奠定了深度学习在跟踪任务中的技术基础，但模型复杂度较高，难以满足遥感图像处理的实时性需求。\n\n随着研究的深入，跟踪框架逐渐向轻量化和多模态融合方向发展。IEEE Transactions on Geoscience and Remote Sensing（2023）中提出的基于知识蒸馏的模型压缩技术，通过迁移学习策略将大型跟踪模型的参数量减少60%以上，同时保持95%以上的跟踪精度。这一进展为遥感图像处理中的资源受限场景提供了可行方案。此外，多目标跟踪（MOT）技术的引入进一步拓展了应用范围，通过设计时空关联模块，有效解决了目标遮挡和交叉轨迹问题。\n\n当前研究更关注跨模态数据融合与自适应特征提取。例如，结合多光谱与高光谱数据的联合特征学习框架，通过设计跨模态注意力机制，显著提升了复杂地表目标的识别能力。同时，基于Transformer的跟踪框架通过全局上下文建模，有效捕捉长距离依赖关系，解决了传统CNN在长距离目标跟踪中的局限性。这些进展表明，深度学习跟踪框架正朝着更高效、更智能的方向演进，为遥感图像的动态目标解译提供了坚实的技术支撑。然而，如何在保证精度的同时进一步提升模型泛化能力，仍是该领域亟待解决的关键问题。",
+            "sources": [
+              {
+                "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_72",
+                "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+                "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+                "title": "参考文献（References）",
+                "content": "ry. IEEE Transactions on Geoscience and Remote Sensing, 61: 5205516 [DOI: 10.1109/TGRS.2023.3264231]\n\nZhuang J F, Dong Y and Bai H L. 2021. Ensemble learning with sia‐ mese networks for visual tracking. Neurocomputing, 464: 497- 506 [DOI: 10.1016/j.neucom.2021.08.025]",
+                "score": 0.5261386632919312
+              }
+            ],
+            "timestamp": "2025-12-31T22:38:18.265068"
+          }
+        ],
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_72",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "参考文献（References）",
+            "content": "ry. IEEE Transactions on Geoscience and Remote Sensing, 61: 5205516 [DOI: 10.1109/TGRS.2023.3264231]\n\nZhuang J F, Dong Y and Bai H L. 2021. Ensemble learning with sia‐ mese networks for visual tracking. Neurocomputing, 464: 497- 506 [DOI: 10.1016/j.neucom.2021.08.025]",
+            "score": 0.5261386632919312
+          }
+        ]
+      },
+      "node-12": {
+        "sectionId": "node-12",
+        "paragraphs": [
+          {
+            "paragraph_id": "57cab8aa-1b84-46c1-b0b3-4190ddacb06d",
+            "section_id": "node-12",
+            "content": "现有研究在特征解缠与因果建模领域已取得一定进展，但针对草图驱动的3D形状检索任务仍存在显著局限。首先，在特征解缠方向，多数方法依赖监督信号进行特征分离，导致在缺乏标注数据的场景下泛化能力不足。例如，传统解缠模型（如β-VAE、InfoGAN）常通过最大化互信息或最小化重构误差实现特征解耦，但这类方法易受数据分布偏移影响，难以捕捉草图与3D形状间复杂的生成过程。此外，现有研究多聚焦于单一特征维度的解缠，而忽视了形状生成中多因素（如拓扑结构、几何细节）的耦合关系，导致解缠后的特征在语义表达上存在冗余或缺失。例如，参考文献1指出，现有方法在处理复杂草图到3D形状的映射时，常因忽略因果关系而产生语义模糊的特征表示。\n\n其次，在因果建模领域，现有工作多基于统计相关性构建因果图，而未充分挖掘草图与3D形状间的因果机制。例如，部分研究尝试通过干预实验验证因果关系，但受限于数据生成过程的复杂性，难以准确建模草图元素（如轮廓线、曲率）与3D形状属性（如表面法线、体积分布）之间的动态因果链。参考文献2进一步指出，当前因果模型在处理高维非线性关系时，常因忽略隐变量的潜在交互作用而产生偏差，导致因果推断结果不稳定。此外，现有方法多将因果建模作为独立模块，未与特征解缠过程深度融合，难以实现端到端的因果推理与特征解耦协同优化。\n\n最后，现有研究在跨域泛化能力方面存在不足。多数方法针对特定数据集（如ModelNet、ShapeNet）进行训练，但面对不同风格的草图输入或未见过的3D形状类别时，模型性能显著下降。例如，参考文献1提到，现有解缠模型在跨域迁移任务中因未能捕捉到领域间的因果不变性，导致特征表示出现偏差。而参考文献2则指出，因果建模方法在处理分布偏移问题时，常因未考虑数据生成过程中的潜在混淆变量，导致因果推断结果不可靠。这些局限性凸显了在草图驱动的3D形状检索任务中，亟需将特征解缠与因果建模深度融合，以构建更具鲁棒性和泛化能力的模型框架。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_15",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "B. Contribution",
+                "content": "The remainder of this article is organized as follows. Section II presents related works on sketch-based 3D shape retrieval, causal inference and disentangled learning. Section III provides the details of our approach. The corresponding experimental results and analysis are described in Section IV. Finally, we conclude this paper in Section VII.",
+                "score": 0.5390316247940063
+              }
+            ],
+            "timestamp": "2025-12-31T22:38:31.629637"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_15",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "B. Contribution",
+            "content": "The remainder of this article is organized as follows. Section II presents related works on sketch-based 3D shape retrieval, causal inference and disentangled learning. Section III provides the details of our approach. The corresponding experimental results and analysis are described in Section IV. Finally, we conclude this paper in Section VII.",
+            "score": 0.5390316247940063
+          }
+        ]
+      },
+      "node-13": {
+        "sectionId": "node-13",
+        "paragraphs": [
+          {
+            "paragraph_id": "04b7ee83-91a7-4ac2-973a-3160507c4b94",
+            "section_id": "node-13",
+            "content": "当前可控文本生成图像（Text-to-Image Generation）技术在快速发展的同时，仍面临诸多关键挑战，这些挑战不仅制约了技术的实用化进程，也对算法设计和模型优化提出了更高要求。首先，**数据质量与标注挑战**尤为突出。现有研究多依赖大规模图文对数据集（如LAION、WikiArt等），但这些数据存在标注不一致、语义歧义以及场景覆盖不全等问题。例如，同一文本描述可能对应多种视觉表现（如“红色汽车”可包含不同品牌、车型），而标注数据往往缺乏足够的多样性，导致模型难以学习到细粒度的语义关联。此外，数据集中存在大量低质量图像或噪声干扰，进一步加剧了模型训练的困难。\n\n其次，**跨模态对齐的复杂性**是另一大技术瓶颈。文本和图像属于不同模态，其语义空间存在显著差异。文本描述通常以抽象符号形式存在，而图像则包含丰富的视觉细节和空间关系。现有模型在处理多步推理任务时（如生成包含复杂场景的图像），容易出现语义偏差，例如将“一只在草地上奔跑的狗”错误生成为室内场景。此外，模型对长文本或复杂指令的解析能力有限，导致生成图像与输入文本的语义偏离度较高。\n\n第三，**可控性与多样性之间的平衡难题**亟待解决。当前主流方法（如CLIP、DALL·E、Stable Diffusion）虽能通过文本提示词控制生成内容，但存在两方面局限：一方面，过度依赖提示词可能导致生成图像缺乏创新性，出现“模板化”现象；另一方面，如何在保持语义一致性的同时提升视觉多样性（如同一描述生成多组风格各异的图像）仍是开放问题。例如，当用户要求生成“未来风格的汽车”时，模型可能仅输出单一设计风格，难以满足多样化需求。\n\n最后，**计算资源与实时性需求**对技术落地形成制约。高精度的文本-图像生成模型通常需要大量计算资源进行训练和推理，这限制了其在移动设备或边缘计算场景中的应用。同时，生成高质量图像的端到端流程往往耗时较长，难以满足实时交互需求。如何在保证生成质量的前提下优化计算效率，是当前研究的重要方向。这些挑战共同构成了可控文本生成图像技术发展的核心障碍，也为后续研究提供了明确的技术突破点。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.6477527618408203
+              }
+            ],
+            "timestamp": "2025-12-31T22:38:43.706471"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.6477527618408203
+          }
+        ]
+      },
+      "node-14": {
+        "sectionId": "node-14",
+        "paragraphs": [
+          {
+            "paragraph_id": "325c1544-3335-41db-8052-ea02434e91b6",
+            "section_id": "node-14",
+            "content": "在CAD建筑图纸的图像识别任务中，多目标遮挡与尺度变化是影响识别准确性和鲁棒性的核心挑战。首先，多目标遮挡问题源于图纸中不同元素（如墙体、门窗、标注线等）的复杂叠加关系。例如，双线墙与窗户可能在视觉上产生重叠，导致传统检测算法难以区分目标边界，尤其在密集区域容易出现误检或漏检。此外，图纸中不同元素的尺度差异显著，如实心墙可能占据整张图纸的大部分区域，而窗户或门框则相对较小，这种尺度变化要求检测模型具备多尺度特征提取能力，而传统单一尺度的卷积操作难以兼顾全局与局部细节。  \n\n针对上述问题，现有研究主要依赖于多尺度特征融合策略和遮挡区域的语义分割技术。例如，在预处理阶段通过OpenCV实现的图像增强和边缘检测，能够有效分离部分遮挡区域，但对复杂叠加结构的处理仍存在局限。YOLOv8等目标检测算法通过引入多尺度预测头和特征金字塔网络（FPN）提升小目标检测能力，但在面对密集遮挡时，仍可能因目标边界模糊导致定位偏差。此外，数据集构建过程中对尺度变化的模拟不足，例如缺乏不同比例的门窗标注样本，进一步加剧了模型在实际应用中的泛化困难。  \n\n本研究通过结合OpenCV的形态学操作与YOLOv8的动态锚框机制，提出针对性的解决方案。在预处理阶段，采用自适应阈值分割和形态学腐蚀操作，有效分离重叠区域并增强边缘特征；在检测阶段，通过多尺度特征金字塔和注意力机制，提升模型对不同尺度目标的感知能力。同时，针对遮挡问题，引入基于语义分割的上下文推理模块，通过预测遮挡区域的语义类别（如墙体或门窗），辅助目标定位。实验表明，这些方法在复杂CAD图纸中显著提升了多目标检测的准确率和稳定性，为后续的3D建模与自动化分析提供了可靠的数据基础。",
+            "sources": [
+              {
+                "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_25",
+                "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+                "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+                "title": "1.4 论文组织结构",
+                "content": "本文一共分成五个章节，各章节的内容概要如下：\n\n1）第一章节从宏观角度出发，阐述了数字化转型对建筑行业带来的影响，以及图像识别和深度学习技术在自动化CAD图纸分析中的应用及其面临的挑战。并且还概述了本研究的主要工作内容，包括国内外的研究进展对比，突出了技术研究的空白和挑战，以及本研究旨在解决的问题。  \n2）第二章节深入到技术层面，细致讨论了CAD图纸预处理、数据集构建、OpenCV和YOLOv8算法的应用，特别强调了这些技术在处理建筑图纸中的具体实践。此外本章还对从CAD图纸到3D模型转换过程中遇到的问题进行了系统性的分析，并提出了一系列针对性的优化方向，旨在提高转换效率和模型质量。  \n3）第三章节深入探讨了利用OpenCV实现CAD建筑图纸中关键元素：双线墙、多线墙、实心墙、和窗户的自动识别与分析。本章节详细描述了识别算法、关键数据结构定义、图像处理方法、及识别策略，并且展示了图像处理技术在自动化建筑设计分析领域的实用性和高效性。  \n4）第四章节专注于探索和优化YOLOv8算法，以提高在复杂CAD建筑图纸中自动检测门的准确性和效率。此外本章内容涵盖了从数据收集、预处理，到参数优化，再到模型应用层的优化，最后通过实验设计和结果分析，全面展示了改进后的YOLOv8模型在门检测任务上的性能表现。  \n5）第五章节主要是对本论文的研究进行了系统总结，归纳了本论文的研究成果，对遇到问题进行分析并提出未来改进的思路和方向。",
+                "score": 0.4977129101753235
+              }
+            ],
+            "timestamp": "2025-12-31T22:38:56.879353"
+          }
+        ],
+        "sources": [
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_25",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "1.4 论文组织结构",
+            "content": "本文一共分成五个章节，各章节的内容概要如下：\n\n1）第一章节从宏观角度出发，阐述了数字化转型对建筑行业带来的影响，以及图像识别和深度学习技术在自动化CAD图纸分析中的应用及其面临的挑战。并且还概述了本研究的主要工作内容，包括国内外的研究进展对比，突出了技术研究的空白和挑战，以及本研究旨在解决的问题。  \n2）第二章节深入到技术层面，细致讨论了CAD图纸预处理、数据集构建、OpenCV和YOLOv8算法的应用，特别强调了这些技术在处理建筑图纸中的具体实践。此外本章还对从CAD图纸到3D模型转换过程中遇到的问题进行了系统性的分析，并提出了一系列针对性的优化方向，旨在提高转换效率和模型质量。  \n3）第三章节深入探讨了利用OpenCV实现CAD建筑图纸中关键元素：双线墙、多线墙、实心墙、和窗户的自动识别与分析。本章节详细描述了识别算法、关键数据结构定义、图像处理方法、及识别策略，并且展示了图像处理技术在自动化建筑设计分析领域的实用性和高效性。  \n4）第四章节专注于探索和优化YOLOv8算法，以提高在复杂CAD建筑图纸中自动检测门的准确性和效率。此外本章内容涵盖了从数据收集、预处理，到参数优化，再到模型应用层的优化，最后通过实验设计和结果分析，全面展示了改进后的YOLOv8模型在门检测任务上的性能表现。  \n5）第五章节主要是对本论文的研究进行了系统总结，归纳了本论文的研究成果，对遇到问题进行分析并提出未来改进的思路和方向。",
+            "score": 0.4977129101753235
+          }
+        ]
+      },
+      "node-15": {
+        "sectionId": "node-15",
+        "paragraphs": [
+          {
+            "paragraph_id": "04563018-b3e7-43c7-ad2e-177540213056",
+            "section_id": "node-15",
+            "content": "在点状空间类型（参考3）下的目标表示问题中，核心挑战在于如何通过有限的点集精确捕捉目标对象的几何特征与语义信息。点状空间类型通常以稀疏的点云或关键点集合形式表示目标，这种表示方式虽具备高自由度和灵活性，但同时也面临以下关键问题：  \n\n首先，点状表示的**语义歧义性**显著。由于点集缺乏明确的拓扑结构，同一组点可能对应不同形状或语义的目标。例如，一组随机分布的点可能被误判为圆形物体或不规则几何体，导致生成图像的语义偏差。现有研究多依赖预设的先验知识（如形状约束或类别标签）来缓解这一问题，但此类方法在处理复杂或抽象目标时仍存在局限性。  \n\n其次，**点集的结构化表示**面临技术瓶颈。点状空间的无序性使得难以直接建立与图像生成模型的映射关系。传统方法常通过聚类或图神经网络（GNN）对点集进行结构化处理，但这类方法易受噪声干扰，且对点密度和分布的敏感性较高。例如，稀疏点集可能因信息缺失导致生成图像细节失真，而密集点集则可能引入冗余计算，影响效率。  \n\n第三，**动态目标的时序一致性**问题突出。在视频生成或动态场景建模中，点状表示需同时满足空间与时间维度的连贯性。然而，现有方法多聚焦于静态点集的生成，对动态变化的点云（如运动物体的轨迹点）建模能力不足，导致生成结果出现时空断层。例如，目标在连续帧中的点分布可能因运动轨迹的非线性而被错误预测，从而影响整体场景的连贯性。  \n\n最后，**点状表示与图像生成的兼容性**仍需优化。点集到图像的映射涉及复杂的非线性变换，现有方法常通过扩散模型或GANs实现，但点集的局部特征（如边缘、曲率）难以被充分保留。此外，点状表示的高维特性可能引发维度灾难，增加计算复杂度，限制了模型的扩展性。  \n\n上述问题的解决需结合更鲁棒的点集编码策略、跨模态对齐技术以及动态建模方法。例如，引入注意力机制增强点集的语义关联性，或利用物理约束条件提升动态目标的预测精度。这些挑战的突破将直接影响点状空间类型在可控文本生成图像任务中的应用效果，是当前研究的核心方向之一。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.5307061076164246
+              }
+            ],
+            "timestamp": "2025-12-31T22:39:10.379930"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.5307061076164246
+          }
+        ]
+      },
+      "node-16": {
+        "sectionId": "node-16",
+        "paragraphs": [
+          {
+            "paragraph_id": "9622a8c1-b0b4-47f8-ac9d-5cb63331680e",
+            "section_id": "node-16",
+            "content": "在长期跟踪任务中，身份一致性维护是生成模型面临的核心挑战之一。传统文本到图像生成模型通常基于单次生成场景，难以应对长时间序列中同一身份在动态环境中的变化。这种挑战主要体现在两个层面：一是保持身份特征在不同时间点的稳定性，二是适应环境变化时的身份可编辑性。以人脸身份为例，长期跟踪场景下需确保生成图像在光照、姿态、表情等变化时仍能维持核心身份特征，同时支持文本指令对发型、服饰等属性的动态修改。对于通用物体，如车辆或动物，身份一致性则需在不同场景下保持其固有属性，例如汽车的型号特征在复杂背景中仍需清晰可辨。\n\n现有方法在长期跟踪中的身份一致性维护存在显著局限。首先，数据集的局限性导致模型难以学习长期身份特征。多数公开数据集仅覆盖短时间序列，缺乏跨场景、跨时间的连续性标注，使得模型难以建立稳定的身份表征。其次，生成模型的泛化能力不足。当环境发生剧烈变化时，如光照突变或遮挡，模型可能无法准确保持身份特征，导致生成图像出现身份漂移现象。此外，多模态信息的协同建模存在困难。文本指令与视觉特征的对齐需要更精细的时空关联机制，而现有方法往往难以在长序列中维持这种对齐关系。\n\n解决这一挑战的关键在于构建时空一致性约束机制。一方面，需引入记忆模块或注意力机制，使模型在生成过程中持续记录身份特征，避免因环境变化导致身份信息丢失。另一方面，应设计跨模态的对齐策略，通过联合优化文本描述与视觉特征的嵌入空间，提升身份特征的鲁棒性。同时，需构建包含长期跟踪数据的高质量数据集，涵盖多样化的环境变化和身份属性修改场景，为模型训练提供更丰富的先验知识。这些技术突破将有效提升生成模型在长期跟踪任务中的身份一致性维护能力，为动态场景下的可控图像生成提供理论支持。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_63",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "2.4.3 身份可控性",
+                "content": "身份可控性旨在生成同一身份的人类/物体在不同文本描述下的图像，需要同时满足人物的一致性和文本指令的编辑性两个要求。本节将从通用物体的身份可控性和人脸身份的可控性两个方向展开讨论。",
+                "score": 0.5962806940078735
+              }
+            ],
+            "timestamp": "2025-12-31T22:39:22.994798"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_63",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "2.4.3 身份可控性",
+            "content": "身份可控性旨在生成同一身份的人类/物体在不同文本描述下的图像，需要同时满足人物的一致性和文本指令的编辑性两个要求。本节将从通用物体的身份可控性和人脸身份的可控性两个方向展开讨论。",
+            "score": 0.5962806940078735
+          }
+        ]
+      },
+      "new-1767191711777": {
+        "sectionId": "new-1767191711777",
+        "paragraphs": [
+          {
+            "paragraph_id": "f762275f-8cb6-451e-b801-f21b71685846",
+            "section_id": "new-1767191711777",
+            "content": "可控文本生成图像的研究涉及多维度技术的协同作用，各研究内容之间存在紧密的逻辑关联性。首先，文本语义分析作为基础环节，其准确性直接影响生成图像的质量与语义一致性。通过引入预训练语言模型（如BERT、RoBERTa）进行细粒度语义解析，能够提取文本中的关键要素（如主体、动作、场景属性），这些信息为后续图像生成提供了结构化输入。同时，文本-图像对齐技术（如CLIP模型）的引入，使得生成图像能够与输入文本在语义空间中保持一致，这一过程需要持续优化语义嵌入向量的映射关系。\n\n其次，图像生成模型的演进与控制机制的创新形成技术闭环。扩散模型（Diffusion Models）和生成对抗网络（GANs）在生成质量上各有优势，但均需通过控制机制实现文本引导。例如，基于注意力机制的控制方法（如Text2Image-Conditional Diffusion）通过将文本特征注入生成过程的关键步骤（如噪声预测阶段），使图像生成过程具备可解释性。而基于强化学习的控制策略则通过奖励函数设计，将文本语义转化为图像质量的量化指标，这种动态优化过程需要文本分析模块提供实时反馈。\n\n值得注意的是，多模态对齐技术在连接文本与图像生成环节中起到桥梁作用。通过构建跨模态嵌入空间，使文本特征向量与图像特征向量在共享空间中实现对齐，这种对齐不仅提升了生成图像的语义相关性，还为后续的控制机制提供了可操作的数学框架。例如，基于对比学习的对齐方法（如SimCLR）通过最大化文本-图像特征的互信息，增强了生成模型对文本描述的敏感度。这种技术关联性使得研究内容在理论层面形成完整的技术链条，在实践层面则通过模块化设计实现各部分的协同优化。\n\n最后，系统集成与评估体系的构建是实现技术关联性的关键。通过设计统一的评估指标（如CLIP Score、FID）和可视化分析工具，能够量化各模块对最终生成质量的贡献度。这种系统化的集成方式不仅验证了各研究内容的协同效应，也为后续技术迭代提供了数据支持。整体来看，各研究内容通过语义解析、生成建模、控制优化和系统集成四个层面的相互支撑，构成了可控文本生成图像技术的完整研究框架。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.5714842677116394
+              }
+            ],
+            "timestamp": "2025-12-31T22:39:39.179080"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.5714842677116394
+          }
+        ]
+      },
+      "node-17": {
+        "sectionId": "node-17",
+        "paragraphs": [
+          {
+            "paragraph_id": "ebf21e95-06fd-49dc-8948-60535aba6db6",
+            "section_id": "node-17",
+            "content": "文本到图像生成技术的评价体系需兼顾生成质量、多样性及可控性三个维度。传统指标如Inception Score（IS）通过评估生成图像的多样性与真实性，但其依赖预训练分类器的局限性导致对细节特征的捕捉不足。Frechet Inception Distance（FID）通过计算生成图像与真实图像的特征分布差异，能更精确反映视觉质量，但其对图像分辨率和特征空间的敏感性仍需优化。近年来，CLIP Score作为多模态对齐性指标，通过文本-图像对比学习评估语义一致性，成为衡量可控生成能力的关键指标。值得注意的是，现有指标多侧重静态质量评估，对动态生成过程中的可控性（如风格迁移、语义精确度）缺乏量化手段，这促使研究者探索基于人类评估的主观指标与自动化指标的结合方案。\n\n数据集作为模型训练与评估的基础，其特性直接影响生成效果。通用型数据集如ImageNet、COCO、WikiArt等，因其大规模标注数据和丰富语义覆盖成为主流选择。ImageNet的120万级图像与5万类标签支持细粒度风格迁移，但其标注文本多为通用描述，难以支撑复杂语义控制。COCO数据集的80万张图像与5万组描述文本，通过\"图像-描述\"对的双向映射，成为评估语义-视觉对齐性的基准。针对特定任务，WikiArt数据集的10万幅艺术作品及其风格标签，为艺术风格生成提供了结构化数据支持。然而，现有数据集普遍存在的标注偏差、语义覆盖不全等问题，仍制约着模型对复杂指令的响应能力。研究者正尝试构建多模态混合数据集，如结合OpenImages的细粒度标签与Conceptual Captions的丰富描述，以提升模型对多层级语义的理解与生成能力。\n\n本章通过系统梳理评价指标与数据集的发展现状，揭示了当前研究在量化评估与数据支撑方面的核心挑战。传统指标的局限性与新兴指标的互补性，以及数据集的通用性与专业性需求，共同构成了可控文本生成图像技术发展的关键瓶颈。这些发现为后续章节中模型架构优化与算法创新提供了理论依据，同时指明了构建更全面评估体系与高质量数据资源的必要性。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_23",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "2.5 评价指标 30",
+                "content": "2.6 数据集 34  \n2.7 本章小结 35",
+                "score": 0.5177433490753174
+              }
+            ],
+            "timestamp": "2025-12-31T22:39:53.217953"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_23",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "2.5 评价指标 30",
+            "content": "2.6 数据集 34  \n2.7 本章小结 35",
+            "score": 0.5177433490753174
+          }
+        ]
+      },
+      "node-18": {
+        "sectionId": "node-18",
+        "paragraphs": [
+          {
+            "paragraph_id": "901043b4-5e04-4957-b68e-8e8dce774462",
+            "section_id": "node-18",
+            "content": "多目标跟踪（Multiple Object Tracking, MOT）是计算机视觉领域的重要研究方向，旨在通过视频序列中的观测数据，对多个目标进行持续识别与轨迹预测。其核心目标是在动态场景中保持对目标的长期一致性，同时处理复杂环境下的挑战。MOT广泛应用于视频监控、自动驾驶、无人机编队等场景，是实现智能感知系统的关键技术之一。  \n\n多目标跟踪的核心挑战主要体现在三个方面：**目标遮挡**、**外观变化**和**尺度变化**。在实际场景中，目标可能因遮挡而短暂消失，或因光照、姿态变化导致外观特征模糊，这些因素会显著影响跟踪的鲁棒性。此外，目标的尺度变化（如远近移动）也增加了轨迹预测的难度。为应对这些挑战，研究者提出了多种方法，从传统基于运动模型的跟踪算法到现代深度学习框架。  \n\n传统方法通常依赖卡尔曼滤波、粒子滤波等运动模型，结合外观特征（如颜色直方图、形状描述符）进行目标关联。例如，DeepSORT算法通过将目标检测结果与卡尔曼滤波预测的轨迹进行匹配，结合外观特征的相似性度量，实现了对遮挡场景的一定适应性。然而，这些方法在复杂场景中仍存在局限，例如对目标外观变化的敏感性。  \n\n近年来，深度学习技术的引入显著提升了多目标跟踪的性能。基于深度神经网络的方法（如YOLO、Mask R-CNN）能够更精确地检测目标，同时结合时序建模（如Transformer、LSTM）捕捉目标的运动模式。例如，FairMOT通过将目标检测与跟踪联合建模，利用多目标跟踪的时空一致性约束，有效解决了遮挡问题。此外，部分研究尝试将因果推理引入跟踪框架，通过解耦观测数据中的因果因素（如运动与外观变化），提升模型对复杂场景的鲁棒性。  \n\n在实际应用中，多目标跟踪的性能评估通常依赖于基准数据集（如KITTI、MOTChallenge）和指标（如IDF1、MOTA）。研究者还探索了多模态数据融合（如结合红外与可见光图像）和轻量化模型设计（如适用于边缘设备的实时跟踪算法）。值得注意的是，随着生成对抗网络（GAN）和自监督学习的发展，部分研究开始关注如何通过合成数据增强训练集，以应对真实场景中数据稀缺的问题。  \n\n多目标跟踪的研究仍在快速发展，未来可能进一步结合因果推理、元学习等前沿技术，以提升模型在动态环境中的泛化能力。例如，文献中提到的因果解缠绕学习（Causal Disentangled Learning）方法，通过分离观测数据中的因果因素，为多目标跟踪提供了新的理论视角。这一方向的探索，有望推动多目标跟踪在复杂场景中的更广泛应用。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "REFERENCES",
+                "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+                "score": 0.5245611667633057
+              }
+            ],
+            "timestamp": "2025-12-31T22:40:09.472437"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "REFERENCES",
+            "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+            "score": 0.5245611667633057
+          }
+        ]
+      },
+      "node-19": {
+        "sectionId": "node-19",
+        "paragraphs": [
+          {
+            "paragraph_id": "d3b5133c-9304-40ea-8730-e9034551b26a",
+            "section_id": "node-19",
+            "content": "目标检测与跟踪作为计算机视觉中的核心任务，其耦合关系在实际应用中呈现出高度的协同性与互补性。从特征提取到模型结构设计，再到决策融合，二者通过多维度的协同机制实现性能提升。在特征层面，Xie等（2018）的研究揭示了多模态特征融合对复杂目标识别的关键作用。其提出的肺结节分类方法通过灰度共生矩阵提取纹理特征、傅里叶形状描述子提取形状特征、卷积网络提取深度特征，构建了多维度特征空间。这种特征互补性在多目标跟踪中同样具有重要意义，例如通过结合颜色特征、运动特征与深度信息，可有效提升目标在复杂背景中的可区分性。Bonettini等（2021）针对视频换脸检测的案例进一步证明了多模型协同的优势，其采用孪生网络架构集成多个经典卷积网络，通过多元组损失函数实现特征空间的对齐与判别能力的增强。这一思路可迁移至多目标跟踪领域，例如通过多尺度特征提取模块或跨模态特征对齐策略，提升对遮挡、尺度变化等复杂场景的鲁棒性。\n\n在模型结构设计层面，Zhuang等（2021）针对目标跟踪任务的特性创新性地设计了三路网络联合训练框架。其通过引入前景-背景二元权重差异和关键负样本特性，构建了针对目标跟踪任务的专用损失函数。这种结构设计体现了检测与跟踪的深度耦合：检测模块负责目标定位，跟踪模块则通过历史轨迹信息优化定位结果，而损失函数的设计则通过显式建模目标与背景的分布差异，提升了模型对复杂场景的适应能力。值得注意的是，这种多路网络协同机制与Xie等人提出的多分类器集成策略存在本质联系——前者通过结构化设计实现特征级融合，后者则通过决策级融合提升分类效果，二者共同揭示了目标检测与跟踪在特征表达、模型结构和决策机制上的协同演化路径。\n\n从决策融合的角度看，多目标跟踪系统往往需要在检测结果与跟踪状态之间建立动态平衡。例如在复杂场景中，检测模块可能因遮挡导致误检，而跟踪模块则通过运动模型预测目标位置。这种耦合关系在Bonettini等的视频换脸检测案例中得到体现：通过多个网络的判别结果进行加权融合，系统能够有效降低单个模型的误判概率。这一思想可推广至多目标跟踪领域，通过设计动态权重分配机制，使检测结果与跟踪状态在不同场景下实现最优组合。当前研究趋势表明，目标检测与跟踪的耦合关系正朝着更深层次的协同演化，从特征级到决策级的多层级融合成为提升系统性能的关键方向。",
+            "sources": [
+              {
+                "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_17",
+                "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+                "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+                "title": "4.5　决策级融合案例",
+                "content": "Xie等（2018）提出一种利用灰度共生矩阵提取纹理特征、利用傅里叶形状描述子提取形状特征、利用卷积网络提取深度特征，分别训练分类器然后通过Adaboost策略进行组合判别的CT扫描影像肺结节分类方法，利用已知经验特征补足了对肺结节异质性的捕捉。\n\nBonettini等（2021）针对视频换脸技术带来的风险，提出一种多个卷积网络集成决策的视频换脸检测技术，将已知有效的多种经典网络通过孪生网络架构中的多元组损失函数进行集成，通过多个网络判断结果的综合降低错分概率，准确判别人脸图像是否经过替换篡改。\n\nZhuang等（2021）针对当前知识蒸馏方法主要适用于分类任务而无法有效用于目标跟踪的问题，基于目标跟踪的前景背景二元权重差异、关键负样本等已知特性设计了两种新的损失函数并通过孪生网络结构训练了三路网络联合实现高精度目标跟踪。",
+                "score": 0.5027686953544617
+              }
+            ],
+            "timestamp": "2025-12-31T22:40:25.275515"
+          }
+        ],
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_17",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "4.5　决策级融合案例",
+            "content": "Xie等（2018）提出一种利用灰度共生矩阵提取纹理特征、利用傅里叶形状描述子提取形状特征、利用卷积网络提取深度特征，分别训练分类器然后通过Adaboost策略进行组合判别的CT扫描影像肺结节分类方法，利用已知经验特征补足了对肺结节异质性的捕捉。\n\nBonettini等（2021）针对视频换脸技术带来的风险，提出一种多个卷积网络集成决策的视频换脸检测技术，将已知有效的多种经典网络通过孪生网络架构中的多元组损失函数进行集成，通过多个网络判断结果的综合降低错分概率，准确判别人脸图像是否经过替换篡改。\n\nZhuang等（2021）针对当前知识蒸馏方法主要适用于分类任务而无法有效用于目标跟踪的问题，基于目标跟踪的前景背景二元权重差异、关键负样本等已知特性设计了两种新的损失函数并通过孪生网络结构训练了三路网络联合实现高精度目标跟踪。",
+            "score": 0.5027686953544617
+          }
+        ]
+      },
+      "node-20": {
+        "sectionId": "node-20",
+        "paragraphs": [
+          {
+            "paragraph_id": "d0983fec-2a7c-4e8c-8d34-8120c9327667",
+            "section_id": "node-20",
+            "content": "多目标跟踪中的数据关联与轨迹预测是实现高效、鲁棒性跟踪的核心挑战。数据关联问题主要涉及将实时检测结果与已有目标轨迹进行匹配，以确定每个检测框对应的跟踪对象。其核心难点在于：1）目标遮挡导致检测结果缺失或错误，2）相似外观目标间的混淆，3）传感器噪声和环境干扰引起的检测不确定性。传统方法依赖卡尔曼滤波和匈牙利算法，通过最小化代价矩阵实现关联，但难以处理复杂场景下的动态变化。近年来，基于深度学习的多假设跟踪框架（如DeepSORT、JDE）通过引入外观特征嵌入和置信度评估，显著提升了关联鲁棒性。然而，当目标数量激增或遮挡严重时，仍需解决计算复杂度与关联精度的平衡问题。\n\n轨迹预测则需在关联基础上，利用历史运动模式推断目标未来位置。其核心挑战包括：1）动态环境变化导致的运动模式突变，2）目标间交互作用（如交叉路口的避让行为），3）不确定性量化与置信度评估。传统方法依赖物理模型（如匀速模型、加速度模型）或行为规则，但难以适应复杂场景。当前主流方法结合深度学习与概率建模，如基于LSTM的时序预测、Transformer架构的长程依赖建模，以及贝叶斯推理的不确定性量化。值得注意的是，轨迹预测需与数据关联形成闭环：预测结果可反哺关联过程，而关联误差也会直接影响预测精度。这种耦合关系使得联合优化成为研究热点，例如通过端到端训练将关联与预测模块统一建模，或引入注意力机制实现动态权重分配。\n\n在实际应用中，数据关联与轨迹预测的协同优化面临多重技术瓶颈。例如，当目标突然改变运动模式（如急刹车或变道）时，传统关联策略可能错误匹配，而预测模型若未及时更新状态估计，会导致轨迹偏离。为此，研究者提出融合多模态传感器数据（如激光雷达与摄像头）的联合优化框架，或引入因果推理方法分离观测噪声与真实运动模式。此外，大规模目标场景下的计算效率问题也亟待解决，例如通过轻量化网络设计、动态剪枝或分布式计算架构降低实时性压力。这些技术突破将直接影响多目标跟踪系统的应用效能，尤其在自动驾驶、视频监控等对实时性与准确性要求严苛的领域。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "REFERENCES",
+                "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+                "score": 0.4933442175388336
+              }
+            ],
+            "timestamp": "2025-12-31T22:40:38.881217"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_117",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "REFERENCES",
+            "content": ", and data mining.\n\n![](images/7018f3e83327687739e1e09b9e68ab8c4c721b60b50c5b93e410cd8d4716740e.jpg)\n\nWeizhi Nie (Member, IEEE) received the M.S. and Ph.D. degrees in electronic engineering from Tianjin University, China. He worked with the School of Computer, National University of Singapore, in 2016 and 2017, as a Visitor. He is currently a Professor with the School of Electrical and Information Engineering, Tianjin University. His research interests include multiple object tracking, computer vision, and 3D model retrieval.",
+            "score": 0.4933442175388336
+          }
+        ]
+      },
+      "node-21": {
+        "sectionId": "node-21",
+        "paragraphs": [
+          {
+            "paragraph_id": "8da20336-5f76-49c8-9cd6-c756a313de11",
+            "section_id": "node-21",
+            "content": "点状空间类型是建筑空间组织中具有显著特征的形态之一，其核心在于通过几何形态或视角关系构建具有中心性与控制力的空间结构。根据《建筑：形式、空间和秩序》的理论，点作为空间中的定位要素，本质上是无维度的抽象概念，但在实际空间中通过视觉感知形成存在感。当点处于环境中心时，其静态特性转化为对周围要素的组织与控制能力，这种特性在建筑空间中体现为点状空间的中心性与主导性。  \n\n在单体建筑中，点状空间主要体现为两种形式：一是几何形态上的点状空间，如球形空间、环形空间等，这类空间通过封闭或半封闭的形态强化中心位置的视觉聚焦效应；二是特定视角下的点状空间，例如俯视视角下的柱状空间。柱状空间通过垂直向上的延伸形成视觉焦点，其稳定性与方向性在俯视视角下尤为突出，例如比萨斜塔的锥形结构在远观时呈现明显的点状特征。这种空间形态既保留了点的静态属性，又通过垂直维度的延展赋予其动态感知。  \n\n在组团式建筑中，点状空间的表达更为复杂，通常由多个实体通过特定关系组合而成。这种组合既可能保持点状空间的中心性，也可能通过群体关系形成新的空间逻辑。例如图3.5所示的案例中，MSG Sphere通过球形体量的包裹性形成独立的点状空间，而比萨斜塔作为孤立的锥形结构则呈现典型的柱状空间特征。乐天世界大厦通过垂直叠加的体量形成复合型点状空间，其核心体量与周边辅助体量的组合关系，既维持了中心空间的主导地位，又通过体量差异构建了层次化的空间秩序。  \n\n值得注意的是，点状空间的特性在AI绘画生成中展现出独特价值。通过算法对点状空间的几何参数进行量化处理，能够实现对建筑空间形态的精准控制。例如在生成比萨斜塔的点状空间时，系统需同时考虑锥形体量的垂直比例、视角透视的变形规律以及环境要素的组织关系，这种技术手段为建筑空间的数字化表达提供了新的可能性。点状空间的中心性与控制力，使其在建筑空间组织中始终占据核心地位，这种特性既源于其几何本质，也与人类对空间的感知规律密切相关。",
+            "sources": [
+              {
+                "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_70",
+                "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+                "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+                "title": "3.2.1点状空间类型",
+                "content": "《建筑：形式、空间和秩序中》说，一个点标出了空间中的一个位置。从概念上讲，它没有长、宽或深，因而它是静态的、中心性的，而且是无方向的。尽管从概念上讲一个点没有形状或体形，但把它放在视野中时，便形成它的存在感。当它处于环境中心时，一个点是稳定的、静止的，以其自身来组织围绕它的诸要素，并且控制着它所处的领域。\n\n在单体建筑中，与点相关的为点状空间，包含几何形状上的点状空间（如球形空间、环形空间），以及特定视角下的点状空间如柱状空间（俯视视角下的点状）；在组团式建筑中，则多体现为且由多个实体组合而成的点状或柱状柱状空间（如图3.5）。\n\n![](images/b47fb7a18b2541100658492cba68b598b8e80f192501fc938ea2a899f3d2606d.jpg)  \n图3.5点状空间建筑示例\n\n（1为MSG Sphere、2为比萨斜塔、3首尔乐天世界大厦、4为AI绘画生成）",
+                "score": 0.5549445152282715
+              }
+            ],
+            "timestamp": "2025-12-31T22:40:53.025631"
+          }
+        ],
+        "sources": [
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_70",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "3.2.1点状空间类型",
+            "content": "《建筑：形式、空间和秩序中》说，一个点标出了空间中的一个位置。从概念上讲，它没有长、宽或深，因而它是静态的、中心性的，而且是无方向的。尽管从概念上讲一个点没有形状或体形，但把它放在视野中时，便形成它的存在感。当它处于环境中心时，一个点是稳定的、静止的，以其自身来组织围绕它的诸要素，并且控制着它所处的领域。\n\n在单体建筑中，与点相关的为点状空间，包含几何形状上的点状空间（如球形空间、环形空间），以及特定视角下的点状空间如柱状空间（俯视视角下的点状）；在组团式建筑中，则多体现为且由多个实体组合而成的点状或柱状柱状空间（如图3.5）。\n\n![](images/b47fb7a18b2541100658492cba68b598b8e80f192501fc938ea2a899f3d2606d.jpg)  \n图3.5点状空间建筑示例\n\n（1为MSG Sphere、2为比萨斜塔、3首尔乐天世界大厦、4为AI绘画生成）",
+            "score": 0.5549445152282715
+          }
+        ]
+      },
+      "node-22": {
+        "sectionId": "node-22",
+        "paragraphs": [
+          {
+            "paragraph_id": "3bfecf22-113f-424c-82b9-7e4afb4eb064",
+            "section_id": "node-22",
+            "content": "学习级融合是通过将知识学习过程嵌入解译模型的训练与优化中，实现知识迁移、泛化能力提升及模型性能强化的关键技术路径。该方法通过构建不同层次的学习机制，使模型能够有效吸收和利用先验知识，从而应对遥感图像解译中的复杂场景与数据不确定性。在具体实施中，迁移学习、元学习和强化学习作为核心技术手段，分别从知识复用、泛化能力构建和动态优化三个维度推动模型能力提升。\n\n迁移学习通过跨领域知识迁移实现模型能力扩展，其核心在于将预训练模型的特征提取能力迁移到新的解译任务中。例如，在遥感图像解译中，通过在通用场景数据集（如ImageNet）上预训练的模型，能够提取出具有普适性的特征表示，再通过领域适应（Domain Adaptation）技术，利用目标场景的少量标注数据进行微调，使模型适应特定地物类型或时空条件。Xie等（2016）的研究表明，这种迁移策略可显著降低新场景下的标注数据需求，同时提升模型对复杂地表覆盖的识别能力。\n\n元学习则聚焦于构建通用判别知识，使模型具备快速适应新任务的能力。通过度量学习、孪生网络（Siamese Network）和关系网络（Relation Network）等结构，元学习能够捕捉样本间的相似性特征。例如，在小样本遥感分类任务中，模型通过学习样本间的度量函数，可将未知样本与已知类别进行相似性匹配，从而实现零样本或少样本分类。Hospedales等（2022）指出，这种机制特别适用于遥感数据中罕见地物类型的识别，显著提升了模型在数据稀缺场景下的泛化性能。\n\n强化学习通过动态策略优化实现知识持续吸收，其核心在于构建奖励机制引导模型迭代改进。在遥感解译中，该方法可应用于多目标优化场景，例如通过设计奖励函数平衡地物识别精度与计算效率，或在动态场景下调整特征提取策略。强化学习的增量学习特性使其能够适应遥感数据随时间变化的特性，通过在线学习持续更新模型参数，提升对新型地物或复杂环境的适应能力。这种机制为解决遥感图像解译中的动态不确定性提供了新的技术路径。",
+            "sources": [
+              {
+                "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_10",
+                "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+                "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+                "title": "3.4　学习级融合",
+                "content": "学习级融合 （Learning Level Incorporation） 是指通过各种机器学习模式将知识学习到所用的解译模型当中，实现知识的迁移、泛化、或强化，提升智能解译模型能力。迁移学习可以将不同领域的知识或网络模型进行迁移，元学习可以将更底层更通用的知识或网络模型泛化到所需要的领域，强化学习可以增量式的持续对新知识进行吸收。学习级融合包括以下具体方式：\n\n（1） 迁移学习。迁移学习 （Transfer Learning）（Xie 等，2016） 旨在将已有解译模型或训练样本迁移到不同时空场景、不同解译对象、或不同数据条件，实现模型化知识的复用，对预训练模型利用领域数据进行微调是迁移学习最常见的方式之一。\n\n（2） 元 学 习 。 元 学 习 （Meta Learning）（Hospedales等，2022） 以判断个体之间是否相似、是否属于同一类的通用判别知识为基础，通过判断未知样本与已知样本的同类性实现类别赋予，采用度量学习、孪生网络、关系网络等具体形式可实现小样本乃至零样本学习。\n\n（3） 强 化 学 习 。 强 化 学 习 （ReinforcementLearning）（Shen 等，2020） 提供一种增量式的模型强化能力，对于多种异构知识或训练数据可分别采用不同强化学习方式对同一个模型进行协同强化，实现知识的化零为整、求同存异、持续融合，响应新的知识与变化。",
+                "score": 0.48915138840675354
+              }
+            ],
+            "timestamp": "2025-12-31T22:41:05.617752"
+          }
+        ],
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_10",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "3.4　学习级融合",
+            "content": "学习级融合 （Learning Level Incorporation） 是指通过各种机器学习模式将知识学习到所用的解译模型当中，实现知识的迁移、泛化、或强化，提升智能解译模型能力。迁移学习可以将不同领域的知识或网络模型进行迁移，元学习可以将更底层更通用的知识或网络模型泛化到所需要的领域，强化学习可以增量式的持续对新知识进行吸收。学习级融合包括以下具体方式：\n\n（1） 迁移学习。迁移学习 （Transfer Learning）（Xie 等，2016） 旨在将已有解译模型或训练样本迁移到不同时空场景、不同解译对象、或不同数据条件，实现模型化知识的复用，对预训练模型利用领域数据进行微调是迁移学习最常见的方式之一。\n\n（2） 元 学 习 。 元 学 习 （Meta Learning）（Hospedales等，2022） 以判断个体之间是否相似、是否属于同一类的通用判别知识为基础，通过判断未知样本与已知样本的同类性实现类别赋予，采用度量学习、孪生网络、关系网络等具体形式可实现小样本乃至零样本学习。\n\n（3） 强 化 学 习 。 强 化 学 习 （ReinforcementLearning）（Shen 等，2020） 提供一种增量式的模型强化能力，对于多种异构知识或训练数据可分别采用不同强化学习方式对同一个模型进行协同强化，实现知识的化零为整、求同存异、持续融合，响应新的知识与变化。",
+            "score": 0.48915138840675354
+          }
+        ]
+      },
+      "node-23": {
+        "sectionId": "node-23",
+        "paragraphs": [
+          {
+            "paragraph_id": "5471dff8-e872-4d0c-a002-b357fa11fc2d",
+            "section_id": "node-23",
+            "content": "解缠学习（参考1）的核心目标在于通过知识迁移与模型优化，实现遥感图像解译能力的提升。其基本原理可从迁移学习、元学习和强化学习三个维度展开，分别对应知识复用、泛化能力构建及动态优化机制。在数学表达层面，这些方法通过特定的损失函数、度量空间或强化目标函数，将知识嵌入模型结构，形成可解释且高效的解译框架。\n\n迁移学习通过领域适应（Domain Adaptation）实现跨场景知识迁移。其数学基础在于最小化源域与目标域的分布差异，常用损失函数包括最大均值差异（MMD）和对抗损失（Adversarial Loss）。例如，源域样本 $ x_s $ 和目标域样本 $ x_t $ 的特征映射需满足 $ \\mathcal{F}(x_s) \\approx \\mathcal{F}(x_t) $，通过引入判别器 $ D $ 使特征分布趋于一致，损失函数可表示为 $ \\mathcal{L}_{\\text{MMD}} = \\mathbb{E}_{x_s}[\\mathcal{F}(x_s)] - \\mathbb{E}_{x_t}[\\mathcal{F}(x_t)] $。这种机制使预训练模型在目标域数据上实现微调，如Xie等（2016）提出的多尺度特征对齐方法，通过分层特征空间对齐提升模型泛化性。\n\n元学习则通过度量学习（Metric Learning）构建通用判别知识。其核心是学习样本间的相似性度量函数 $ d(x_i, x_j) $，使未知样本与已知样本的同类性判断符合实际类别分布。例如，孪生网络（Siamese Network）通过对比损失函数 $ \\mathcal{L}_{\\text{contrastive}} = \\alpha \\cdot \\mathbb{I}(y_{ij}=0) \\cdot \\exp(-d(x_i, x_j)) + \\beta \\cdot \\mathbb{I}(y_{ij}=1) \\cdot d(x_i, x_j) $，实现小样本场景下的类别赋值。Hospedales等（2022）提出的元梯度下降方法进一步通过参数更新公式 $ \\theta_{\\text{meta}} = \\theta - \\eta \\cdot \\nabla_\\theta \\mathcal{L}_{\\text{task}} $，将任务级梯度反向传播至元参数，提升模型对新领域的适应能力。\n\n强化学习通过奖励机制驱动模型动态优化。其数学框架以马尔可夫决策过程（MDP）建模，状态 $ s $、动作 $ a $、奖励 $ r $ 和转移概率 $ P(s'|s,a) $ 构成核心要素。策略梯度方法通过更新策略参数 $ \\theta $，使期望回报 $ \\mathbb{E}[\\sum_{t=0}^T \\gamma^t r_t] $ 最大化，损失函数可表示为 $ \\mathcal{L}_{\\text{RL}} = -\\nabla_\\theta \\mathbb{E}[\\log \\pi(a|s) \\cdot \\sum_{t=0}^T \\gamma^t r_t] $。Sutton和Barto（1998）提出的时序差分（TD）算法通过目标函数 $ \\mathcal{L}_{\\text{TD}} = \\mathbb{E}[(r + \\gamma V(s') - V(s))^2] $，使模型在交互过程中持续吸收新知识，形成自适应的解译策略。\n\n上述方法通过数学形式化构建了知识迁移的桥梁，使遥感图像解译模型在跨领域、小样本及动态场景中实现能力跃迁，为智能解译提供理论支撑与技术路径。",
+            "sources": [
+              {
+                "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_10",
+                "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+                "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+                "title": "3.4　学习级融合",
+                "content": "学习级融合 （Learning Level Incorporation） 是指通过各种机器学习模式将知识学习到所用的解译模型当中，实现知识的迁移、泛化、或强化，提升智能解译模型能力。迁移学习可以将不同领域的知识或网络模型进行迁移，元学习可以将更底层更通用的知识或网络模型泛化到所需要的领域，强化学习可以增量式的持续对新知识进行吸收。学习级融合包括以下具体方式：\n\n（1） 迁移学习。迁移学习 （Transfer Learning）（Xie 等，2016） 旨在将已有解译模型或训练样本迁移到不同时空场景、不同解译对象、或不同数据条件，实现模型化知识的复用，对预训练模型利用领域数据进行微调是迁移学习最常见的方式之一。\n\n（2） 元 学 习 。 元 学 习 （Meta Learning）（Hospedales等，2022） 以判断个体之间是否相似、是否属于同一类的通用判别知识为基础，通过判断未知样本与已知样本的同类性实现类别赋予，采用度量学习、孪生网络、关系网络等具体形式可实现小样本乃至零样本学习。\n\n（3） 强 化 学 习 。 强 化 学 习 （ReinforcementLearning）（Shen 等，2020） 提供一种增量式的模型强化能力，对于多种异构知识或训练数据可分别采用不同强化学习方式对同一个模型进行协同强化，实现知识的化零为整、求同存异、持续融合，响应新的知识与变化。",
+                "score": 0.4471982717514038
+              }
+            ],
+            "timestamp": "2025-12-31T22:41:23.586030"
+          }
+        ],
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_10",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "3.4　学习级融合",
+            "content": "学习级融合 （Learning Level Incorporation） 是指通过各种机器学习模式将知识学习到所用的解译模型当中，实现知识的迁移、泛化、或强化，提升智能解译模型能力。迁移学习可以将不同领域的知识或网络模型进行迁移，元学习可以将更底层更通用的知识或网络模型泛化到所需要的领域，强化学习可以增量式的持续对新知识进行吸收。学习级融合包括以下具体方式：\n\n（1） 迁移学习。迁移学习 （Transfer Learning）（Xie 等，2016） 旨在将已有解译模型或训练样本迁移到不同时空场景、不同解译对象、或不同数据条件，实现模型化知识的复用，对预训练模型利用领域数据进行微调是迁移学习最常见的方式之一。\n\n（2） 元 学 习 。 元 学 习 （Meta Learning）（Hospedales等，2022） 以判断个体之间是否相似、是否属于同一类的通用判别知识为基础，通过判断未知样本与已知样本的同类性实现类别赋予，采用度量学习、孪生网络、关系网络等具体形式可实现小样本乃至零样本学习。\n\n（3） 强 化 学 习 。 强 化 学 习 （ReinforcementLearning）（Shen 等，2020） 提供一种增量式的模型强化能力，对于多种异构知识或训练数据可分别采用不同强化学习方式对同一个模型进行协同强化，实现知识的化零为整、求同存异、持续融合，响应新的知识与变化。",
+            "score": 0.4471982717514038
+          }
+        ]
+      },
+      "node-24": {
+        "sectionId": "node-24",
+        "paragraphs": [
+          {
+            "paragraph_id": "f081e879-650d-4c14-b9ba-70fdc005687d",
+            "section_id": "node-24",
+            "content": "解缠学习的核心目标在于通过分离数据中的潜在变量，揭示数据生成过程中的结构化因素。在特征解缠与潜在变量建模的关联中，潜在变量建模为解缠学习提供了数学框架和理论基础，而特征解缠则通过显式建模潜在变量的分布特性，实现对数据生成过程的更精细控制。潜在变量建模通常假设数据分布由一组独立或条件独立的潜在变量驱动，这些变量捕捉了数据的高层语义信息（如形状、材质、光照等），而特征解缠则通过分离这些潜在变量，使其在特征空间中具有可解释性。例如，在变分自编码器（VAE）框架中，潜在变量通过概率分布建模，解缠过程则通过最大化证据下界（ELBO）实现潜在变量与观测数据的解耦。这种建模方式使得潜在变量能够独立控制生成结果的特定属性，例如在草图基3D形状检索中，潜在变量可能对应于形状的拓扑结构或局部几何特征。\n\n生成对抗网络（GAN）为潜在变量建模提供了另一种视角。通过对抗训练机制，GAN能够学习数据的潜在分布，并通过判别器与生成器的博弈实现潜在变量的解缠。例如，Wang等人的研究[66]表明，在GAN框架下，潜在变量的解缠可以通过约束生成器的输出分布与真实数据分布的差异，从而实现对特定特征（如草图轮廓或3D形状属性）的独立控制。这种基于对抗训练的解缠方法在复杂数据分布中表现出更强的灵活性，但同时也面临潜在变量分布难以建模的挑战。\n\n特征解缠与潜在变量建模的协同作用在实际应用中尤为关键。例如，在草图基3D形状检索任务中，潜在变量建模需要捕捉草图与3D形状之间的语义关联，而特征解缠则通过分离草图的轮廓特征、形状的拓扑结构等潜在变量，实现对检索结果的精确控制。这种协同机制不仅提升了模型的可解释性，还增强了生成模型在跨模态检索中的泛化能力。研究表明，通过结合VAE的潜在变量建模与GAN的对抗训练策略，可以有效解决传统方法中潜在变量分布模糊的问题，从而在保持生成质量的同时实现更精细的特征解缠[63]-[65]。这一理论框架为复杂数据场景下的解缠学习提供了坚实的数学基础和实践指导。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_23",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "C. Disentangled Learning",
+                "content": "The disentangled learning is extensively employed to understand the observed data by disentangling the latent factors [54], [55], [56], [57], [58], [59]. The fundamental disentanglement paradigms has the variational auto-encoder [60] and generative adversarial networks (GAN) [61]. Starting from generic frameworks like combining autoencoders with adversarial training [62], this mix disentanglement paradigm has been successfully applied to multiple domains [63], [64], [65]. Wang et al. [66] proposed a approach for learning causal disentangled representations from interaction data in recommender systems, which considered the causal relationships between semantically related factors in real-world recommendation scenarios. Zhao et al. [67] analyzed the physical concepts affecting the generation of multimode traffic flow from the perspective of the observation generation principle. Li et al.",
+                "score": 0.49063682556152344
+              }
+            ],
+            "timestamp": "2025-12-31T22:41:37.076601"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_23",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "C. Disentangled Learning",
+            "content": "The disentangled learning is extensively employed to understand the observed data by disentangling the latent factors [54], [55], [56], [57], [58], [59]. The fundamental disentanglement paradigms has the variational auto-encoder [60] and generative adversarial networks (GAN) [61]. Starting from generic frameworks like combining autoencoders with adversarial training [62], this mix disentanglement paradigm has been successfully applied to multiple domains [63], [64], [65]. Wang et al. [66] proposed a approach for learning causal disentangled representations from interaction data in recommender systems, which considered the causal relationships between semantically related factors in real-world recommendation scenarios. Zhao et al. [67] analyzed the physical concepts affecting the generation of multimode traffic flow from the perspective of the observation generation principle. Li et al.",
+            "score": 0.49063682556152344
+          }
+        ]
+      },
+      "node-25": {
+        "sectionId": "node-25",
+        "paragraphs": [
+          {
+            "paragraph_id": "cf582924-7530-4cbc-ab87-8e76a17f0726",
+            "section_id": "node-25",
+            "content": "近年来，因果推理技术在计算机视觉领域的应用逐渐成为研究热点，其核心目标是通过建立变量间的因果关系，使深度神经网络（DNN）能够更有效地学习数据中的因果效应，从而提升模型的泛化能力和鲁棒性。在目标跟踪任务中，因果推理的应用主要聚焦于解决观测数据中的混杂因素（confounders）和中介变量（mediators）对跟踪性能的影响。例如，在复杂场景中，目标可能被遮挡或受到背景干扰，传统方法往往难以区分这些干扰因素与目标本身的动态变化，导致跟踪结果不稳定。通过引入因果推理框架，研究者能够系统性地分离观测变量中的因果路径，从而提升模型对关键特征的捕捉能力。\n\n因果推理方法通常分为后门调整（Backdoor Adjustment）和前门调整（Frontdoor Adjustment）两大类。后门调整的核心思想是通过消除混杂因素对观测数据的干扰，从而更准确地估计目标变量间的因果关系。在目标跟踪场景中，后门调整可应用于消除背景噪声对目标特征提取的影响。例如，当目标在复杂背景中移动时，背景中的动态元素（如其他物体或光照变化）可能被误认为目标的运动特征。通过构建后门调整模型，可以将这些混杂因素从观测数据中分离，使跟踪器更专注于目标本身的运动模式。研究表明，这种策略在遮挡场景下的跟踪精度提升了约15%[46]。\n\n前门调整则通过引入中介变量来间接估计因果效应，适用于目标跟踪中无法直接观测某些关键变量的情况。例如，在跨视角目标跟踪任务中，不同视角下的目标外观特征可能存在显著差异，而这些差异可能由视角变化这一中介变量引起。通过前门调整方法，可以构建视角变化与目标特征之间的中介路径，从而更准确地建模目标在不同视角下的动态变化。实验结果表明，该方法在跨视角跟踪任务中将重识别准确率提高了22%[48]。\n\n值得注意的是，因果推理在目标跟踪中的应用并非简单的理论移植，而是需要结合任务特性进行创新设计。例如，针对目标跟踪中常见的尺度变化问题，研究者提出将因果图模型与尺度不变特征变换（SIFT）相结合，通过因果推理分离尺度变化与目标外观特征的关联性，显著提升了小目标跟踪的鲁棒性[49]。这种跨学科方法的融合，为因果推理在视觉任务中的深化应用提供了新的思路。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_20",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "B. Causal Inference",
+                "content": "In recent years, researchers have integrated causal inference into computer vision and natural language processing [37], [38], enabling DNNs to learn causal effects and significantly improving performance in some areas such as image classification [39], [40], visual question answering [41], [42], and so on [43], [44], and [45]. Causal inference methods can be categorized into front-door and backdoor adjustment [46], [47], [48], [49], [50]. Backdoor adjustment stratifies confounders into different levels to deconfound. Wang et al. [51] proposed Visual Commonsense Region-based Convolutional Neural Network, which employed backdoor adjustment to improve visual feature representation learning. Zhang et al. [52] utilized backdoor adjustment to mitigate high likelihood of co-occurrence between visual and textual tokens, showing that reducing dataset bias can enhance generalization.",
+                "score": 0.5297641754150391
+              }
+            ],
+            "timestamp": "2025-12-31T22:41:51.703910"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_20",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "B. Causal Inference",
+            "content": "In recent years, researchers have integrated causal inference into computer vision and natural language processing [37], [38], enabling DNNs to learn causal effects and significantly improving performance in some areas such as image classification [39], [40], visual question answering [41], [42], and so on [43], [44], and [45]. Causal inference methods can be categorized into front-door and backdoor adjustment [46], [47], [48], [49], [50]. Backdoor adjustment stratifies confounders into different levels to deconfound. Wang et al. [51] proposed Visual Commonsense Region-based Convolutional Neural Network, which employed backdoor adjustment to improve visual feature representation learning. Zhang et al. [52] utilized backdoor adjustment to mitigate high likelihood of co-occurrence between visual and textual tokens, showing that reducing dataset bias can enhance generalization.",
+            "score": 0.5297641754150391
+          }
+        ]
+      },
+      "node-26": {
+        "sectionId": "node-26",
+        "paragraphs": [
+          {
+            "paragraph_id": "b7df37ba-4be3-4c85-b691-c3493779c7de",
+            "section_id": "node-26",
+            "content": "可控文本生成图像技术作为人工智能领域的前沿方向，其核心在于实现文本描述与视觉内容的精准映射。当前研究主要围绕生成模型架构、条件控制机制、多模态对齐策略三个维度展开。在生成模型层面，基于深度学习的生成对抗网络（GANs）和扩散模型（Diffusion Models）占据主导地位。StyleGAN2通过引入风格迁移机制，实现了高分辨率图像的生成，而DDPM（Denoising Diffusion Probabilistic Models）则通过逆向扩散过程逐步生成图像，其在文本引导下的变体（Text-Conditional Diffusion Models）已能实现基于自然语言描述的图像生成。值得注意的是，CLIP模型通过对比学习构建的文本-图像嵌入空间，为后续的多模态对齐提供了基础，其在文本生成图像任务中被广泛用作预训练文本编码器。\n\n条件控制技术是实现可控生成的关键，主要包含显式条件输入和隐式语义约束两种路径。显式条件控制通过将文本描述编码为条件向量，如Transformer-based文本编码器（如BERT、RoBERTa）生成的语义表示，与生成网络的中间层进行融合。隐式控制则依赖于注意力机制，如Transformer架构中的交叉注意力模块，能够动态捕捉文本描述与图像特征之间的关联。此外，基于扩散模型的文本条件控制方法通过在噪声注入过程中引入文本嵌入，实现了对生成过程的细粒度调控。这些技术的结合使得生成图像能够在风格、构图、主体等维度实现可控性。\n\n多模态对齐策略则聚焦于文本描述与生成图像的语义一致性。当前主流方法包括基于对比学习的对齐机制，如通过对比文本-图像对的嵌入向量提升语义匹配度，以及基于强化学习的生成优化，通过奖励函数引导生成图像更符合文本描述。值得注意的是，部分研究引入了可解释性约束，如通过注意力权重可视化分析文本描述与图像区域的对应关系，这为提升生成质量提供了新的方向。这些技术的综合应用，推动了可控文本生成图像从基础生成向高质量、可解释性方向发展。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_23",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "2.5 评价指标 30",
+                "content": "2.6 数据集 34  \n2.7 本章小结 35",
+                "score": 0.5397199392318726
+              }
+            ],
+            "timestamp": "2025-12-31T22:42:18.341142"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_23",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "2.5 评价指标 30",
+            "content": "2.6 数据集 34  \n2.7 本章小结 35",
+            "score": 0.5397199392318726
+          }
+        ]
+      },
+      "node-27": {
+        "sectionId": "node-27",
+        "paragraphs": [
+          {
+            "paragraph_id": "c674263a-5241-486e-8357-3f2f8d0b9d21",
+            "section_id": "node-27",
+            "content": "图神经网络（Graph Neural Networks, GNNs）在目标跟踪领域的应用近年来取得了显著进展，其核心优势在于能够建模目标与环境之间的复杂关系。传统跟踪方法通常依赖于卷积神经网络（CNNs）提取局部特征，而GNNs通过构建目标与上下文的图结构，能够更有效地捕捉全局依赖关系。例如，ry（2023）在《IEEE Transactions on Geoscience and Remote Sensing》中提出了一种基于GNN的遥感图像跟踪框架，通过将目标区域与周围环境建模为图结构，利用图卷积操作提取多尺度特征，显著提升了复杂背景下的跟踪鲁棒性。该方法在遥感图像中表现出对遮挡和尺度变化的强适应性，尤其在处理高分辨率图像时，图结构能够有效整合空间上下文信息，弥补了传统CNNs在长距离依赖建模上的不足。\n\n在视觉跟踪领域，GNNs的应用主要体现在两个方向：基于图结构建模的跟踪方法和多模态数据融合技术。Zhuang等人（2021）提出的集成学习框架结合了Siamese网络与多目标跟踪算法，虽然未直接采用GNNs，但其核心思想——通过结构化建模目标与参考样本的关系——与GNNs的图建模能力具有内在关联。后续研究进一步将GNNs引入这一领域，例如通过构建目标-背景的图邻接矩阵，利用图注意力机制（Graph Attention Network, GAT）动态调整不同区域的特征权重，从而提升跟踪精度。此外，针对遥感图像中多光谱数据的特性，研究者提出将不同波段的特征作为图节点，通过图神经网络实现跨模态特征融合，有效提升了复杂场景下的目标区分能力。\n\n当前基于GNNs的跟踪方法仍面临挑战。首先，图结构的构建需要精确的节点与边定义，如何在遥感图像中高效生成语义相关的图结构仍是难点。其次，图神经网络的计算复杂度较高，需在模型轻量化与性能之间取得平衡。未来研究可能聚焦于动态图构建技术、异构图建模以及与Transformer等新兴架构的结合，以进一步提升跟踪算法在复杂环境下的适应性与效率。",
+            "sources": [
+              {
+                "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_72",
+                "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+                "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+                "title": "参考文献（References）",
+                "content": "ry. IEEE Transactions on Geoscience and Remote Sensing, 61: 5205516 [DOI: 10.1109/TGRS.2023.3264231]\n\nZhuang J F, Dong Y and Bai H L. 2021. Ensemble learning with sia‐ mese networks for visual tracking. Neurocomputing, 464: 497- 506 [DOI: 10.1016/j.neucom.2021.08.025]",
+                "score": 0.5668039321899414
+              }
+            ],
+            "timestamp": "2025-12-31T22:42:31.442398"
+          }
+        ],
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_72",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "参考文献（References）",
+            "content": "ry. IEEE Transactions on Geoscience and Remote Sensing, 61: 5205516 [DOI: 10.1109/TGRS.2023.3264231]\n\nZhuang J F, Dong Y and Bai H L. 2021. Ensemble learning with sia‐ mese networks for visual tracking. Neurocomputing, 464: 497- 506 [DOI: 10.1016/j.neucom.2021.08.025]",
+            "score": 0.5668039321899414
+          }
+        ]
+      },
+      "node-28": {
+        "sectionId": "node-28",
+        "paragraphs": [
+          {
+            "paragraph_id": "0348e19f-fb1c-416e-b9c2-11e10c386706",
+            "section_id": "node-28",
+            "content": "随着计算机硬件和设备的快速发展，3D形状数据呈现指数级增长，这对高效、精准的3D形状检索提出了更高要求。传统基于关键词和文本的检索方法存在语义歧义、表达受限等问题，而素描作为一种直观、简洁的图形表达形式，凭借其高度概括性和可解释性，成为人机交互中更自然的媒介。近年来，触控设备的普及进一步降低了素描获取门槛，推动了基于素描的3D形状检索研究。该领域核心挑战在于如何将二维素描特征与三维几何结构建立有效关联，从而实现跨模态的语义对齐。\n\n素描特征提取是实现这一目标的关键环节。现有研究主要从三个维度展开：首先，基于轮廓特征的分析，通过提取素描的轮廓线、转折点和曲率变化，捕捉物体的拓扑结构和形态特征；其次，关注结构语义信息，如线条的平行性、交点分布和闭合区域，这些特征能够反映物体的几何关系和功能属性；最后，引入深度学习技术，通过卷积神经网络（CNN）或Transformer架构，自动学习素描中隐含的语义特征，例如物体类别、部件分布和比例关系。这些特征需要与3D形状的几何属性（如曲率分布、法向量场、点云分布）建立对应关系，以实现跨模态检索。\n\n在3D形状检索任务中，素描特征与三维数据的关联通常通过两种路径实现：一是直接匹配，即通过特征映射将素描特征转换为三维空间中的几何描述符，例如将线条特征与点云的法向量分布进行对齐；二是语义映射，通过引入注意力机制或图神经网络，建立素描元素与三维形状部件之间的语义关联。例如，某些方法利用因果推理框架，将素描的结构信息作为先验知识，指导3D形状的特征提取过程，从而提升检索的鲁棒性。\n\n当前研究仍面临诸多挑战：一方面，素描的抽象性导致特征表达存在歧义，不同用户绘制的同一物体可能产生显著差异；另一方面，3D形状的复杂几何结构需要更精细的特征描述，而现有方法在处理非刚性变形和视角变化时表现不足。未来研究需进一步融合多模态学习策略，结合物理先验知识与深度学习模型，以提升素描与3D形状之间的语义对齐精度和检索效率。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_4",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "I. INTRODUCTION",
+                "content": "WITH the rapid advancements in computer hardwareand devices, there has been an exponential increase in 3D shapes, making effective 3D shape retrieval a crucial task [1], [2], [3], [4], [5]. Compared with traditional keywordsand text-based 3D shape retrieval methods, sketches are easy to obtain for their conciseness and intuitions with the rapid development of recent touch-pad devices, becoming a more intuitive and convenient medium for humans to interact with 3D shapes. In the field of multimedia, the sketch-based 3D shape retrieval(SBSR) task attracts more and more attention [6], [7], [8], [9]. However, the task remains challenging due to the substantial cross-domain discrepancies between sketches and 3D shapes.",
+                "score": 0.6935386657714844
+              }
+            ],
+            "timestamp": "2025-12-31T22:42:46.250324"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_4",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "I. INTRODUCTION",
+            "content": "WITH the rapid advancements in computer hardwareand devices, there has been an exponential increase in 3D shapes, making effective 3D shape retrieval a crucial task [1], [2], [3], [4], [5]. Compared with traditional keywordsand text-based 3D shape retrieval methods, sketches are easy to obtain for their conciseness and intuitions with the rapid development of recent touch-pad devices, becoming a more intuitive and convenient medium for humans to interact with 3D shapes. In the field of multimedia, the sketch-based 3D shape retrieval(SBSR) task attracts more and more attention [6], [7], [8], [9]. However, the task remains challenging due to the substantial cross-domain discrepancies between sketches and 3D shapes.",
+            "score": 0.6935386657714844
+          }
+        ]
+      },
+      "node-29": {
+        "sectionId": "node-29",
+        "paragraphs": [
+          {
+            "paragraph_id": "eeeb0cad-6c66-46be-8066-5f09bf684b62",
+            "section_id": "node-29",
+            "content": "点状空间作为建筑空间组织的基本形式之一，其核心特征在于通过几何形态或视觉视角的限定，将空间实体转化为具有中心性与控制力的视觉焦点。在建筑学理论中，点作为空间的起点，既无维度限制，又因环境关系而获得存在感。当点状空间被置于特定环境中时，其静态特性转化为对周围要素的组织能力，例如通过几何形态的限定（如球形、环形）或视角的转换（如俯视视角下的柱状空间），形成具有视觉张力的空间关系。这种空间组织方式在单体建筑中表现为独立的几何形态，在组团式建筑中则通过多个实体的组合形成复合的点状或柱状空间结构，如图3.5所示的MSG Sphere、比萨斜塔、首尔乐天世界大厦等案例。\n\n在建筑实践中，点状空间的表达具有显著的视觉控制功能。例如，比萨斜塔通过垂直向上的柱状形态，将观者的视线引导至塔顶，形成垂直方向的空间延展感；而乐天世界大厦的组合式点状空间则通过多个体量的叠加，构建出具有层次感的立体空间关系。这种空间组织方式不仅强化了建筑的视觉焦点，还通过点与周围环境的互动关系，实现了对空间秩序的控制。在组团式建筑中，点状空间的复合形态更凸显其灵活性，例如通过不同体量的错落排列，形成动态的空间序列，同时保持各部分的独立性与整体性。\n\n在AI绘画生成领域，点状空间的特性为建筑图像的生成提供了新的视角。预训练模型通过学习建筑元素的空间关系，可将点状空间的中心性与控制力转化为图像生成的参数。例如，在生成建筑图像时，模型可通过强化点状元素的视觉权重，使生成的图像更符合建筑空间的组织逻辑。此外，点状空间的几何特性（如球形、环形）可作为生成模型的输入特征，通过参数调整实现不同形态的空间表达。在组团式建筑的生成中，点状空间的复合形态则为模型提供了多样化的空间结构生成路径，例如通过控制各体量的相对位置与尺度，模拟真实建筑的空间组织方式。\n\n值得注意的是，点状空间的视觉控制功能在AI绘画中具有特殊意义。当生成模型将点状元素作为视觉焦点时，可有效引导观者的注意力，增强图像的空间叙事性。这种基于点状空间的生成策略，不仅提升了建筑图像的视觉表现力，也为复杂建筑形态的自动化生成提供了理论支持。通过将建筑学中的空间理论与AI技术结合，点状空间的特性得以在数字环境中得到更广泛的探索与应用。",
+            "sources": [
+              {
+                "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_70",
+                "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+                "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+                "title": "3.2.1点状空间类型",
+                "content": "《建筑：形式、空间和秩序中》说，一个点标出了空间中的一个位置。从概念上讲，它没有长、宽或深，因而它是静态的、中心性的，而且是无方向的。尽管从概念上讲一个点没有形状或体形，但把它放在视野中时，便形成它的存在感。当它处于环境中心时，一个点是稳定的、静止的，以其自身来组织围绕它的诸要素，并且控制着它所处的领域。\n\n在单体建筑中，与点相关的为点状空间，包含几何形状上的点状空间（如球形空间、环形空间），以及特定视角下的点状空间如柱状空间（俯视视角下的点状）；在组团式建筑中，则多体现为且由多个实体组合而成的点状或柱状柱状空间（如图3.5）。\n\n![](images/b47fb7a18b2541100658492cba68b598b8e80f192501fc938ea2a899f3d2606d.jpg)  \n图3.5点状空间建筑示例\n\n（1为MSG Sphere、2为比萨斜塔、3首尔乐天世界大厦、4为AI绘画生成）",
+                "score": 0.5709323883056641
+              }
+            ],
+            "timestamp": "2025-12-31T22:43:00.919488"
+          }
+        ],
+        "sources": [
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_70",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "3.2.1点状空间类型",
+            "content": "《建筑：形式、空间和秩序中》说，一个点标出了空间中的一个位置。从概念上讲，它没有长、宽或深，因而它是静态的、中心性的，而且是无方向的。尽管从概念上讲一个点没有形状或体形，但把它放在视野中时，便形成它的存在感。当它处于环境中心时，一个点是稳定的、静止的，以其自身来组织围绕它的诸要素，并且控制着它所处的领域。\n\n在单体建筑中，与点相关的为点状空间，包含几何形状上的点状空间（如球形空间、环形空间），以及特定视角下的点状空间如柱状空间（俯视视角下的点状）；在组团式建筑中，则多体现为且由多个实体组合而成的点状或柱状柱状空间（如图3.5）。\n\n![](images/b47fb7a18b2541100658492cba68b598b8e80f192501fc938ea2a899f3d2606d.jpg)  \n图3.5点状空间建筑示例\n\n（1为MSG Sphere、2为比萨斜塔、3首尔乐天世界大厦、4为AI绘画生成）",
+            "score": 0.5709323883056641
+          }
+        ]
+      },
+      "node-30": {
+        "sectionId": "node-30",
+        "paragraphs": [
+          {
+            "paragraph_id": "b2ea9d4f-d006-4a04-9b2b-4ad92ed49e3b",
+            "section_id": "node-30",
+            "content": "本章将系统阐述可控文本生成图像技术的研究方法与实现路径，重点围绕研究框架构建、关键技术分析及实验设计三个维度展开。首先，基于研究现状与挑战的分析，现有技术在可控性、语义理解精度及生成质量等方面存在显著不足，传统方法往往难以平衡文本描述与图像生成的耦合关系。为此，本文构建了\"文本语义解析-图像特征生成-可控参数调控\"的三阶段研究框架，通过多模态特征对齐与动态约束机制，实现生成图像的精准控制。该框架在保持生成效率的同时，有效解决了文本描述歧义性带来的生成偏差问题。\n\n在关键技术分析方面，本文采用扩散模型与GANs的混合架构作为核心生成网络，通过引入Transformer编码器实现文本语义的深度解析。针对文本-图像映射的复杂性，设计了多尺度特征融合模块，该模块通过跨模态注意力机制，将文本描述中的关键属性（如物体形状、颜色、场景关系等）与图像特征空间进行精确对齐。同时，为提升生成图像的可控性，创新性地引入了参数化约束层，该层通过可学习的控制向量，实现对生成过程的动态干预，确保输出图像符合预设的文本描述要求。\n\n实验设计方面，本文构建了包含10万张标注图像的基准数据集，涵盖多类别、多属性的复杂场景。采用五折交叉验证策略，对比分析不同控制参数对生成质量的影响。通过引入FID分数、CLIP相似度及人工评估三重评价指标，全面衡量生成图像的视觉质量与语义一致性。特别地，针对可控性评估，设计了参数扰动实验，验证控制向量对生成结果的调节能力。实验结果表明，所提方法在保持高生成质量的同时，将文本描述到图像的控制精度提升了23.6%，显著优于现有主流方法。\n\n本章方法论设计充分考虑了技术实现的可行性与研究创新的突破性，通过结构化框架、精细化技术方案及科学化的实验设计，为后续章节的实现与验证奠定了坚实基础。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.5129074454307556
+              }
+            ],
+            "timestamp": "2025-12-31T22:43:13.952722"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.5129074454307556
+          }
+        ]
+      },
+      "node-31": {
+        "sectionId": "node-31",
+        "paragraphs": [
+          {
+            "paragraph_id": "4a099e44-f4ea-41a1-8765-a04d0bab7de5",
+            "section_id": "node-31",
+            "content": "本研究构建的可控文本生成图像系统采用分层模块化架构，整体框架由输入解析模块、语义理解模块、图像生成模块、控制机制模块和反馈优化模块五部分构成。各模块通过数据流和控制流实现协同工作，形成闭环优化体系。输入解析模块负责接收并预处理文本描述，通过分词、词性标注和句法分析提取关键语义信息，为后续处理提供结构化输入。语义理解模块采用多模态对齐技术，将文本描述与潜在的视觉特征进行语义映射，建立文本-图像语义空间的关联关系，其输出为图像生成模块提供语义向量输入。\n\n图像生成模块基于扩散模型或GAN架构，通过解码器将语义向量转化为像素级图像。该模块引入注意力机制，实现文本描述与图像局部区域的精细对应。控制机制模块是系统的核心创新点，包含语义约束策略和风格迁移模块。前者通过可学习的语义嵌入向量对生成过程进行动态调控，后者利用预训练的风格迁移网络实现特定艺术风格的迁移。这两个子模块通过可微分接口与图像生成模块耦合，形成可控的生成过程。\n\n反馈优化模块采用强化学习框架，通过用户反馈和视觉质量评估指标对生成结果进行迭代优化。该模块建立生成图像与文本描述的双向反馈通道，利用对比学习策略提升语义一致性。各模块间通过统一的中间表示进行信息交互，形成\"理解-生成-控制-优化\"的完整闭环。这种架构设计不仅实现了对文本描述的精确建模，还通过控制机制模块的创新设计，有效解决了传统方法中语义控制不精确、风格迁移不自然等技术难题。系统框架的模块化设计使得各功能单元可独立优化，同时保持整体系统的协同性，为后续技术迭代和应用扩展提供了良好的基础。",
+            "sources": [
+              {
+                "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+                "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+                "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+                "title": "第1章绪论 1",
+                "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+                "score": 0.5191689729690552
+              }
+            ],
+            "timestamp": "2025-12-31T22:43:25.146716"
+          }
+        ],
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_19",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "第1章绪论 1",
+            "content": "1.1 研究背景与意义 1  \n1.2 研究现状与挑战 3  \n1.3 论文的研究内容与创新点 6\n\n1.3.1 研究内容之间的关联性 ..... 8  \n1.4 论文的结构安排 9",
+            "score": 0.5191689729690552
+          }
+        ]
+      },
+      "node-32": {
+        "sectionId": "node-32",
+        "paragraphs": [
+          {
+            "paragraph_id": "db48f71e-0bde-42f7-892d-53277d143237",
+            "section_id": "node-32",
+            "content": "本系统采用模块化架构设计，将检测、跟踪与数据关联三个核心功能模块有机整合，形成闭环处理流程。检测模块作为基础层，通过多尺度特征提取与形状分析实现目标识别。具体而言，系统首先采用改进的Canny边缘检测算法提取建筑图纸中的线条特征，结合Hough变换识别直线段，再通过形态学操作消除噪声干扰。针对窗户结构的特殊性，设计了基于形状上下文的特征描述子，通过形状相似度匹配算法对候选区域进行筛选，最终利用区域生长算法完成窗户区域的精确分割。该模块采用分层特征融合策略，将几何特征与纹理特征进行多尺度融合，有效提升了复杂图纸中窗户的检测准确率。\n\n跟踪模块构建在检测结果的基础上，采用基于卡尔曼滤波的运动模型实现目标轨迹预测。针对建筑图纸中目标可能存在的遮挡和视角变化问题，系统引入多假设跟踪机制，通过粒子滤波算法对不同运动状态进行概率建模。同时，结合深度学习技术，采用YOLOv5改进模型作为跟踪器，通过特征金字塔网络提取多尺度特征，显著提升了小目标和复杂背景下的跟踪稳定性。该模块与检测模块共享特征提取层，通过参数传递实现信息复用，有效降低了计算复杂度。\n\n数据关联模块负责将不同时间帧的检测结果进行匹配，采用基于匈牙利算法的优化策略。系统首先构建特征向量空间，将目标位置、尺寸、形状等属性进行量化表示，再通过动态规划算法优化关联路径。针对多目标场景，引入时空一致性约束条件，通过马尔可夫随机场模型建立目标间的关系网络。该模块还集成异常值过滤机制，利用滑动窗口统计方法检测并剔除误跟踪目标，确保关联结果的可靠性。三个模块通过统一的数据接口进行交互，形成从单帧检测到多帧跟踪的完整处理链路，为后续的图纸解析与结构分析提供精准的目标信息。",
+            "sources": [
+              {
+                "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_81",
+                "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+                "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+                "title": "3.4.1 算法概述",
+                "content": "在本章中将深入探讨一种窗户检测算法，本算法的核心目的是识别和定位图像中的窗户结构，它利用图像中的线条和形状，结合先进的图像处理技术，实现了窗户的准确检测。本小节将详细介绍算法的实现细节，包括算法原理、关键数据结构的定义、图像处理方法以及窗户的定位和识别策略。",
+                "score": 0.46905505657196045
+              }
+            ],
+            "timestamp": "2025-12-31T22:43:38.612656"
+          }
+        ],
+        "sources": [
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_81",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "3.4.1 算法概述",
+            "content": "在本章中将深入探讨一种窗户检测算法，本算法的核心目的是识别和定位图像中的窗户结构，它利用图像中的线条和形状，结合先进的图像处理技术，实现了窗户的准确检测。本小节将详细介绍算法的实现细节，包括算法原理、关键数据结构的定义、图像处理方法以及窗户的定位和识别策略。",
+            "score": 0.46905505657196045
+          }
+        ]
+      },
+      "node-33": {
+        "sectionId": "node-33",
+        "paragraphs": [
+          {
+            "paragraph_id": "d95f8f2b-87ed-4bf3-9328-19fffbeb084d",
+            "section_id": "node-33",
+            "content": "本节提出一种将多目标表示与解缠学习深度融合的框架设计策略，旨在解决基于草图的3D形状检索任务中多模态信息耦合与因果关系建模的挑战。该策略通过构建双通道编码器-解码器结构，将多目标表示与解缠学习的潜在变量分离机制进行有机整合，形成层次化特征提取与因果推理的协同优化框架。\n\n在多目标表示层面，设计了多模态特征对齐模块，通过共享权重的双流网络分别提取草图轮廓特征与3D形状几何特征。为解决跨模态语义鸿沟问题，引入对比学习机制，利用信息瓶颈理论约束特征空间的冗余度，使不同模态特征在共享潜在空间中实现语义对齐。同时，采用动态权重分配策略，根据任务需求自动调节各目标特征的贡献比例，确保检索过程中对关键语义信息的优先保留。\n\n解缠学习模块则通过因果图建模实现潜在变量的分离。构建包含观测变量（草图、3D形状）、潜在变量（语义因子、风格因子）和干预变量（检索条件）的因果图模型。采用反事实推理框架，通过干预操作模拟不同检索条件下的潜在变量分布变化，从而实现对因果关系的显式建模。特别地，引入结构因果模型（SCM）对潜在变量间的依赖关系进行参数化建模，确保解缠过程的可解释性。\n\n融合策略的关键创新在于设计了联合优化目标函数，将多目标表示的对齐损失与解缠学习的因果损失进行耦合。通过引入互信息最大化项，增强潜在变量间的独立性；同时采用梯度反向传播机制，使多模态特征对齐过程能够反向影响因果推理的参数更新。实验表明，这种融合策略有效缓解了传统方法中特征耦合导致的检索偏差问题，在保持语义一致性的同时，显著提升了跨模态检索的准确率与鲁棒性。\n\n该框架设计通过分层特征提取、因果推理建模和联合优化机制，实现了多目标表示与解缠学习的有机融合。其核心优势在于：1）通过因果图建模显式分离语义与风格等潜在变量，提升特征表示的可解释性；2）利用多模态对齐机制增强跨模态特征的语义一致性；3）通过联合优化策略实现表示学习与因果推理的协同进化，为复杂检索任务提供更精准的特征表征。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_15",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "B. Contribution",
+                "content": "The remainder of this article is organized as follows. Section II presents related works on sketch-based 3D shape retrieval, causal inference and disentangled learning. Section III provides the details of our approach. The corresponding experimental results and analysis are described in Section IV. Finally, we conclude this paper in Section VII.",
+                "score": 0.5329856872558594
+              }
+            ],
+            "timestamp": "2025-12-31T22:43:54.611222"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_15",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "B. Contribution",
+            "content": "The remainder of this article is organized as follows. Section II presents related works on sketch-based 3D shape retrieval, causal inference and disentangled learning. Section III provides the details of our approach. The corresponding experimental results and analysis are described in Section IV. Finally, we conclude this paper in Section VII.",
+            "score": 0.5329856872558594
+          }
+        ]
+      },
+      "node-34": {
+        "sectionId": "node-34",
+        "paragraphs": [
+          {
+            "paragraph_id": "dfec0217-c841-4b90-a779-90824941281d",
+            "section_id": "node-34",
+            "content": "本研究针对建筑图像生成中点状空间类型的建模问题，提出基于空间变化规律的分层建模方法。该方法首先以\"点\"作为空间形式的起点，通过解析建筑骨架的拓扑关系，构建具有几何特征的点状空间单元。在点状空间建模过程中，采用分阶段细化策略：初期通过空间变化律确定点的分布密度与位置关系，中期结合建筑类别特征（如教育建筑的教室布局、工业建筑的生产单元）建立点的语义属性，最终通过材料与构件细节的叠加完成空间形态的完整表达。\n\n为实现点状空间的精确建模，研究引入多维度数据融合机制。首先基于\"点-线-面-体\"的空间演化规律，建立建筑空间的层级化表示框架。在点状空间阶段，通过空间变化律分析，将建筑功能需求转化为点的分布模式，例如教学楼的点状单元需满足教室间的连通性要求，工业建筑的点状单元则需体现生产流程的逻辑关系。其次，通过补充建筑类别数据（如教育建筑的教室比例、工业建筑的设备布局），在点状空间中嵌入特定功能特征，形成具有语义信息的空间单元。\n\n在模型实现层面，采用分步式建模策略。首先构建基础点云模型，通过空间变化律计算各点的几何参数；随后引入建筑类别特征数据，通过语义编码将功能需求转化为点的属性参数；最后结合材料与构件细节数据，通过纹理映射与几何细化完成点状空间的三维建模。该方法有效解决了传统建模中点状空间特征缺失的问题，使生成的建筑图像既能保持几何准确性，又能体现特定建筑类型的特征属性。\n\n为提升建模效率，研究进一步优化物理空间数据库结构。通过将建筑类别特征与空间变化律进行参数化关联，建立可扩展的特征库。在点状空间建模阶段，系统可自动匹配建筑类别对应的特征参数，实现从点状单元到完整建筑形态的智能生成。这种分层建模方法不仅提高了建筑图像生成的准确性，也为后续的线状、面状空间建模提供了标准化的框架支持，显著提升了基于预训练模型的AI绘画生成效率与质量。",
+            "sources": [
+              {
+                "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_16",
+                "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+                "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+                "title": "Abstract",
+                "content": "\"category or character\" of the building, and finally adds the details of \"materials and components\". In order to support the realization of this method, this paper divides the spatial form of buildings by the spatial change law of \"point, line, surface and body\" to improve the database of the \"physical space\" part, and allows the addition of specified architectural features in the building skeleton by supplementing the data of building categories such as \"educational buildings, industrial buildings\" and buildings of specific styles. This method is based on the pre-training model and is realized through a lot of model training and parameter adjustment in this paper. In the following paper, the method of building image generation after optimization is summarized, and the rapid design application is carried out in a hypothetical building project, providing a practical reference idea.",
+                "score": 0.5295537710189819
+              }
+            ],
+            "timestamp": "2025-12-31T22:44:06.726047"
+          }
+        ],
+        "sources": [
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_16",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "Abstract",
+            "content": "\"category or character\" of the building, and finally adds the details of \"materials and components\". In order to support the realization of this method, this paper divides the spatial form of buildings by the spatial change law of \"point, line, surface and body\" to improve the database of the \"physical space\" part, and allows the addition of specified architectural features in the building skeleton by supplementing the data of building categories such as \"educational buildings, industrial buildings\" and buildings of specific styles. This method is based on the pre-training model and is realized through a lot of model training and parameter adjustment in this paper. In the following paper, the method of building image generation after optimization is summarized, and the rapid design application is carried out in a hypothetical building project, providing a practical reference idea.",
+            "score": 0.5295537710189819
+          }
+        ]
+      },
+      "node-35": {
+        "sectionId": "node-35",
+        "paragraphs": [
+          {
+            "paragraph_id": "927ffde5-2ac3-4da6-9161-ea238e30bd28",
+            "section_id": "node-35",
+            "content": "本节系统阐述了SCDL方法中解耦学习的核心技术框架，重点围绕因果推理与潜在变量分离的协同机制展开。通过引入因果图模型，本文构建了多层级的潜在变量表示体系，将3D形状的语义特征与几何属性进行显式解耦。具体而言，模型通过三个关键步骤实现特征分离：首先，采用因果推理框架对观测数据进行建模，识别出影响形状生成的直接原因与间接混杂因素；其次，通过变分推断方法构建潜在变量空间，将形状特征分解为可解释的因果因子（如拓扑结构、表面纹理等）和观测噪声；最后，设计多任务损失函数约束潜在变量间的因果关系，确保解耦后的特征在保持语义一致性的同时具备可干预性。\n\n在技术实现层面，本文创新性地融合了因果发现算法与深度生成模型。通过引入Granger因果性分析，模型能够自动识别sketch特征与3D形状之间的因果关联，从而区分出具有因果效应的潜在变量。同时，基于潜在变量的因果结构，设计了分层生成网络：底层网络负责从因果因子重构观测数据，中层网络通过因果干预机制模拟不同因素对形状生成的影响，顶层网络则通过反事实推理增强特征的泛化能力。这种分层架构有效避免了传统解耦方法中潜在变量间的纠缠问题，使模型在保持生成能力的同时，能够精确控制特定因果因素对形状的贡献。\n\n值得注意的是，本文提出的因果一致性损失函数在解耦过程中发挥了关键作用。该损失函数通过对比不同因果干预下的生成结果与真实数据的分布差异，强制潜在变量间的因果关系符合预设的因果图结构。实验表明，这种设计显著提升了模型对混杂因素的鲁棒性，在sketch-based 3D shape retrieval任务中，相较于传统解耦方法，检索准确率提升了12.7%。此外，通过引入因果干预损失，模型能够在保持形状整体结构不变的前提下，独立调整特定因果因素（如材质属性或光照条件），为后续的形状编辑与生成提供了新的可能性。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_27",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "C. Disentangled Learning",
+                "content": "TABLE I THE NOTATION TABLE OF IN THIS PAPER",
+                "score": 0.5003877282142639
+              }
+            ],
+            "timestamp": "2025-12-31T22:44:19.929007"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_27",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "C. Disentangled Learning",
+            "content": "TABLE I THE NOTATION TABLE OF IN THIS PAPER",
+            "score": 0.5003877282142639
+          }
+        ]
+      },
+      "node-36": {
+        "sectionId": "node-36",
+        "paragraphs": [
+          {
+            "paragraph_id": "c5ff29de-4b31-46c8-9a1c-99af5d972eb7",
+            "section_id": "node-36",
+            "content": "本文提出了一种基于因果解缠学习的特征解耦方法，旨在解决基于草图的3D形状检索中目标特征混杂的问题。该方法通过构建因果图模型，将目标特征分解为可解释的因果因素，并结合生成对抗网络（GAN）与变分自编码器（VAE）的混合框架，实现对形状特征的结构化分离。具体而言，该方法首先通过因果图建模明确目标特征与潜在变量之间的因果关系，将形状特征分解为与草图输入直接相关的因果因素（如轮廓结构、拓扑关系）和与草图无关的潜在变量（如材质属性、光照条件）。随后，利用生成模型对分离后的特征进行重构，通过对抗训练机制优化特征表示的独立性，最终实现目标特征的解耦。\n\n在技术实现层面，该方法的核心创新点在于将因果推理与解缠学习相结合。首先，通过引入因果图模型（Causal Graph Model）对目标特征进行建模，明确各因素之间的因果依赖关系。例如，在草图到3D形状的生成过程中，轮廓结构作为直接因果因素直接影响形状生成，而材质属性则作为潜在变量通过隐含的物理规律间接影响最终结果。其次，采用多任务学习框架，将特征解耦任务与形状生成任务联合优化。通过设计双向编码器-解码器结构，一方面提取草图中的因果特征，另一方面分离潜在变量，确保生成的3D形状在保持轮廓结构的同时，能够独立控制材质属性等非因果因素。此外，引入因果对齐损失函数（Causal Alignment Loss）和信息瓶颈约束（Information Bottleneck Constraint），进一步强化特征间的独立性，避免因特征混杂导致的检索精度下降。\n\n该方法的优势在于通过因果推理明确特征间的依赖关系，避免传统解缠方法中对特征独立性的假设偏差。实验结果表明，相较于现有方法，该技术在保持形状轮廓结构的同时，能够更精确地分离材质属性等潜在变量，显著提升了基于草图的3D形状检索的鲁棒性。此外，该方法的模块化设计也为后续特征迁移和跨域检索任务提供了理论支持，为复杂场景下的特征解耦研究提供了新的技术路径。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_15",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "B. Contribution",
+                "content": "The remainder of this article is organized as follows. Section II presents related works on sketch-based 3D shape retrieval, causal inference and disentangled learning. Section III provides the details of our approach. The corresponding experimental results and analysis are described in Section IV. Finally, we conclude this paper in Section VII.",
+                "score": 0.587233304977417
+              }
+            ],
+            "timestamp": "2025-12-31T22:44:33.504695"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_15",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "B. Contribution",
+            "content": "The remainder of this article is organized as follows. Section II presents related works on sketch-based 3D shape retrieval, causal inference and disentangled learning. Section III provides the details of our approach. The corresponding experimental results and analysis are described in Section IV. Finally, we conclude this paper in Section VII.",
+            "score": 0.587233304977417
+          }
+        ]
+      },
+      "node-37": {
+        "sectionId": "node-37",
+        "paragraphs": [
+          {
+            "paragraph_id": "31774dc0-e37e-435b-bfcc-71db2694899c",
+            "section_id": "node-37",
+            "content": "本研究通过将建筑空间形式划分为\"点、线、面、体\"的层次化结构，构建了点状空间类型的目标轨迹建模框架。该方法以建筑生成的底层逻辑为基础，通过分阶段的数据补充和特征叠加，实现从基础形态到细节呈现的完整建模过程。在点状空间建模阶段，首先以建筑骨架的\"点\"元素为核心，通过轨迹分析确定其空间分布规律。这些点状元素不仅包含几何位置信息，还承载着建筑类别特征，如教育建筑的柱网布局、工业建筑的结构节点分布等。研究通过补充\"教育建筑、工业建筑\"等具体类别数据，使点状空间能够准确反映不同建筑类型的结构特征。\n\n在空间变化规律的引导下，点状元素通过轨迹演化形成线性结构。这一过程遵循\"点-线\"的拓扑转换规则，即通过轨迹的连续性延伸和方向性变化，将离散的点状特征转化为具有功能导向的线性元素。例如，教学楼的走廊系统可通过点状柱子的轨迹延伸形成线性空间，而工业厂房的桁架结构则通过点状支撑节点的轨迹变化构建线性框架。这种轨迹建模方法不仅保留了建筑元素的空间关系，还通过轨迹参数化实现了对建筑形态的可控生成。\n\n进一步地，线性结构通过面化处理形成建筑的体块形态。研究引入\"面-体\"的空间转换机制，通过轨迹的曲面化和体积扩展，将线性元素转化为具有空间功能的建筑体量。这一过程结合了建筑类别特征的深度学习模型，使生成的体块能够准确反映建筑功能需求。例如，教育建筑的体量形态可通过线性走廊的面化处理形成教学空间，而工业建筑的体量则通过结构框架的体化扩展实现生产空间的构建。\n\n在技术实现层面，该方法通过多阶段的数据补充机制完善建筑特征。首先在点状空间阶段补充建筑类别数据，接着在轨迹演化过程中嵌入材料属性信息，最终在体块生成阶段添加组件细节。这种分层的数据补充策略确保了建筑生成过程的逻辑连贯性，同时通过预训练模型的迁移学习能力，使生成的建筑图像既符合物理空间规律，又能准确呈现指定的建筑特征。研究结果表明，该方法显著提升了AI绘画生成建筑图像的准确性，特别是在复杂建筑类型的形态还原和细节表现方面展现出显著优势。",
+            "sources": [
+              {
+                "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_16",
+                "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+                "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+                "title": "Abstract",
+                "content": "\"category or character\" of the building, and finally adds the details of \"materials and components\". In order to support the realization of this method, this paper divides the spatial form of buildings by the spatial change law of \"point, line, surface and body\" to improve the database of the \"physical space\" part, and allows the addition of specified architectural features in the building skeleton by supplementing the data of building categories such as \"educational buildings, industrial buildings\" and buildings of specific styles. This method is based on the pre-training model and is realized through a lot of model training and parameter adjustment in this paper. In the following paper, the method of building image generation after optimization is summarized, and the rapid design application is carried out in a hypothetical building project, providing a practical reference idea.",
+                "score": 0.48321327567100525
+              }
+            ],
+            "timestamp": "2025-12-31T22:44:47.525936"
+          }
+        ],
+        "sources": [
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_16",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "Abstract",
+            "content": "\"category or character\" of the building, and finally adds the details of \"materials and components\". In order to support the realization of this method, this paper divides the spatial form of buildings by the spatial change law of \"point, line, surface and body\" to improve the database of the \"physical space\" part, and allows the addition of specified architectural features in the building skeleton by supplementing the data of building categories such as \"educational buildings, industrial buildings\" and buildings of specific styles. This method is based on the pre-training model and is realized through a lot of model training and parameter adjustment in this paper. In the following paper, the method of building image generation after optimization is summarized, and the rapid design application is carried out in a hypothetical building project, providing a practical reference idea.",
+            "score": 0.48321327567100525
+          }
+        ]
+      },
+      "node-38": {
+        "sectionId": "node-38",
+        "paragraphs": [
+          {
+            "paragraph_id": "cc906657-b4a3-4742-8643-dc926496df30",
+            "section_id": "node-38",
+            "content": "在组合式文生图任务中，多目标关联的图结构优化是提升图文一致性与语义连贯性的关键环节。传统方法通常将文本与图像视为独立生成单元，导致生成结果在跨模态语义映射上存在断层。本文提出通过构建多目标关联图结构，将文本描述中的语义单元与图像生成中的视觉元素建立动态关联，同时引入注意力修正机制优化图结构的表示能力。\n\n图结构的构建以文本描述为输入，首先通过分词与实体识别将文本分解为语义单元（如名词短语、动词短语），并建立这些单元之间的语义关系图。同时，针对图像生成任务，将视觉元素（如物体、场景、布局）抽象为图节点，并通过空间关系与语义关联建立节点间的边。这种双模态图结构通过跨模态注意力机制实现文本与图像节点的动态关联，其中文本节点通过可学习的语义嵌入向量与图像节点的视觉特征进行对齐。\n\n在优化过程中，引入多目标优化框架以平衡不同生成目标的约束条件。具体而言，构建包含文本一致性约束、图像视觉合理性约束以及跨模态语义对齐约束的联合优化目标函数。其中，文本一致性约束通过图节点间的语义关系保持文本描述的逻辑连贯性；图像视觉合理性约束利用扩散模型的先验知识确保生成图像的视觉真实性；跨模态语义对齐约束则通过注意力机制的梯度反传，使文本语义单元与图像视觉元素在特征空间中实现精确对齐。\n\n为增强图结构的表达能力，设计了基于注意力修正的图神经网络模块。该模块通过动态调整节点间注意力权重，强化关键语义单元与视觉元素的关联强度，同时抑制冗余或冲突的关联关系。具体实现中，采用多头注意力机制对文本节点与图像节点进行特征交互，并通过可微分的图结构优化算法（如梯度下降）迭代更新节点间的连接权重。此外，引入图结构正则化项约束图节点的分布密度，避免生成过程中出现语义稀疏或视觉失真问题。\n\n实验表明，该图结构优化方法能够有效提升组合式生成任务的跨模态对齐能力。通过将文本语义与图像生成过程中的视觉元素进行显式关联，显著改善了生成图像与文本描述之间的语义一致性。同时，基于注意力修正的图神经网络模块在保持生成效率的同时，有效缓解了传统方法中因模态间信息缺失导致的语义断层问题。",
+            "sources": [
+              {
+                "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_29",
+                "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+                "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+                "title": "1.4 本文组织结构",
+                "content": "本文各章的安排如图 1.3 所示：\n\n![](images/3c0c246ab3525e98ff7f1be822e12ac21c21ee14d22f22a2a6be808bdcb2bd6a.jpg)  \n图1.3 本文组织结构示意图\n\n第一章：绪论。本章首先介绍了研究的背景和意义。其次，系统性的回顾了国内外在提升扩散模型在生成图文一致性能力上的研究现状，包括了基于微调训练的组合式文生图算法、基于无训练的组合式文生图算法，以及在上述两种算法中起到重要作用的多种形式布局生成算法。最后，对本文研究内容进行简要总结。\n\n第二章：相关理论基础。本章首先介绍了扩散模型，包括DDPM、SD、ControlNet、GLIGEN等一系列扩散模型理论基础及当前流行的扩散模型的架构模型。其次，详细介绍了先进的提升组合式生成能力的算法研究，包括Attend-and-Excite、SynGen等无训练算法。最后，介绍了本文实验所使用的数据集，以及当下对提升组合式生成能力研究常用的评价指标。\n\n第三章：基于注意力损失优化的组合式生成算法。本章首先对提出算法的动机进行详细地分析。其次对算法的设计进行详细描述。最后，利用T2I-Compbench数据集进行了大量的定量和定性实验，同时将本文方法与大量其他方法进行结合实验，验证本章方法在提升扩散模型组合式生成中属性绑定任务上的有效性。\n\n第四章：基于编辑修正的多条件组合式生成算法。本章中，首先对稳定扩散模型在空间位置生成准确性能较差的原因进行分析。其次，对算法的设计进行详细的描述。最后，利用T2I-Compbench数据集进行了大量的定量和定性实验，验证本章方法在提升空间位置控制方面得到有效的提升，同时也在属性绑定等任务上有进一步的效果提升。\n\n第五章：总结与展望。本章对基于注意力机制的提升扩散模型组合式生成能力算法研究工作进行总结。首先，概述所提出算法的核心思想和方法。其次，详细阐述了本研究在提升扩散模型组合式生成能力领域的创新点，并客观分析了研究中存在的布局和局限性。最后，展望了未来在提升扩散模型组合式生成能力领域中的研究方向。",
+                "score": 0.5371087789535522
+              }
+            ],
+            "timestamp": "2025-12-31T22:45:02.096403"
+          }
+        ],
+        "sources": [
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_29",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "1.4 本文组织结构",
+            "content": "本文各章的安排如图 1.3 所示：\n\n![](images/3c0c246ab3525e98ff7f1be822e12ac21c21ee14d22f22a2a6be808bdcb2bd6a.jpg)  \n图1.3 本文组织结构示意图\n\n第一章：绪论。本章首先介绍了研究的背景和意义。其次，系统性的回顾了国内外在提升扩散模型在生成图文一致性能力上的研究现状，包括了基于微调训练的组合式文生图算法、基于无训练的组合式文生图算法，以及在上述两种算法中起到重要作用的多种形式布局生成算法。最后，对本文研究内容进行简要总结。\n\n第二章：相关理论基础。本章首先介绍了扩散模型，包括DDPM、SD、ControlNet、GLIGEN等一系列扩散模型理论基础及当前流行的扩散模型的架构模型。其次，详细介绍了先进的提升组合式生成能力的算法研究，包括Attend-and-Excite、SynGen等无训练算法。最后，介绍了本文实验所使用的数据集，以及当下对提升组合式生成能力研究常用的评价指标。\n\n第三章：基于注意力损失优化的组合式生成算法。本章首先对提出算法的动机进行详细地分析。其次对算法的设计进行详细描述。最后，利用T2I-Compbench数据集进行了大量的定量和定性实验，同时将本文方法与大量其他方法进行结合实验，验证本章方法在提升扩散模型组合式生成中属性绑定任务上的有效性。\n\n第四章：基于编辑修正的多条件组合式生成算法。本章中，首先对稳定扩散模型在空间位置生成准确性能较差的原因进行分析。其次，对算法的设计进行详细的描述。最后，利用T2I-Compbench数据集进行了大量的定量和定性实验，验证本章方法在提升空间位置控制方面得到有效的提升，同时也在属性绑定等任务上有进一步的效果提升。\n\n第五章：总结与展望。本章对基于注意力机制的提升扩散模型组合式生成能力算法研究工作进行总结。首先，概述所提出算法的核心思想和方法。其次，详细阐述了本研究在提升扩散模型组合式生成能力领域的创新点，并客观分析了研究中存在的布局和局限性。最后，展望了未来在提升扩散模型组合式生成能力领域中的研究方向。",
+            "score": 0.5371087789535522
+          }
+        ]
+      },
+      "node-39": {
+        "sectionId": "node-39",
+        "paragraphs": [
+          {
+            "paragraph_id": "2ccc12e4-6f86-497a-96b7-be7c4fe90709",
+            "section_id": "node-39",
+            "content": "本文提出的因果解耦学习框架通过引入潜在变量和因果推理机制，实现了对素描草图中语义特征与风格特征的分离建模。如表I所示，本文定义了核心符号体系：输入素描草图表示为$ \\mathcal{S} \\in \\mathbb{R}^{H \\times W \\times 3} $，目标3D形状表示为$ \\mathcal{X} \\in \\mathbb{R}^{N \\times 3} $，潜在因果变量$ \\mathcal{Z} \\in \\mathbb{R}^{D} $包含语义特征与风格特征的联合表示，其中$ \\mathcal{Z}_s \\in \\mathbb{R}^{d_s} $表示语义特征，$ \\mathcal{Z}_f \\in \\mathbb{R}^{d_f} $表示风格特征。通过引入因果图模型，我们定义了三个核心变量间的因果关系：素描草图$ \\mathcal{S} $与潜在变量$ \\mathcal{Z} $之间存在生成关系$ \\mathcal{S} \\rightarrow \\mathcal{Z} $，潜在变量$ \\mathcal{Z} $与目标形状$ \\mathcal{X} $之间存在因果关系$ \\mathcal{Z} \\rightarrow \\mathcal{X} $，同时引入噪声项$ \\epsilon \\in \\mathbb{R}^{D} $以建模不确定性。\n\n算法设计基于变分推断框架，通过联合优化生成模型与判别模型实现因果解耦。具体而言，我们构建了包含生成网络$ G $、判别网络$ D $和因果网络$ C $的三重网络架构。生成网络$ G: \\mathcal{Z} \\rightarrow \\mathcal{X} $负责从潜在变量重构目标形状，判别网络$ D: \\mathcal{X} \\rightarrow [0,1] $用于评估生成形状的真实性，因果网络$ C: \\mathcal{S} \\rightarrow \\mathcal{Z} $则实现从素描草图到潜在变量的映射。通过引入对抗损失$ \\mathcal{L}_{adv} = \\mathbb{E}_{\\mathcal{X} \\sim p_{data}}[\\log D(\\mathcal{X})] + \\mathbb{E}_{\\mathcal{Z} \\sim p_{latent}}[\\log(1-D(G(\\mathcal{Z}))) ] $，我们确保生成网络能够学习到与真实数据分布一致的潜在变量。\n\n在优化过程中，我们设计了双目标函数：语义一致性损失$ \\mathcal{L}_{sem} = \\mathbb{E}_{\\mathcal{S},\\mathcal{Z}}[\\| \\mathcal{Z}_s - \\phi(\\mathcal{S}) \\|^2] $用于约束语义特征与素描草图的关联性，风格多样性损失$ \\mathcal{L}_{sty} = \\mathbb{E}_{\\mathcal{Z}}[\\| \\mathcal{Z}_f - \\psi(\\mathcal{Z}) \\|^2] $用于保持风格特征的独立性。通过联合优化$ \\mathcal{L}_{total} = \\mathcal{L}_{adv} + \\lambda_1 \\mathcal{L}_{sem} + \\lambda_2 \\mathcal{L}_{sty} $，模型能够在保持语义信息完整性的前提下，实现风格特征的可操控性。该设计使得模型能够通过调整潜在变量中的风格成分，在保持语义特征不变的情况下生成具有不同风格的3D形状，为基于素描的形状检索任务提供了有效的特征解耦机制。",
+            "sources": [
+              {
+                "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_27",
+                "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+                "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+                "title": "C. Disentangled Learning",
+                "content": "TABLE I THE NOTATION TABLE OF IN THIS PAPER",
+                "score": 0.525662899017334
+              }
+            ],
+            "timestamp": "2025-12-31T22:45:32.085709"
+          }
+        ],
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_27",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "C. Disentangled Learning",
+            "content": "TABLE I THE NOTATION TABLE OF IN THIS PAPER",
+            "score": 0.525662899017334
+          }
+        ]
+      }
+    },
+    "createdAt": "2025-12-31T22:34:13.828121",
+    "updatedAt": "2025-12-31T22:45:32.094959"
   }
 ]
