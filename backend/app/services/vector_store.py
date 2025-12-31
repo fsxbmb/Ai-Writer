@@ -165,8 +165,15 @@ class VectorStore:
         Returns:
             搜索结果列表
         """
+        # 如果collection未初始化，自动加载
         if not self.collection:
-            raise ValueError("集合未初始化")
+            if not self.connected:
+                self.connect()
+            if utility.has_collection(self.collection_name):
+                self.collection = Collection(self.collection_name)
+                self.collection.load()
+            else:
+                raise ValueError(f"集合 {self.collection_name} 不存在")
 
         try:
             # 加载集合到内存

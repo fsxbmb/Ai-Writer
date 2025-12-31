@@ -11,6 +11,7 @@ import {
   NCard,
   NConfigProvider,
   NMessageProvider,
+  NDialogProvider,
   // 布局组件
   NLayout,
   NLayoutSider,
@@ -35,6 +36,7 @@ import {
   NP,
   NTooltip,
   NAlert,
+  NEllipsis,
   // 表单组件
   NInput,
   NSelect,
@@ -47,11 +49,18 @@ import {
   NForm,
   NFormItem,
   NDrawer,
+  NDrawerContent,
   NTabs,
   NTabPane,
   NDescriptions,
   NDescriptionsItem,
   NSwitch,
+  NTree,
+  NCollapse,
+  NCollapseItem,
+  // 其他组件
+  useDialog,
+  useMessage,
 } from 'naive-ui'
 
 const naive = create({
@@ -60,6 +69,7 @@ const naive = create({
     NCard,
     NConfigProvider,
     NMessageProvider,
+    NDialogProvider,
     NLayout,
     NLayoutSider,
     NLayoutHeader,
@@ -82,6 +92,7 @@ const naive = create({
     NP,
     NTooltip,
     NAlert,
+    NEllipsis,
     NInput,
     NSelect,
     NButtonGroup,
@@ -93,11 +104,15 @@ const naive = create({
     NForm,
     NFormItem,
     NDrawer,
+    NDrawerContent,
     NTabs,
     NTabPane,
     NDescriptions,
     NDescriptionsItem,
     NSwitch,
+    NTree,
+    NCollapse,
+    NCollapseItem,
   ],
 })
 

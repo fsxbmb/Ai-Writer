@@ -53,16 +53,18 @@ async def create_folder(data: FolderCreate):
 @router.delete("/{folder_id}")
 async def delete_folder(folder_id: str):
     """
-    删除文件夹
+    删除文件夹（级联删除所有文档）
     """
     import json
 
-    # 检查是否有文档在该文件夹中
+    # 获取文件夹中的所有文档
     documents, _ = storage.list_documents(folder=folder_id)
-    if documents:
-        raise HTTPException(
-            status_code=400, detail="该文件夹中还有文档，无法删除"
-        )
+
+    # 级联删除所有文档
+    for doc in documents:
+        doc_id = doc["id"]
+        # 删除文档文件
+        storage.delete_document(doc_id)
 
     # 删除文件夹
     storage.folders = [f for f in storage.folders if f["id"] != folder_id]
@@ -71,4 +73,4 @@ async def delete_folder(folder_id: str):
     with open(storage.folders_file, "w", encoding="utf-8") as f:
         json.dump(storage.folders, f, ensure_ascii=False, indent=2)
 
-    return {"message": "删除成功"}
+    return {"message": f"删除成功（已删除 {len(documents)} 个文档）"}

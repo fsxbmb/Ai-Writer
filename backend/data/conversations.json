@@ -1,0 +1,369 @@
+[
+  {
+    "id": "f49dafb1-96af-450d-a748-abad683eff74",
+    "title": "Medical Image Segmentation wit",
+    "folderId": "1bf866cf-a3d5-40a9-88d2-8c32b9f33e5b",
+    "createdAt": "2025-12-31T15:54:09.088864",
+    "updatedAt": "2025-12-31T15:54:34.388203",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Medical Image Segmentation with Diffusion Probabilistic Model说的是什么内容"
+      },
+      {
+        "id": "5cece7a6-61fd-4b6f-a289-c3e77cebb5bb",
+        "role": "assistant",
+        "content": "根据参考资料，**\"Medical Image Segmentation with Diffusion Probabilistic Model\"**（即 MedSegDiff）的内容主要涉及以下几点：  \n\n1. **研究背景与目标**  \n   该研究受扩散概率模型（Diffusion Probabilistic Model, DPM）在计算机视觉领域（如图像生成、去模糊、超分辨率等）的成功启发，首次将其应用于**通用医学图像分割任务**。DPM 的生成能力（如 Imagen、Latent Diffusion Models 和 Stable Diffusion）推动了这一探索 [引用2]。  \n\n2. **核心方法**  \n   - **动态条件编码（Dynamic Conditional Encoding）**：通过为每个采样步骤建立状态自适应的条件，增强 DPM 在医学图像分割中的区域注意力机制。  \n   - **特征频率解析器（FF-Parser）**：消除高频率噪声对分割过程的负面影响，提升模型稳定性与精度 [引用2]。  \n\n3. **应用场景**  \n   该模型针对医学图像分割任务，例如脑肿瘤、视盘（optic cup）、甲状腺结节等目标的分割 [引用2]。  \n\n4. **相关研究**  \n   该工作被收录于 **Medical Imaging with Deep Learning** 会议（2024），论文编号为 14（页码 1623–1639）[引用4]。  \n\n综上，MedSegDiff 是首个将扩散概率模型应用于医学图像分割的框架，通过改进的条件编码和噪声处理技术，提升了分割效果 [引用2][引用4]。",
+        "sources": [
+          {
+            "id": "4dd5cb3b-4f58-41fd-8f1a-06703ee9167c_chunk_3",
+            "document_id": "4dd5cb3b-4f58-41fd-8f1a-06703ee9167c",
+            "document_name": "[2024]Analysing Diffusion Segmentation for Medical Images",
+            "title": "Analysing Diffusion Segmentation for Medical Images",
+            "content": "Keywords: Diffusion Segmentation · Semantic Segmentation · Uncertainty Modelling",
+            "score": 0.7691473960876465
+          },
+          {
+            "id": "b080db92-d536-4e1f-93b4-8f20da802c19_chunk_3",
+            "document_id": "b080db92-d536-4e1f-93b4-8f20da802c19",
+            "document_name": "[2023]MedSegDiff--Medical Image Segmentation with Diffusion Probabilistic Model",
+            "title": "MedSegDiff: Medical Image Segmentation with Diffusion Probabilistic Model",
+            "content": "Keywords: diffusion probabilistic model, medical image segmentation, brain tumor, optic cup, thyroid nodule",
+            "score": 0.7517763376235962
+          },
+          {
+            "id": "11198709-48e4-4803-b3f5-4dc02a5af8f3_chunk_101",
+            "document_id": "11198709-48e4-4803-b3f5-4dc02a5af8f3",
+            "document_name": "[2024]HiDiff_Hybrid_Diffusion_Framework_for_Medical_Image_Segmentation",
+            "title": "REFERENCES",
+            "content": "ion probabilistic models,” 2021, arXiv:2112.00390.   \n[28] J. Wu, H. Fang, Y. Zhang, Y. Yang, and Y. Xu, “MedSegDiff: Medical image segmentation with diffusion probabilistic model,” in Proc. MIDL, 2023, pp. 1623–1639.   \n[29] T. Chen, C. Wang, and H. Shan, “BerDiff: Conditional Bernoulli diffusion model for medical image segmentation,” in Proc. MICCAI, 2023, pp. 491–501.   \n[30] O. Ronneberger, P. Fischer, and T. Brox, “U-Net: Convolutional networks for biomedical image segmentation,” in Proc. MICCAI, 2015, pp. 234–241.   \n[31] A. Q. Nichol and P. Dhariwal, “Improved denoising diffusion probabilistic models,” in Proc. ICML, 2021, pp. 8162–8171.   \n[32] E. Hoogeboom, D. Nielsen, P. Jaini, P. Forré, and M. Welling, “Argmax flows and multinomial diffusion: Learning categorical distributions,” in Proc. NeurIPS, 2021, pp. 12454–12465.   \n[33] T.-Y. Lin, P. Goyal, R. Girshick, K. He, and P. Dollár, “Focal loss for dense object detection,” in Proc. ICCV, Oct. 2017, pp. 2980–2988.   \n[34] P.-H.",
+            "score": 0.7476710081100464
+          },
+          {
+            "id": "4dd5cb3b-4f58-41fd-8f1a-06703ee9167c_chunk_35",
+            "document_id": "4dd5cb3b-4f58-41fd-8f1a-06703ee9167c",
+            "document_name": "[2024]Analysing Diffusion Segmentation for Medical Images",
+            "title": "References",
+            "content": "ng with Deep Learning. pp. 1336–1348. PMLR (2022)   \n13. Wu, J., Fu, R., Fang, H., Zhang, Y., Xu, Y.: Medsegdiff-v2: Diffusion based medical image segmentation with transformer. arXiv preprint arXiv:2301.11798 (2023)   \n14. Wu, J., Fu, R., Fang, H., Zhang, Y., Yang, Y., Xiong, H., Liu, H., Xu, Y.: Medsegdiff: Medical image segmentation with diffusion probabilistic model. In: Medical Imaging with Deep Learning. pp. 1623–1639. PMLR (2024)   \n15. Xie, E., Wang, W., Yu, Z., Anandkumar, A., Alvarez, J.M., Luo, P.: Segformer: Simple and efficient design for semantic segmentation with transformers. Advances in Neural Information Processing Systems 34, 12077–12090 (2021)",
+            "score": 0.7413345575332642
+          },
+          {
+            "id": "b080db92-d536-4e1f-93b4-8f20da802c19_chunk_1",
+            "document_id": "b080db92-d536-4e1f-93b4-8f20da802c19",
+            "document_name": "[2023]MedSegDiff--Medical Image Segmentation with Diffusion Probabilistic Model",
+            "title": "MedSegDiff: Medical Image Segmentation with Diffusion Probabilistic Model",
+            "content": "Abstract. Diffusion probabilistic model (DPM) recently becomes one of the hottest topic in computer vision. Its image generation application such as Imagen, Latent Diffusion Models and Stable Diffusion have shown impressive generation capabilities, which aroused extensive discussion in the community. Many recent studies also found it is useful in many other vision tasks, like image deblurring, super-resolution and anomaly detection. Inspired by the success of DPM, we propose the first DPM based model toward general medical image segmentation tasks, which we named MedSegDiff. In order to enhance the step-wise regional attention in DPM for the medical image segmentation, we propose dynamic conditional encoding, which establishes the state-adaptive conditions for each sampling step. We further propose Feature Frequency Parser (FF-Parser), to eliminate the negative effect of high-frequency noise component in this process.",
+            "score": 0.7391883134841919
+          }
+        ],
+        "timestamp": "2025-12-31T15:54:34.388184"
+      }
+    ]
+  },
+  {
+    "id": "bb1f5e22-00c3-4b12-9b06-87b6bde81d0b",
+    "title": "直线检测是什么方法？",
+    "folderId": "35804038-e3dc-4539-90a0-201f2e92ec80",
+    "createdAt": "2025-12-31T14:19:26.742081",
+    "updatedAt": "2025-12-31T14:55:31.323279",
+    "messages": [
+      {
+        "role": "user",
+        "content": "直线检测是什么方法？"
+      },
+      {
+        "id": "f4b6b918-1108-425b-bd43-7beea699344e",
+        "role": "assistant",
+        "content": "直线检测是一种基于**霍夫变换（Hough Transform）**的图像处理技术，用于识别图像中的直线特征。其核心原理是将图像空间中的点映射到霍夫空间中的曲线，通过寻找霍夫空间中的交点来确定图像中的直线。具体来说：\n\n1. **霍夫变换的映射过程**：图像空间中的每个点会被转换为霍夫空间中的一条曲线。对于直线方程 $ y = mx + b $，霍夫空间中的表示形式为 $ \\rho = x\\cos\\theta + y\\sin\\theta $，其中 $ \\rho $ 是直线到原点的距离，$ \\theta $ 是直线与x轴的夹角 [引用1]。\n\n2. **交点的识别**：在霍夫空间中，多个点对应的曲线会相交于某一点，该交点对应的 $ (\\rho, \\theta) $ 参数即代表图像空间中的一条直线。通过统计霍夫空间中交点的投票数，可以确定最可能的直线参数。\n\n3. **直线方程表示**：直线在图像空间中的数学表达为 $ y = mx + b $，其中 $ m $ 为斜率，$ b $ 为截距 [引用1]。\n\n该方法广泛应用于计算机视觉领域，例如车道线检测、文档边缘识别等场景。其他资料未涉及直线检测的具体技术细节 [引用2]。",
+        "sources": [
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_33",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "2.3.4 直线检测概述",
+            "content": "直线检测是一种使用霍夫变换（Hough Transform）来识别图像中特定形状的技术。对于直线检测，霍夫变换将图像空间中的每个点映射到霍夫空间中的一条曲线上，并查找这个空间中的交点，交点表示图像空间中的直线[37]。直线方程为：\n\n$$\n\\mathbf {y} = m \\mathbf {x} + \\mathbf {b} \\tag {2-2}\n$$\n\n其中  $m$  是直线的斜率， $b$  是直线的截距。",
+            "score": 0.6522101163864136
+          },
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_66",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "参考文献（References）",
+            "content": "7(8): 30-34) [DOI: 10.3969/j. issn.1672-5867.2014.08.009] Yang H Q, Yu J, Qin K and Zhang G N. 2006. The research on the ground objects extraction from the LIDAR based on knowledge. Bulletin of Surveying and Mapping, 12: 9-11, 15 (杨海全, 余洁, 秦昆, 张国宁. 2006. 基于知识的LIDAR数据地物提取研究. 测 绘通报, (12): 9-11, 15) [DOI: 10.3969/j.issn.0494-0911.2006.12.003] Yang W K, Zhao J J, Qiang Y, Yang X T, Dong Y Y, Du Q Q, Shi G H and Zia M B. 2019. DScGANS: integrate domain knowledge in training dual-path semi-supervised conditional generative adver‐ sarial networks and S3VM for ultrasonography thyroid nodules classification//22nd International Conference on Medical Image Computing and Computer Assisted Intervention. Shenzhen: Springer: 558-566 [DOI: 10.1007/978-3-030-32251-9_61] Yang Z J, Diao C Y and Gao F. 2023. Towards scalable within-season crop mapping with phenology normalization and deep learning. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 16: 1390-1402 [DOI: 10.",
+            "score": 0.49171316623687744
+          },
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_126",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "6.2.3 建筑教学指导和实践参考",
+            "content": "这种快速且目的性强的文字生成建筑图像的方法,在当前的建筑教学中,具有一定的指导意义。在对学生建筑空间思维的训练教学中,往往需要即时的互动与思维的发散,教学中的一大难点也是将抽象的空间与具象的建筑相联系。本研究这种简单快速的图像生成方式正满足了教学中的需求,在有了某类空间的生成意向后,只需简单的几个字母,就可以实现空间在建筑中的具象化,帮助学生发散思维,提高教学效率和质量。通过控制Lora 的权重,还可以实现建筑性格和建筑立面的教学。\n\n在建筑设计的实践中,这种图像生成方法可以在设计的初期为使用者提供大量的灵感,在多方沟通的过程中,快速且意图较为准确的建筑图像生成,提高了沟通效率,省去了方案初期在建筑意向方面大量繁琐的修改流程,节约了人力成本。",
+            "score": 0.4506329298019409
+          },
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_9",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "3.2.1 点状空间类型 .33",
+            "content": "3.2.2 线性空间类型. ...3.4  \n3.2.3 面的延伸形成的空间类型. ....34  \n3.2.4 体的变化形成的空间类型. ·.··.···············.·············· ..35  \n3.3 预训练模型：图像-文本的对应 .38  \n3.4 本章小结. ..40  \n第4章 AI 绘画生成建筑图像方法的优化的方式和步骤 ..41  \n4.1 图像生成平台和模型训练工具选择的选择 ..41  \n4.1.1 本研究 AI 绘画平台的选择 (Stable Diffusion) ..41  \n4.1.2 Stable Diffusion 中大模型(Checkpoint)与特征模型(Lora)的关  \n系与特点... ...42  \n4.1.3 模型训练工具选的.. ....44  \n4.2 模型数据库的建设. ...45  \n4.2.1 预训练模型的类型选择.. ...4.5  \n4.2.2 主要参数分析. ...45  \n4.2.3Dreambooth 图像和文本内容的输入. ..48  \n4.3预训练模型图像生成测试与调整 ..56  \n4.3.1建筑形体空间类型&建筑类别/性格同时输入大模型  \n(checkpoint)时的图像生成测试.. ....56  \n4.3.2预训练模型类型的调整.. ...69  \n4.3.3Lora 文本内容的输入(以幼儿园类建筑为例) ...60  \n4.3.4建筑形体空间类型(checkpoint)&建筑类型/性格(Lora)图像生  \n成测试... ...62  \n4.4 本章小结 ..68  \n第5章AI绘画生成建筑图像方法的优化结果 ..69  \n5.1优化后的建筑图像生成方法归纳 ..69  \n5.2 优化后的建筑图像生成方法在案例中的快速设计应用举例...73  \n5.2.1 项目背景与设计需求.. ....73  \n5.2.2 项目设计要素的提取.. ....73  \n5.2.3 使用优化后的建筑图像生成方法进行建筑项目的快速设计  \n过程 ...7.4  \n第6章总结与展望 ······································· ..83  \n6.1 主要研究结论. ..83  \n6.2 主要创新点.. ...83  \n6.2.",
+            "score": 0.4502309262752533
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_75",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "4.4.1 实验设置",
+            "content": "本章节通过其API使用GPT-3.5模型从文本提示中生成边界框，包括最大边界盒大小和期望的输出格式等，具体方法与第3章生成布局边框方法一致。使用官方GLIGEN多模态控制模型，使用线性调度率设置比例因子  $\\alpha_{t}$ ，该线性调度率从20开始并线性衰减到最小值10，使用  $s = 7.5$  对潜在空间向量  $z_{t}$  进行无分类器引导，所使用的交叉注意力图维度为  $16\\times 16$  。所有图像生成使用PLMS去噪方法，其去噪步骤为50步，损失优化时间步数  $t^{\\prime}$  设置为30步。进行迭代优化的时间步集合  $T_{iteration} = \\{0,5,10,20,30\\}$ ，在该集合内的时间步上的最大迭代次数设置为25，其余的时间步上的最大优化次数均为1。在图像生成完成后的验证步骤使用CLIP ViT-B/32验证裁剪图像块与其对应短语的Text-Image相似度，验证该区域图像是否正确生成，其相似度阈值设置为  $\\tau_{text-image} = 0.30$  ，为缩短图像生成时间，图像编辑修正次数为1。若实现图像生成更高的图文一致性，可将  $\\tau_{text-image}$  设置为更高的阈值或实现多轮迭代修正编辑。为确保公正性，本章节进行比较的无训练模型算法均为在Stable Diffusion v1.5版本及其衍生GLIGEN。基线方法和本章提出的方法为每个提示文本生成10张图像后进行定量指标检测。",
+            "score": 0.44428226351737976
+          }
+        ],
+        "timestamp": "2025-12-31T14:19:37.139405"
+      },
+      {
+        "id": "8365a96b-fe61-4791-9a14-664c8ba4ca35",
+        "role": "user",
+        "content": "基于深度学习和图像识别的CAD建筑图纸识别这个文献说的是什么内容，总结下",
+        "sources": [],
+        "timestamp": "2025-12-31T14:55:31.321771"
+      },
+      {
+        "id": "a5d2c3f5-254c-4d2d-8986-ce6b6d6d88cc",
+        "role": "assistant",
+        "content": "根据提供的参考资料，文献《基于深度学习和图像识别的CAD建筑图纸识别》是李培德撰写的硕士学位论文，其研究方向聚焦于将深度学习与图像识别技术应用于CAD（计算机辅助设计）建筑图纸的解析与处理。该研究的核心目标是通过人工智能技术实现对建筑图纸中复杂元素（如墙体、门窗、结构布局等）的自动识别与分类。  \n\n然而，参考资料中未提供该论文的具体研究方法、实验设计或详细结论等内容，仅通过题目可知其研究主题。此外，其他引用资料（如引用2、3）讨论的是AI生成建筑图像在教学和设计中的应用，与CAD图纸识别技术无直接关联。  \n\n**总结**：  \n该文献（引用1）探讨了深度学习和图像识别技术在CAD建筑图纸处理中的应用，但具体技术细节和研究成果未在提供的资料中进一步说明。  \n\n**引用标注**：[引用1]",
+        "sources": [
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_1",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文",
+            "content": "![](images/efe571ea83f7a69b1384ff4bc1eeeca54c09de3e73ca9c4bcbd472b677625344.jpg)\n\n题目： 基于深度学习和图像识别的CAD建筑图纸识别\n\n学号： 2021180009\n\n姓名： 李培德\n\n学科专业： 通信工程\n\n培养方式： 非全日制\n\n导师： 张欣\n\n学 院： 信息与通信工程学院\n\n2024年05月26日\n\n中国·北京",
+            "score": 0.8252767324447632
+          },
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_126",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "6.2.3 建筑教学指导和实践参考",
+            "content": "这种快速且目的性强的文字生成建筑图像的方法,在当前的建筑教学中,具有一定的指导意义。在对学生建筑空间思维的训练教学中,往往需要即时的互动与思维的发散,教学中的一大难点也是将抽象的空间与具象的建筑相联系。本研究这种简单快速的图像生成方式正满足了教学中的需求,在有了某类空间的生成意向后,只需简单的几个字母,就可以实现空间在建筑中的具象化,帮助学生发散思维,提高教学效率和质量。通过控制Lora 的权重,还可以实现建筑性格和建筑立面的教学。\n\n在建筑设计的实践中,这种图像生成方法可以在设计的初期为使用者提供大量的灵感,在多方沟通的过程中,快速且意图较为准确的建筑图像生成,提高了沟通效率,省去了方案初期在建筑意向方面大量繁琐的修改流程,节约了人力成本。",
+            "score": 0.6060068011283875
+          },
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_36",
+            "document_id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7",
+            "document_name": "基于预训练模型的AI绘画生成建筑图像的方法优化研究_刘可萌",
+            "title": "第2章AI绘画生成建筑图像方法的主要原理和当前存在的问题",
+            "content": "本文的主要研究内容是基于AI绘画中文生图模型中对建筑空间和建筑类别的认识缺失而展开，主要讨论这部分的内容，对边缘控制和图生图不展开叙述。",
+            "score": 0.5983514785766602
+          },
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_65",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "参考文献（References）",
+            "content": "wledge-based collaborative deep learning for benignmalignant lung nodule classification on chest CT. IEEE Transac‐ tions on Medical Imaging, 38(4): 991-1004 [DOI: 10.1109/TMI. 2018.2876510]   \nXie Y T, Zhang J P, Xia Y, Fulham M and Zhang Y N. 2018. Fusing texture, shape and deep model-learned information at decision lev‐ el for automated classification of lung nodules on chest CT. Infor‐ mation Fusion, 42: 102-110 [DOI: 10.1016/j.inffus.2017.10.005] Xu J Y, Zhang Z L, Friedman T, Liang Y T and van den Broeck G.   \n2018. A semantic loss function for deep learning with symbolic knowledge. arXiv:1711.11157 [DOI: 10.48550/arXiv.1711.11157] Yang A N, Xu Y H and Su H J. 2014. Urban built-up land extraction and change detection analysis using built-up indexes. Geomatics and Spatial Information Technology, 37(8): 30-34 (杨安妮, 许亚 辉, 苏红军. 2014. 结合建筑指数的城市建筑用地提取与变化检 测分析 . 测绘与空间地理信息, 37(8): 30-34) [DOI: 10.3969/j. issn.1672-5867.2014.08.009] Yang H Q, Yu J, Qin K and Zhang G N. 2006.",
+            "score": 0.5953711867332458
+          },
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_66",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "参考文献（References）",
+            "content": "7(8): 30-34) [DOI: 10.3969/j. issn.1672-5867.2014.08.009] Yang H Q, Yu J, Qin K and Zhang G N. 2006. The research on the ground objects extraction from the LIDAR based on knowledge. Bulletin of Surveying and Mapping, 12: 9-11, 15 (杨海全, 余洁, 秦昆, 张国宁. 2006. 基于知识的LIDAR数据地物提取研究. 测 绘通报, (12): 9-11, 15) [DOI: 10.3969/j.issn.0494-0911.2006.12.003] Yang W K, Zhao J J, Qiang Y, Yang X T, Dong Y Y, Du Q Q, Shi G H and Zia M B. 2019. DScGANS: integrate domain knowledge in training dual-path semi-supervised conditional generative adver‐ sarial networks and S3VM for ultrasonography thyroid nodules classification//22nd International Conference on Medical Image Computing and Computer Assisted Intervention. Shenzhen: Springer: 558-566 [DOI: 10.1007/978-3-030-32251-9_61] Yang Z J, Diao C Y and Gao F. 2023. Towards scalable within-season crop mapping with phenology normalization and deep learning. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 16: 1390-1402 [DOI: 10.",
+            "score": 0.567182719707489
+          }
+        ],
+        "timestamp": "2025-12-31T14:55:31.323265"
+      }
+    ]
+  },
+  {
+    "id": "041b904d-7a39-4816-b6a7-85e6ed21931b",
+    "title": "测试",
+    "folderId": "35804038-e3dc-4539-90a0-201f2e92ec80",
+    "createdAt": "2025-12-31T14:17:09.750363",
+    "updatedAt": "2025-12-31T14:17:49.042432",
+    "messages": [
+      {
+        "role": "user",
+        "content": "测试"
+      },
+      {
+        "id": "794f5625-5d5f-4012-a806-408d3322d07c",
+        "role": "assistant",
+        "content": "根据提供的参考资料，所有内容均与“测试”这一主题无直接关联。参考资料主要涉及学位论文（如硕士学位论文、博士学位论文）及相关技术内容（如Disentangled Learning的符号表），但未提及任何与“测试”相关的具体信息或研究内容。\n\n若需进一步帮助，请提供更具体的问题或补充背景信息。  \n\n**标注说明**：参考资料中无相关内容，因此未标注引用编号。",
+        "sources": [
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_6",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "Dissertation Submitted to Hangzhou Dianzi University",
+            "content": "for the Degree of Master",
+            "score": 0.5236322283744812
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.5085263848304749
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.5079632997512817
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.4999839663505554
+          },
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_27",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "C. Disentangled Learning",
+            "content": "TABLE I THE NOTATION TABLE OF IN THIS PAPER",
+            "score": 0.48856738209724426
+          }
+        ],
+        "timestamp": "2025-12-31T14:17:49.042411"
+      }
+    ]
+  },
+  {
+    "id": "421039cb-4f0c-475a-b995-b6998b6ca003",
+    "title": "直线检测是什么方法？",
+    "folderId": "35804038-e3dc-4539-90a0-201f2e92ec80",
+    "createdAt": "2025-12-30T23:08:58.499356",
+    "updatedAt": "2025-12-30T23:09:23.372903",
+    "messages": [
+      {
+        "role": "user",
+        "content": "直线检测是什么方法？"
+      },
+      {
+        "id": "6479cec0-e175-4898-879d-88228e20478a",
+        "role": "assistant",
+        "content": "直线检测是一种通过霍夫变换（Hough Transform）来识别图像中直线形状的技术。其核心原理是将图像空间中的每个点映射到霍夫空间中的一条曲线上，通过寻找霍夫空间中的交点来确定图像中的直线。具体来说，直线方程以 $ y = mx + b $ 表示，其中 $ m $ 为斜率，$ b $ 为截距 [引用1]。\n\n其他参考资料（如引用2-5）主要涉及LIDAR数据处理、建筑图像生成、AI绘画优化等领域的研究，未提及直线检测的相关内容。",
+        "sources": [
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_33",
+            "title": "2.3.4 直线检测概述",
+            "content": "直线检测是一种使用霍夫变换（Hough Transform）来识别图像中特定形状的技术。对于直线检测，霍夫变换将图像空间中的每个点映射到霍夫空间中的一条曲线上，并查找这个空间中的交点，交点表示图像空间中的直线[37]。直线方程为：\n\n$$\n\\mathbf {y} = m \\mathbf {x} + \\mathbf {b} \\tag {2-2}\n$$\n\n其中  $m$  是直线的斜率， $b$  是直线的截距。",
+            "score": 0.6522101163864136
+          },
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_66",
+            "title": "参考文献（References）",
+            "content": "7(8): 30-34) [DOI: 10.3969/j. issn.1672-5867.2014.08.009] Yang H Q, Yu J, Qin K and Zhang G N. 2006. The research on the ground objects extraction from the LIDAR based on knowledge. Bulletin of Surveying and Mapping, 12: 9-11, 15 (杨海全, 余洁, 秦昆, 张国宁. 2006. 基于知识的LIDAR数据地物提取研究. 测 绘通报, (12): 9-11, 15) [DOI: 10.3969/j.issn.0494-0911.2006.12.003] Yang W K, Zhao J J, Qiang Y, Yang X T, Dong Y Y, Du Q Q, Shi G H and Zia M B. 2019. DScGANS: integrate domain knowledge in training dual-path semi-supervised conditional generative adver‐ sarial networks and S3VM for ultrasonography thyroid nodules classification//22nd International Conference on Medical Image Computing and Computer Assisted Intervention. Shenzhen: Springer: 558-566 [DOI: 10.1007/978-3-030-32251-9_61] Yang Z J, Diao C Y and Gao F. 2023. Towards scalable within-season crop mapping with phenology normalization and deep learning. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 16: 1390-1402 [DOI: 10.",
+            "score": 0.49171316623687744
+          },
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_126",
+            "title": "6.2.3 建筑教学指导和实践参考",
+            "content": "这种快速且目的性强的文字生成建筑图像的方法,在当前的建筑教学中,具有一定的指导意义。在对学生建筑空间思维的训练教学中,往往需要即时的互动与思维的发散,教学中的一大难点也是将抽象的空间与具象的建筑相联系。本研究这种简单快速的图像生成方式正满足了教学中的需求,在有了某类空间的生成意向后,只需简单的几个字母,就可以实现空间在建筑中的具象化,帮助学生发散思维,提高教学效率和质量。通过控制Lora 的权重,还可以实现建筑性格和建筑立面的教学。\n\n在建筑设计的实践中,这种图像生成方法可以在设计的初期为使用者提供大量的灵感,在多方沟通的过程中,快速且意图较为准确的建筑图像生成,提高了沟通效率,省去了方案初期在建筑意向方面大量繁琐的修改流程,节约了人力成本。",
+            "score": 0.4506329298019409
+          },
+          {
+            "id": "48e21e36-6c6f-47b8-b1ed-d4d9414b44c7_chunk_9",
+            "title": "3.2.1 点状空间类型 .33",
+            "content": "3.2.2 线性空间类型. ...3.4  \n3.2.3 面的延伸形成的空间类型. ....34  \n3.2.4 体的变化形成的空间类型. ·.··.···············.·············· ..35  \n3.3 预训练模型：图像-文本的对应 .38  \n3.4 本章小结. ..40  \n第4章 AI 绘画生成建筑图像方法的优化的方式和步骤 ..41  \n4.1 图像生成平台和模型训练工具选择的选择 ..41  \n4.1.1 本研究 AI 绘画平台的选择 (Stable Diffusion) ..41  \n4.1.2 Stable Diffusion 中大模型(Checkpoint)与特征模型(Lora)的关  \n系与特点... ...42  \n4.1.3 模型训练工具选的.. ....44  \n4.2 模型数据库的建设. ...45  \n4.2.1 预训练模型的类型选择.. ...4.5  \n4.2.2 主要参数分析. ...45  \n4.2.3Dreambooth 图像和文本内容的输入. ..48  \n4.3预训练模型图像生成测试与调整 ..56  \n4.3.1建筑形体空间类型&建筑类别/性格同时输入大模型  \n(checkpoint)时的图像生成测试.. ....56  \n4.3.2预训练模型类型的调整.. ...69  \n4.3.3Lora 文本内容的输入(以幼儿园类建筑为例) ...60  \n4.3.4建筑形体空间类型(checkpoint)&建筑类型/性格(Lora)图像生  \n成测试... ...62  \n4.4 本章小结 ..68  \n第5章AI绘画生成建筑图像方法的优化结果 ..69  \n5.1优化后的建筑图像生成方法归纳 ..69  \n5.2 优化后的建筑图像生成方法在案例中的快速设计应用举例...73  \n5.2.1 项目背景与设计需求.. ....73  \n5.2.2 项目设计要素的提取.. ....73  \n5.2.3 使用优化后的建筑图像生成方法进行建筑项目的快速设计  \n过程 ...7.4  \n第6章总结与展望 ······································· ..83  \n6.1 主要研究结论. ..83  \n6.2 主要创新点.. ...83  \n6.2.",
+            "score": 0.4502309262752533
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_75",
+            "title": "4.4.1 实验设置",
+            "content": "本章节通过其API使用GPT-3.5模型从文本提示中生成边界框，包括最大边界盒大小和期望的输出格式等，具体方法与第3章生成布局边框方法一致。使用官方GLIGEN多模态控制模型，使用线性调度率设置比例因子  $\\alpha_{t}$ ，该线性调度率从20开始并线性衰减到最小值10，使用  $s = 7.5$  对潜在空间向量  $z_{t}$  进行无分类器引导，所使用的交叉注意力图维度为  $16\\times 16$  。所有图像生成使用PLMS去噪方法，其去噪步骤为50步，损失优化时间步数  $t^{\\prime}$  设置为30步。进行迭代优化的时间步集合  $T_{iteration} = \\{0,5,10,20,30\\}$ ，在该集合内的时间步上的最大迭代次数设置为25，其余的时间步上的最大优化次数均为1。在图像生成完成后的验证步骤使用CLIP ViT-B/32验证裁剪图像块与其对应短语的Text-Image相似度，验证该区域图像是否正确生成，其相似度阈值设置为  $\\tau_{text-image} = 0.30$  ，为缩短图像生成时间，图像编辑修正次数为1。若实现图像生成更高的图文一致性，可将  $\\tau_{text-image}$  设置为更高的阈值或实现多轮迭代修正编辑。为确保公正性，本章节进行比较的无训练模型算法均为在Stable Diffusion v1.5版本及其衍生GLIGEN。基线方法和本章提出的方法为每个提示文本生成10张图像后进行定量指标检测。",
+            "score": 0.44428226351737976
+          }
+        ],
+        "timestamp": "2025-12-30T23:09:23.372872"
+      }
+    ]
+  },
+  {
+    "id": "043ee615-ce75-4d40-8875-325fdc078a5d",
+    "title": "论文的标题是什么？",
+    "folderId": "563790f8-5fef-4cea-981d-41f492b1fa25",
+    "createdAt": "2025-12-30T19:20:41.226113",
+    "updatedAt": "2025-12-30T19:20:41.226137",
+    "messages": [
+      {
+        "role": "user",
+        "content": "论文的标题是什么？"
+      }
+    ]
+  },
+  {
+    "id": "53b7d9c0-c5d6-461b-b67d-d90e61f5eebc",
+    "title": "论文的标题是什么？",
+    "folderId": "563790f8-5fef-4cea-981d-41f492b1fa25",
+    "createdAt": "2025-12-30T19:19:55.066386",
+    "updatedAt": "2025-12-30T19:19:55.066397",
+    "messages": [
+      {
+        "role": "user",
+        "content": "论文的标题是什么？"
+      }
+    ]
+  },
+  {
+    "id": "fc89c993-ab9c-400c-9807-5518aab409d2",
+    "title": "论文的标题是什么？",
+    "folderId": "563790f8-5fef-4cea-981d-41f492b1fa25",
+    "createdAt": "2025-12-30T19:19:44.188732",
+    "updatedAt": "2025-12-30T19:19:44.188747",
+    "messages": [
+      {
+        "role": "user",
+        "content": "论文的标题是什么？"
+      }
+    ]
+  },
+  {
+    "id": "4ff83f57-e78b-4f89-a277-92c0e90b6454",
+    "title": "这篇论文的主要研究内容是什么？",
+    "folderId": "563790f8-5fef-4cea-981d-41f492b1fa25",
+    "createdAt": "2025-12-30T18:57:29.806189",
+    "updatedAt": "2025-12-30T18:57:29.806206",
+    "messages": [
+      {
+        "role": "user",
+        "content": "这篇论文的主要研究内容是什么？"
+      }
+    ]
+  },
+  {
+    "id": "e6e4e66c-0295-46ba-b740-f865984c2bde",
+    "title": "这篇论文的主要研究内容是什么？",
+    "folderId": "563790f8-5fef-4cea-981d-41f492b1fa25",
+    "createdAt": "2025-12-30T18:56:52.145005",
+    "updatedAt": "2025-12-30T18:56:52.145025",
+    "messages": [
+      {
+        "role": "user",
+        "content": "这篇论文的主要研究内容是什么？"
+      }
+    ]
+  },
+  {
+    "id": "a084f7d1-f51a-40a2-9b17-d7c2b651281c",
+    "title": "这篇论文的主要内容是什么？",
+    "folderId": "563790f8-5fef-4cea-981d-41f492b1fa25",
+    "createdAt": "2025-12-30T18:43:52.933479",
+    "updatedAt": "2025-12-30T18:43:52.933498",
+    "messages": [
+      {
+        "role": "user",
+        "content": "这篇论文的主要内容是什么？"
+      }
+    ]
+  }
+]

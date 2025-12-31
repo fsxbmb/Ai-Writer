@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 
-from app.api import documents, folders
+from app.api import documents, folders, chat, document_projects
 from app.core.config import settings
 
 
@@ -15,6 +15,7 @@ async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # 启动时初始化
     print(f"🚀 {settings.APP_NAME} v{settings.APP_VERSION} 启动中...")
+
     yield
     # 关闭时清理
     print("👋 应用关闭")
@@ -40,6 +41,8 @@ app.add_middleware(
 # 注册路由
 app.include_router(documents.router, prefix="/api/documents", tags=["documents"])
 app.include_router(folders.router, prefix="/api/folders", tags=["folders"])
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+app.include_router(document_projects.router, prefix="/api/document-projects", tags=["document-projects"])
 
 
 @app.get("/")
