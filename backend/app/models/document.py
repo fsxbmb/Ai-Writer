@@ -53,7 +53,7 @@ class DocumentStorage:
         with open(self.documents_file, "w", encoding="utf-8") as f:
             json.dump(documents, f, ensure_ascii=False, indent=2)
 
-    def create_document(self, data: DocumentCreate, file_path: str) -> Dict:
+    def create_document(self, data: DocumentCreate, file_path: str, pdf_path: Optional[str] = None) -> Dict:
         """创建文档"""
         documents = self._load_documents()
 
@@ -71,6 +71,39 @@ class DocumentStorage:
             "tags": data.tags,
             "folderId": data.folderId,
             "filePath": file_path,
+            "pdfPath": pdf_path,  # 转换后的 PDF 路径（如果原始文件不是 PDF）
+        }
+
+        documents.append(doc)
+        self._save_documents(documents)
+        return doc
+
+    def create_document_with_markdown(
+        self,
+        data: DocumentCreate,
+        file_path: str,
+        pdf_path: Optional[str] = None,
+        markdown_content: Optional[str] = None
+    ) -> Dict:
+        """创建文档（带 Markdown 内容）"""
+        documents = self._load_documents()
+
+        doc = {
+            "id": str(uuid.uuid4()),
+            "title": data.title,
+            "fileName": data.fileName,
+            "fileType": data.fileType.value,
+            "fileSize": data.fileSize,
+            "uploadTime": datetime.now().isoformat(),
+            "parsed": True,  # 已经有 Markdown，标记为已解析
+            "parseStatus": ParseStatus.SUCCESS.value,
+            "markdownContent": markdown_content,
+            "chunked": False,
+            "vectorizeStatus": "pending",
+            "tags": data.tags,
+            "folderId": data.folderId,
+            "filePath": file_path,
+            "pdfPath": pdf_path,
         }
 
         documents.append(doc)

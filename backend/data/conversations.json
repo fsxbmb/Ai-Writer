@@ -1,10 +1,126 @@
 [
   {
+    "id": "f72c6252-ef75-42a6-8e53-cf25dda2a2c9",
+    "title": "最新有没有持续学习相关论文",
+    "folderId": "1bf866cf-a3d5-40a9-88d2-8c32b9f33e5b",
+    "createdAt": "2026-01-01T18:20:12.060091",
+    "updatedAt": "2026-01-01T18:21:15.688509",
+    "messages": [
+      {
+        "role": "user",
+        "content": "最新有没有持续学习相关论文"
+      },
+      {
+        "id": "127fe595-9c68-4d11-b864-5a62610be7bc",
+        "role": "assistant",
+        "content": "根据提供的参考资料，目前没有提及与**持续学习（Continual Learning）**相关的论文或研究内容。所有引用资料均聚焦于**医疗图像分割**领域，具体涉及扩散模型（Diffusion Models）和Transformer架构的应用，例如HiDiff、MedSegDiff-V2等方法，但未涉及持续学习相关的技术或实验。  \n\n如果需要了解持续学习领域的最新进展，建议查阅人工智能、机器学习领域的顶级会议（如NeurIPS、ICML、CVPR）或期刊的近期论文。  \n\n**标注引用的资料编号**：[引用1]、[引用2]、[引用3]、[引用4]、[引用5] 均未提及持续学习相关内容。",
+        "sources": [
+          {
+            "id": "11198709-48e4-4803-b3f5-4dc02a5af8f3_chunk_4",
+            "document_id": "11198709-48e4-4803-b3f5-4dc02a5af8f3",
+            "document_name": "[2024]HiDiff_Hybrid_Diffusion_Framework_for_Medical_Image_Segmentation",
+            "title": "HiDiff: Hybrid Diffusion Framework for Medical Image Segmentation",
+            "content": "Manuscript received 31 March 2024; revised 3 July 2024; accepted 3 July 2024. Date of publication 8 July 2024; date of current version 24 October 2024. This work was supported in part by the National Natural Science Foundation of China under Grant 62101136 and Grant 62306075, in part by the Natural Science Foundation of Shanghai under Grant 21ZR1403600, in part by Shanghai Municipal Science and Technology Major Project under Grant 2018SHZDZX01, in part by Zhangjiang Lab (ZJLab), and in part by Shanghai Center for Brain Science and Brain-Inspired Technology. (Corresponding authors: Yiming Lei; Hongming Shan.)",
+            "score": 0.5752615928649902
+          },
+          {
+            "id": "e30a2fb1-1217-4787-93b2-9e24eb98718e_chunk_0",
+            "document_id": "e30a2fb1-1217-4787-93b2-9e24eb98718e",
+            "document_name": "[2023]MedSegDiff-V2---Diffusion based Medical Image Segmentation with Transformer",
+            "title": "MedSegDiff-V2: Diffusion based Medical Image Segmentation with Transformer",
+            "content": "Junde $\\mathbf { W } \\mathbf { u } ^ { 1 , 6 , 7 , 8 }$ , Wei $\\mathbf { J i } ^ { 2 }$ , Huazhu $\\mathbf { F u } ^ { 3 }$ , Min $\\mathbf { X } \\mathbf { u } ^ { * }$ , 4,6 Yueming $\\mathbf { J i n } ^ { 1 }$ , Yanwu $\\mathbf { X } \\mathbf { u } ^ { * 5 }$\n\n1National University of Singapore, 2University of Alberta, $^ { 3 } \\mathrm { A } ^ { * } \\mathrm { S T A R }$ , 4Carnegie Mellon University, 5Singapore Eye Research Institute, 6Mohamed bin Zayed University of Artificial Intelligence, 7University of Oxford, 8Kids with Tokens jundewu@ieee.org, ywxu@ieee.org, xumin $1 0 0 @$ gmail.com",
+            "score": 0.5357431173324585
+          },
+          {
+            "id": "b080db92-d536-4e1f-93b4-8f20da802c19_chunk_0",
+            "document_id": "b080db92-d536-4e1f-93b4-8f20da802c19",
+            "document_name": "[2023]MedSegDiff--Medical Image Segmentation with Diffusion Probabilistic Model",
+            "title": "MedSegDiff: Medical Image Segmentation with Diffusion Probabilistic Model",
+            "content": " Zhang2, Yehui Yang $^ { 1 }$ , Haoyi Xiong $\\bot$ Huiying Liu $^ 3$ , and Yanwu Xu1 ( $\\boxtimes$ )\n\n1 Baidu Research 2 Mind Vogue Lab $^ 3$ Institute for Infocomm Research, A\\*STAR",
+            "score": 0.5246111750602722
+          },
+          {
+            "id": "11198709-48e4-4803-b3f5-4dc02a5af8f3_chunk_0",
+            "document_id": "11198709-48e4-4803-b3f5-4dc02a5af8f3",
+            "document_name": "[2024]HiDiff_Hybrid_Diffusion_Framework_for_Medical_Image_Segmentation",
+            "title": "HiDiff: Hybrid Diffusion Framework for Medical Image Segmentation",
+            "content": "Tao Chen , Chenhui Wang , Graduate Student Member, IEEE, Zhihao Chen , Yiming Lei , Member, IEEE, and Hongming Shan , Senior Member, IEEE",
+            "score": 0.5232072472572327
+          },
+          {
+            "id": "11198709-48e4-4803-b3f5-4dc02a5af8f3_chunk_71",
+            "document_id": "11198709-48e4-4803-b3f5-4dc02a5af8f3",
+            "document_name": "[2024]HiDiff_Hybrid_Diffusion_Framework_for_Medical_Image_Segmentation",
+            "title": "C. Cross-Dataset Evaluation",
+            "content": "<table><tr><td rowspan=\"2\">Methods</td><td colspan=\"5\">Kvasir-SEG-→CVC-ClinicDB</td><td colspan=\"5\">CVC-ClinicDB→Kvasir-SEG</td></tr><tr><td>Dice↑</td><td>HD95↓</td><td>IoU个</td><td>Recall个</td><td>Accuracy↑</td><td>Dice↑</td><td>HD95↓</td><td>IoU个</td><td>Recall个</td><td>Accuracy↑</td></tr><tr><td>MERIT[40]</td><td>82.63</td><td>18.46(1.61%)</td><td>70.39</td><td>77.20</td><td>97.13</td><td>87.46</td><td>19.63(0.00%)</td><td>77.72</td><td>80.67</td><td>96.27</td></tr><tr><td>BerDiff [29]</td><td>73.65</td><td>24.56(3.23%)</td><td>58.29</td><td>76.07</td><td>95.19</td><td>77.79</td><td>27.66(2.00%)</td><td>63.65</td><td>67.75</td><td>93.77</td></tr><tr><td>PD-DDPM[19]</td><td>82.62</td><td>19.20(1.61%)</td><td>70.39</td><td>77.19</td><td>97.13</td><td>87.47</td><td>18.22(0.00%)</td><td>77.73</td><td>80.68</td><td>96.28</td></tr><tr><td>HiDiff (ours)</td><td>83.81</td><td>16.38(1.61%)</td><td>71.63</td><td>79.50</td><td>97.39</td><td>88.38</td><td>16.96(0.00%)</td><td>78.80</td><td>81.",
+            "score": 0.49895280599594116
+          }
+        ],
+        "timestamp": "2026-01-01T18:20:36.194952"
+      },
+      {
+        "id": "399e7af3-3d15-45e7-ae01-7df52f8a3432",
+        "role": "user",
+        "content": "知不知道邹健这个人",
+        "sources": [],
+        "timestamp": "2026-01-01T18:21:15.685435"
+      },
+      {
+        "id": "9d039604-67df-4911-a1d8-8d94468e8266",
+        "role": "assistant",
+        "content": "根据提供的参考资料，没有提到名为“邹健”的人物。所有引用资料中列出的作者和研究者均未包含该姓名。可能的情况包括：1) 名字的拼写或翻译存在差异；2) 该人物未在所引用的资料中出现。需要更多背景信息或额外资料来确认该人物的身份。  \n\n**回答依据**：  \n[引用1] [引用2] [引用3] [引用4] [引用5] 均未提及“邹健”。",
+        "sources": [
+          {
+            "id": "e30a2fb1-1217-4787-93b2-9e24eb98718e_chunk_0",
+            "document_id": "e30a2fb1-1217-4787-93b2-9e24eb98718e",
+            "document_name": "[2023]MedSegDiff-V2---Diffusion based Medical Image Segmentation with Transformer",
+            "title": "MedSegDiff-V2: Diffusion based Medical Image Segmentation with Transformer",
+            "content": "Junde $\\mathbf { W } \\mathbf { u } ^ { 1 , 6 , 7 , 8 }$ , Wei $\\mathbf { J i } ^ { 2 }$ , Huazhu $\\mathbf { F u } ^ { 3 }$ , Min $\\mathbf { X } \\mathbf { u } ^ { * }$ , 4,6 Yueming $\\mathbf { J i n } ^ { 1 }$ , Yanwu $\\mathbf { X } \\mathbf { u } ^ { * 5 }$\n\n1National University of Singapore, 2University of Alberta, $^ { 3 } \\mathrm { A } ^ { * } \\mathrm { S T A R }$ , 4Carnegie Mellon University, 5Singapore Eye Research Institute, 6Mohamed bin Zayed University of Artificial Intelligence, 7University of Oxford, 8Kids with Tokens jundewu@ieee.org, ywxu@ieee.org, xumin $1 0 0 @$ gmail.com",
+            "score": 0.3778580129146576
+          },
+          {
+            "id": "11198709-48e4-4803-b3f5-4dc02a5af8f3_chunk_0",
+            "document_id": "11198709-48e4-4803-b3f5-4dc02a5af8f3",
+            "document_name": "[2024]HiDiff_Hybrid_Diffusion_Framework_for_Medical_Image_Segmentation",
+            "title": "HiDiff: Hybrid Diffusion Framework for Medical Image Segmentation",
+            "content": "Tao Chen , Chenhui Wang , Graduate Student Member, IEEE, Zhihao Chen , Yiming Lei , Member, IEEE, and Hongming Shan , Senior Member, IEEE",
+            "score": 0.3714483678340912
+          },
+          {
+            "id": "a6674c25-7b41-4e1b-8e3f-9a41053e2e7c_chunk_168",
+            "document_id": "a6674c25-7b41-4e1b-8e3f-9a41053e2e7c",
+            "document_name": "【2025】BRIGHT",
+            "title": "Appendix H: Details of unsupervised multimodal image matching methods",
+            "content": "Author contributions. Hongruixuan Chen: conceptualization (lead), data curation (lead), funding acquisition (equal), methodology (lead), project administration (lead), investigation (lead), software (lead), visualization (lead), writing – original draft preparation (lead), writing – review and editing (equal). Jian Song: conceptualization (support), data curation (equal), funding acquisition (support), methodology (support), investigation (support), software (support), writing – original draft preparation (equal), visualization (support). Olivier Dietrich: conceptualization (support), data curation (equal), software (support), visualization (equal), writing – review and editing (support). Clifford Broni-Bediako: conceptualization (support), data curation (support), writing – review and editing (lead). Weihao Xuan: data curation (support), project administration (support), writing – review and editing (equal). Junjue Wang: data curation (support), writing – review and editing (support).",
+            "score": 0.35507604479789734
+          },
+          {
+            "id": "b080db92-d536-4e1f-93b4-8f20da802c19_chunk_0",
+            "document_id": "b080db92-d536-4e1f-93b4-8f20da802c19",
+            "document_name": "[2023]MedSegDiff--Medical Image Segmentation with Diffusion Probabilistic Model",
+            "title": "MedSegDiff: Medical Image Segmentation with Diffusion Probabilistic Model",
+            "content": " Zhang2, Yehui Yang $^ { 1 }$ , Haoyi Xiong $\\bot$ Huiying Liu $^ 3$ , and Yanwu Xu1 ( $\\boxtimes$ )\n\n1 Baidu Research 2 Mind Vogue Lab $^ 3$ Institute for Infocomm Research, A\\*STAR",
+            "score": 0.34716537594795227
+          },
+          {
+            "id": "a6674c25-7b41-4e1b-8e3f-9a41053e2e7c_chunk_169",
+            "document_id": "a6674c25-7b41-4e1b-8e3f-9a41053e2e7c",
+            "document_name": "【2025】BRIGHT",
+            "title": "Appendix H: Details of unsupervised multimodal image matching methods",
+            "content": "w and editing (equal). Junjue Wang: data curation (support), writing – review and editing (support). Xinlei Shao: funding acquisition (support), writing – review and editing (support). Yimin Wei: writing – review and editing (support). Junshi Xia: conceptualization (support), data curation (support), supervision (support), writing – review and editing (support). Cuiling Lan12: conceptualization (support), supervision (support), writing – linguistic refinement (equal). Konrad Schindler: conceptualization (equal), resources (support), supervision (equal), writing – review and editing (equal). Naoto Yokoya: conceptualization (equal), funding acquisition (lead), resources (lead), supervision (lead), writing – review and editing (equal).",
+            "score": 0.33631622791290283
+          }
+        ],
+        "timestamp": "2026-01-01T18:21:15.688498"
+      }
+    ]
+  },
+  {
     "id": "69a543e1-9c40-4d67-afa7-90007bf6c212",
     "title": "基于注意力修正机制的组合式文生图算法研究",
     "folderId": "35804038-e3dc-4539-90a0-201f2e92ec80",
     "createdAt": "2026-01-01T14:59:09.070466",
-    "updatedAt": "2026-01-01T15:00:37.852498",
+    "updatedAt": "2026-01-01T21:19:40.526067",
     "messages": [
       {
         "role": "user",
@@ -112,6 +228,391 @@
           }
         ],
         "timestamp": "2026-01-01T15:00:37.852486"
+      },
+      {
+        "id": "6ae4a5af-4533-4272-a10b-e7d774febf89",
+        "role": "user",
+        "content": "还有呢",
+        "sources": [],
+        "timestamp": "2026-01-01T18:58:56.349270"
+      },
+      {
+        "id": "a4589e15-e36d-4cdb-aa4f-2fc668a8baef",
+        "role": "assistant",
+        "content": "根据提供的参考资料，目前仅包含以下内容：  \n1. 关于遥感图像智能解译的进展与展望的文献 [引用1]；  \n2. 博士学位论文（包含图片引用）[引用2]；  \n3. 专业学位论文（图片引用）[引用3]；  \n4. 硕士学位论文（学术学位，图片引用）[引用4]；  \n5. 中国科学技术大学博士论文（图片引用）[引用5]。  \n\n若需进一步补充其他资料或具体细节，请明确说明需求方向（如某领域的论文、特定技术方法等），以便更精准地提供帮助。",
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_1",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "知识与数据驱动的遥感图像智能解译：进展与展望",
+            "content": "20243547］",
+            "score": 0.6156031489372253
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.550439715385437
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.5389678478240967
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.5348004102706909
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_6",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "University of Science and Technology of China A dissertation for doctor's degree",
+            "content": "![](images/d7b03be5d2f79f6616a5d27d7cf2a506868319b2244a925417c59a575e69eaa1.jpg)",
+            "score": 0.5025300979614258
+          }
+        ],
+        "timestamp": "2026-01-01T18:58:56.352622"
+      },
+      {
+        "id": "03702a75-c5c6-46c9-8442-dfe8cbe8cd23",
+        "role": "user",
+        "content": "然后呢",
+        "sources": [],
+        "timestamp": "2026-01-01T19:01:10.528652"
+      },
+      {
+        "id": "3866d74c-0419-4ca0-a609-c35bd4212573",
+        "role": "assistant",
+        "content": "根据提供的参考资料，目前没有明确的信息可以回答“然后呢”这一问题。参考资料主要涉及遥感图像智能解译的研究进展、不同学位论文的标题或描述，但未提及与“然后呢”直接相关的具体内容或流程。若需进一步解答，请补充具体背景或问题细节。\n\n标注引用资料编号：[引用1]",
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_1",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "知识与数据驱动的遥感图像智能解译：进展与展望",
+            "content": "20243547］",
+            "score": 0.5972303152084351
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.5334721803665161
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.5295896530151367
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.5264855623245239
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_6",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "Dissertation Submitted to Hangzhou Dianzi University",
+            "content": "for the Degree of Master",
+            "score": 0.4944748878479004
+          }
+        ],
+        "timestamp": "2026-01-01T19:01:10.532041"
+      },
+      {
+        "id": "99b6b3dc-7007-4a84-af08-718f3ffde415",
+        "role": "user",
+        "content": "然后呢",
+        "sources": [],
+        "timestamp": "2026-01-01T21:05:53.200570"
+      },
+      {
+        "id": "35e69b1d-4bd6-4e25-98cf-af2ba792c6da",
+        "role": "assistant",
+        "content": "根据提供的参考资料，目前没有与问题“然后呢”直接相关的信息或上下文。参考资料主要涉及遥感图像解译的研究进展、博士学位论文、硕士学位论文（学术学位与专业学位）以及杭州电子科技大学的硕士论文提交信息，但均未提及与“然后呢”相关的具体内容。\n\n若问题涉及对某项研究或论文的后续发展、技术路线或学术方向的探讨，可参考以下信息：  \n1. **引用1** 提到遥感图像智能解译的“进展与展望”，可能隐含对未来技术发展的讨论，但需结合具体研究内容进一步分析。  \n2. 其他引用（2-5）为学位论文，但因未提供具体研究内容，无法直接关联到“然后呢”的具体含义。\n\n建议补充更多背景信息或明确问题指向，以便更精准地引用资料内容。  \n\n**回答依据**：  \n- [引用1]  \n- [引用2]  \n- [引用3]  \n- [引用4]  \n- [引用5]",
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_1",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "知识与数据驱动的遥感图像智能解译：进展与展望",
+            "content": "20243547］",
+            "score": 0.5972303152084351
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.5334721803665161
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.5295896530151367
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.5264855623245239
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_6",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "Dissertation Submitted to Hangzhou Dianzi University",
+            "content": "for the Degree of Master",
+            "score": 0.4944748878479004
+          }
+        ],
+        "timestamp": "2026-01-01T21:05:53.203848"
+      },
+      {
+        "id": "a30f3cf2-9bd5-4670-9c7c-a8221c6697de",
+        "role": "user",
+        "content": "然后呢",
+        "sources": [],
+        "timestamp": "2026-01-01T21:09:34.974007"
+      },
+      {
+        "id": "88c138f7-9e37-4aeb-b4d2-2fa1fbfd2e65",
+        "role": "assistant",
+        "content": "根据提供的参考资料，目前没有与问题“然后呢”直接相关的信息或上下文。参考资料主要涉及遥感图像智能解译的研究进展、博士学位论文、硕士学位论文以及杭州电子科技大学的硕士论文等学术内容，但未提及任何与“然后呢”相关的具体论述或情节发展。\n\n若需进一步回答，请补充具体问题背景或上下文信息，以便结合参考资料进行准确分析。",
+        "sources": [
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_1",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "知识与数据驱动的遥感图像智能解译：进展与展望",
+            "content": "20243547］",
+            "score": 0.5972303152084351
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.5334721803665161
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.5295896530151367
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.5264855623245239
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_6",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "Dissertation Submitted to Hangzhou Dianzi University",
+            "content": "for the Degree of Master",
+            "score": 0.4944748878479004
+          }
+        ],
+        "timestamp": "2026-01-01T21:09:34.977559"
+      },
+      {
+        "id": "5f1579da-1c52-4db9-ad39-a0ca80b884ff",
+        "role": "user",
+        "content": "ddd",
+        "sources": [],
+        "timestamp": "2026-01-01T21:13:28.555534"
+      },
+      {
+        "id": "ab278532-f263-4bb1-8fa0-b8a941db46ef",
+        "role": "assistant",
+        "content": "根据提供的参考资料，目前没有与问题“ddd”相关的信息。所有引用资料均涉及学位论文的标题页或声明部分，但未包含与“ddd”直接相关的具体内容。建议您补充更详细的问题描述以便获得准确回答。",
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.6184937357902527
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_6",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "University of Science and Technology of China A dissertation for doctor's degree",
+            "content": "![](images/d7b03be5d2f79f6616a5d27d7cf2a506868319b2244a925417c59a575e69eaa1.jpg)",
+            "score": 0.6169233322143555
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.6030259132385254
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.6029320955276489
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_6",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "Dissertation Submitted to Hangzhou Dianzi University",
+            "content": "for the Degree of Master",
+            "score": 0.5930852293968201
+          }
+        ],
+        "timestamp": "2026-01-01T21:13:28.559748"
+      },
+      {
+        "id": "74abd71d-d92d-4734-99c6-a0159862e1cd",
+        "role": "user",
+        "content": "ddd",
+        "sources": [],
+        "timestamp": "2026-01-01T21:15:45.896042"
+      },
+      {
+        "id": "f47bf53f-dab8-4cc2-a491-46f9a5220d03",
+        "role": "assistant",
+        "content": "您的问题“ddd”目前无法准确理解。根据提供的参考资料，内容主要涉及不同学位论文的标题及提交信息（如博士学位论文、硕士学位论文等），但未提及与“ddd”相关的内容。请补充更具体的问题或澄清需求，以便提供准确回答。 \n\n若需了解学位论文相关的信息，可参考以下内容：  \n- 博士学位论文的提交要求可参考 [引用1] 或 [引用2]  \n- 硕士学位论文格式可参考 [引用4]  \n- 专业学位论文相关信息见 [引用3]  \n\n请明确您的问题，以便进一步协助。",
+        "sources": [
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_4",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "博士学位论文",
+            "content": "![](images/70444d82f420a9da65311cc3bc7451661fa5c6d7eedd45b69d3afc632d1edb50.jpg)",
+            "score": 0.6184937357902527
+          },
+          {
+            "id": "78141f69-093c-44ea-a286-ec2fe4535b73_chunk_6",
+            "document_id": "78141f69-093c-44ea-a286-ec2fe4535b73",
+            "document_name": "可控文本生成图像的关键技术研究_陈卓为",
+            "title": "University of Science and Technology of China A dissertation for doctor's degree",
+            "content": "![](images/d7b03be5d2f79f6616a5d27d7cf2a506868319b2244a925417c59a575e69eaa1.jpg)",
+            "score": 0.6169233322143555
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_2",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(专业学位)",
+            "content": "![](images/54c1ef18b9bdc038df5ef3162b765f42993de3f44ea3fc0e3c7bd5e75922a43f.jpg)",
+            "score": 0.6030259132385254
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.6029320955276489
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_6",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "Dissertation Submitted to Hangzhou Dianzi University",
+            "content": "for the Degree of Master",
+            "score": 0.5930852293968201
+          }
+        ],
+        "timestamp": "2026-01-01T21:15:45.900326"
+      },
+      {
+        "id": "1203b7eb-8be5-4735-9711-43ff2a27be15",
+        "role": "user",
+        "content": "123",
+        "sources": [],
+        "timestamp": "2026-01-01T21:19:40.521774"
+      },
+      {
+        "id": "96537063-3718-40e6-9cf9-cac4c7c5fbb8",
+        "role": "assistant",
+        "content": "根据提供的参考资料，未找到与“123”相关的信息。所有引用内容均涉及深度学习方法、注意力机制、遥感图像解译等技术领域，但未提及数字“123”或与其相关的具体问题。  \n\n若问题存在编号错误或需要进一步澄清，请提供更详细的问题描述，以便基于参考资料准确回答。  \n\n**标注说明**：以上分析基于所有引用资料均未包含“123”相关的内容，因此未标注具体引用编号。",
+        "sources": [
+          {
+            "id": "270a08d8-df19-4f66-af70-d0f683134ae1_chunk_69",
+            "document_id": "270a08d8-df19-4f66-af70-d0f683134ae1",
+            "document_name": "SCDL_Sketch_Causal_Disentangled_Learning_for_Sketch-Based_3D_Shape_Retrieval",
+            "title": "E. Comparisons With the State-of-the-Art Methods",
+            "content": "3</td></tr></table>",
+            "score": 0.6407629251480103
+          },
+          {
+            "id": "563790f8-5fef-4cea-981d-41f492b1fa25_chunk_3",
+            "document_id": "563790f8-5fef-4cea-981d-41f492b1fa25",
+            "document_name": "基于深度学习和图像识别的CAD建筑图纸识别_李培德",
+            "title": "硕士学位论文(学术学位)",
+            "content": "![](images/334ac893110c3321160fdced37f115d29cb1b071411020e4696c1e2896603465.jpg)",
+            "score": 0.6169788241386414
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_74",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "(1) 基于自注意力的结构增强损失（SRSA）",
+            "content": "2}\n$$",
+            "score": 0.612607479095459
+          },
+          {
+            "id": "9592a001-f9e1-4749-8315-a21e61bdb73c_chunk_37",
+            "document_id": "9592a001-f9e1-4749-8315-a21e61bdb73c",
+            "document_name": "基于注意力修正机制的组合式文生图算法研究_罗羚玮",
+            "title": "2.2.1 注意力机制",
+            "content": "10}\n$$",
+            "score": 0.6117250919342041
+          },
+          {
+            "id": "7043d733-602f-4c82-b672-eee8f515a586_chunk_1",
+            "document_id": "7043d733-602f-4c82-b672-eee8f515a586",
+            "document_name": "2024-知识与数据驱动的遥感图像智能解译：进展与展望_孟瑜",
+            "title": "知识与数据驱动的遥感图像智能解译：进展与展望",
+            "content": "20243547］",
+            "score": 0.5929311513900757
+          }
+        ],
+        "timestamp": "2026-01-01T21:19:40.526052"
       }
     ]
   },

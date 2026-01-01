@@ -6,12 +6,64 @@ import logging
 import httpx
 from typing import List, Dict, Optional
 import numpy as np
+import threading
+import asyncio
+from datetime import datetime
 
 from app.services.embedding import embedding_service
 from app.services.vector_store import vector_store
 from app.models.document import storage
+from app.services.ollama_controller import ollama_controller
 
 logger = logging.getLogger(__name__)
+
+
+class TaskManager:
+    """任务管理器，用于跟踪和停止正在运行的任务"""
+
+    def __init__(self):
+        self.active_tasks: Dict[str, Dict] = {}  # task_id -> task_info
+        self.lock = threading.Lock()
+
+    def create_task(self, task_id: str) -> bool:
+        """创建新任务"""
+        with self.lock:
+            if task_id in self.active_tasks:
+                return False
+            self.active_tasks[task_id] = {
+                "status": "running",
+                "created_at": datetime.now().isoformat()
+            }
+            return True
+
+    def stop_task(self, task_id: str) -> bool:
+        """停止任务并释放显存"""
+        with self.lock:
+            if task_id in self.active_tasks:
+                self.active_tasks[task_id]["status"] = "stopped"
+                # 释放显存
+                try:
+                    ollama_controller.unload_all_models()
+                    logger.info(f"任务 {task_id} 已停止，已释放显存")
+                except Exception as e:
+                    logger.warning(f"释放显存失败: {e}")
+                return True
+            return False
+
+    def is_task_stopped(self, task_id: str) -> bool:
+        """检查任务是否被停止"""
+        with self.lock:
+            task = self.active_tasks.get(task_id)
+            return task and task.get("status") == "stopped"
+
+    def remove_task(self, task_id: str):
+        """移除任务"""
+        with self.lock:
+            self.active_tasks.pop(task_id, None)
+
+
+# 全局任务管理器
+task_manager = TaskManager()
 
 
 class RAGService:
@@ -110,7 +162,8 @@ class RAGService:
         self,
         query: str,
         context_chunks: List[Dict],
-        conversation_history: List[Dict] = None
+        conversation_history: List[Dict] = None,
+        task_id: str = None
     ) -> str:
         """
         使用 LLM 生成回答
@@ -119,6 +172,7 @@ class RAGService:
             query: 用户问题
             context_chunks: 相关文档块
             conversation_history: 对话历史
+            task_id: 任务ID，用于停止任务
 
         Returns:
             生成的回答
@@ -131,6 +185,7 @@ class RAGService:
 
         try:
             # 调用 Ollama API 生成回答
+            # 使用较短的超时时间，以便可以快速检查停止状态
             response = self.client.post(
                 f"{self.ollama_base_url}/api/chat",
                 json={
@@ -235,7 +290,8 @@ class RAGService:
         document_id: str = None,
         document_ids: List[str] = None,
         conversation_id: str = None,
-        conversation_history: List[Dict] = None
+        conversation_history: List[Dict] = None,
+        task_id: str = None
     ) -> Dict:
         """
         完整的 RAG 问答流程
@@ -246,11 +302,17 @@ class RAGService:
             document_ids: 多个文档ID列表（用于知识库级别搜索）
             conversation_id: 对话ID（用于获取历史）
             conversation_history: 对话历史
+            task_id: 任务ID，用于停止任务
 
         Returns:
             回答结果，包含答案和引用的文档块
         """
         try:
+            # 检查任务是否被停止
+            if task_id and task_manager.is_task_stopped(task_id):
+                logger.info(f"任务 {task_id} 已被停止")
+                raise Exception("任务已被用户停止")
+
             # 1. 检索相关文档
             logger.info(f"开始检索相关文档，查询: {query}")
             retrieved_chunks = self.search_relevant_chunks(
@@ -260,18 +322,27 @@ class RAGService:
             )
             logger.info(f"检索到 {len(retrieved_chunks)} 个相关文档块")
 
+            # 检查任务是否被停止
+            if task_id and task_manager.is_task_stopped(task_id):
+                logger.info(f"任务 {task_id} 已被停止")
+                raise Exception("任务已被用户停止")
+
             # 2. 重排序
             reranked_chunks = self.rerank_chunks(query, retrieved_chunks)
             logger.info(f"重排序后保留 {len(reranked_chunks)} 个文档块")
 
             # 3. 生成回答
             logger.info("开始生成回答")
-            answer = self.generate_answer(query, reranked_chunks, conversation_history)
+            answer = self.generate_answer(query, reranked_chunks, conversation_history, task_id)
             logger.info("回答生成完成")
 
             # 4. 返回结果（包含引用的文档块）
             # 获取文档名称映射
             doc_names = self._get_document_names(reranked_chunks)
+
+            # 清理任务
+            if task_id:
+                task_manager.remove_task(task_id)
 
             return {
                 "answer": answer,
@@ -289,6 +360,9 @@ class RAGService:
             }
 
         except Exception as e:
+            # 清理任务
+            if task_id:
+                task_manager.remove_task(task_id)
             logger.error(f"RAG 问答失败: {e}")
             raise
 

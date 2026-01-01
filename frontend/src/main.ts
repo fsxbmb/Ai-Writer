@@ -58,6 +58,8 @@ import {
   NTree,
   NCollapse,
   NCollapseItem,
+  NRadio,
+  NRadioGroup,
   // 其他组件
   useDialog,
   useMessage,
@@ -113,6 +115,8 @@ const naive = create({
     NTree,
     NCollapse,
     NCollapseItem,
+    NRadio,
+    NRadioGroup,
   ],
 })
 

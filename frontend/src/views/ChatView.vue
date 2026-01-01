@@ -147,10 +147,10 @@
             <n-button
               type="primary"
               @click="handleSend"
-              :disabled="!inputQuestion.trim() || isLoadingAnswer"
-              :loading="isLoadingAnswer"
+              :disabled="(!inputQuestion.trim() && !isLoadingAnswer) || (isLoadingAnswer && !currentTaskId)"
+              :loading="isLoadingAnswer && !currentTaskId"
             >
-              {{ isLoadingAnswer ? '生成中...' : '发送' }}
+              {{ isLoadingAnswer && currentTaskId ? '停止' : (isLoadingAnswer ? '生成中...' : '发送') }}
             </n-button>
           </div>
         </div>
@@ -211,6 +211,7 @@ const inputQuestion = ref('')
 const isLoadingConversations = ref(false)
 const isLoadingFolders = ref(false)
 const isLoadingAnswer = ref(false)
+const currentTaskId = ref<string | null>(null)
 const showSourceDrawer = ref(false)
 const selectedSource = ref<Source | null>(null)
 
@@ -304,8 +305,27 @@ async function handleSelectConversation(conv: Conversation) {
 }
 
 async function handleSend() {
+  // 如果正在生成，则是停止操作
+  if (isLoadingAnswer.value && currentTaskId.value) {
+    try {
+      await chatApi.stopGeneration(currentTaskId.value)
+      message.success('已停止生成')
+      // 停止时立即清空状态
+      isLoadingAnswer.value = false
+      currentTaskId.value = null
+    } catch (error: any) {
+      message.error(error.response?.data?.detail || '停止失败')
+      console.error(error)
+    }
+    return
+  }
+
   const question = inputQuestion.value.trim()
   if (!question || !selectedFolder.value) return
+
+  // 生成任务ID
+  const taskId = Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9)
+  currentTaskId.value = taskId
 
   const userMessage: Message = {
     id: Date.now().toString(),
@@ -321,14 +341,16 @@ async function handleSend() {
   await nextTick()
   scrollToBottom()
 
+  const requestStartTime = Date.now()
+
   try {
     isLoadingAnswer.value = true
 
     let response
     if (currentConversationId.value) {
-      response = await chatApi.ask(question, selectedFolder.value.id, currentConversationId.value)
+      response = await chatApi.ask(question, selectedFolder.value.id, currentConversationId.value, taskId)
     } else {
-      response = await chatApi.createConversation(selectedFolder.value.id, question)
+      response = await chatApi.createConversation(selectedFolder.value.id, question, taskId)
       currentConversationId.value = response.conversationId
       await loadConversations()
     }
@@ -348,11 +370,19 @@ async function handleSend() {
     // 滚动到底部显示新消息
     await nextTick()
     scrollToBottom()
+
+    // 计算已用时间，如果少于 2 秒，则等待剩余时间
+    const elapsedTime = Date.now() - requestStartTime
+    const minDisplayTime = 2000
+    if (elapsedTime < minDisplayTime) {
+      await new Promise(resolve => setTimeout(resolve, minDisplayTime - elapsedTime))
+    }
   } catch (error: any) {
     message.error(error.response?.data?.detail || '问答失败')
     console.error(error)
   } finally {
     isLoadingAnswer.value = false
+    currentTaskId.value = null
   }
 }
 

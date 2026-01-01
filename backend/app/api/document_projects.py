@@ -21,7 +21,9 @@ router = APIRouter()
 class CreateProjectRequest(BaseModel):
     """创建项目请求"""
     title: str = Field(..., description="项目标题")
-    folderIds: List[str] = Field(..., description="知识库ID列表")
+    folderIds: List[str] = Field(default=[], description="知识库ID列表")
+    outline: Optional[List[dict]] = Field(None, description="大纲树形结构")
+    content: Optional[List[dict]] = Field(None, description="章节内容")
 
 
 class UpdateOutlineRequest(BaseModel):
@@ -40,12 +42,14 @@ async def create_project(request: CreateProjectRequest):
     """
     创建文档项目
 
-    创建新的文档生成项目，可以选择多个知识库
+    创建新的文档生成项目，可以选择多个知识库，也可以直接传入大纲和内容
     """
     try:
         project = document_project_storage.create_project(
             title=request.title,
             folder_ids=request.folderIds,
+            outline=request.outline,
+            content=request.content,
         )
         return project
 

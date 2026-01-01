@@ -70,6 +70,7 @@ tmp/
 
 # Parsed output and screenshots
 backend/parsed_output/
+backend/data/images/
 *.png
 
 # Vector database volumes

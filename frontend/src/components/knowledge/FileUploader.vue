@@ -2,7 +2,7 @@
   <n-upload
     :custom-request="handleUpload"
     :show-file-list="false"
-    accept=".pdf,.docx,.txt"
+    accept=".pdf,.doc,.docx"
     multiple
     directory-dnd
   >
@@ -16,7 +16,7 @@
         点击或拖拽文件到此区域上传
       </n-text>
       <n-p depth="3" style="margin: 8px 0 0 0">
-        支持 PDF、Word、TXT 格式，可一次上传多个文件
+        支持文档格式（PDF、Word等）
       </n-p>
     </n-upload-dragger>
   </n-upload>

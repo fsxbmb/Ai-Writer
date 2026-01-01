@@ -4,11 +4,14 @@
 import os
 import shutil
 import base64
+import logging
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Query, Depends
 from fastapi.responses import FileResponse
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 from app.schemas.document import (
     DocumentCreate,
@@ -23,8 +26,26 @@ from app.api.folders import update_folder_timestamp
 from app.services.mineru_service import mineru_service
 from app.core.config import settings
 from app.schemas.document import ParseStatus
+from app.services.document_converter import document_converter
+from app.services.word_converter import word_converter
 
 router = APIRouter()
+
+# 支持的文件格式列表
+SUPPORTED_FORMATS = [
+    "pdf",
+    # Office 文档
+    "doc", "docx", "xls", "xlsx", "ppt", "pptx",
+    "odt", "ods", "odp",
+    # 图片
+    "png", "jpg", "jpeg", "gif", "bmp", "tiff",
+    # 文本
+    "txt",
+    # 网页
+    "html", "htm",
+    # Markdown
+    "md",
+]
 
 
 @router.post("/upload", response_model=UploadResponse)
@@ -35,12 +56,16 @@ async def upload_document(
     """
     上传文档
 
-    支持的文件类型：PDF, DOCX, TXT
+    支持的文件类型：PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ODT, ODS, ODP, PNG, JPG, JPEG, GIF, BMP, TIFF, TXT, HTML, HTM, MD
+    所有非 PDF 格式将自动转换为 PDF
     """
     # 验证文件类型
     file_ext = Path(file.filename).suffix.lower().lstrip(".")
-    if file_ext not in ["pdf", "docx", "txt"]:
-        raise HTTPException(status_code=400, detail="不支持的文件类型")
+    if file_ext not in SUPPORTED_FORMATS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"不支持的文件类型: {file_ext}。支持的格式: {', '.join(SUPPORTED_FORMATS)}"
+        )
 
     # 确保上传目录存在
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
@@ -56,6 +81,59 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"文件保存失败: {str(e)}")
 
+    # 文档转换和 Markdown 生成
+    pdf_path = file_path
+    markdown_content = None
+    converted_to_pdf = False
+
+    # 如果是 docx 文件，直接转换为 Markdown（更准确）
+    if file_ext in ["docx", "doc"]:
+        try:
+            logger.info(f"检测到 Word 文档 {file_id}，开始转换为 Markdown...")
+            markdown_content, images = word_converter.convert_to_markdown(
+                file_path,
+                base_url="/api/documents/images"  # 图片访问路径
+            )
+            logger.info(f"Word 文档 {file_id} 转换成功，提取了 {len(images)} 张图片")
+
+            # 同时转换为 PDF 用于预览
+            try:
+                converted_pdf, _ = document_converter.convert_to_pdf(
+                    file_path,
+                    output_dir=settings.UPLOAD_DIR
+                )
+                pdf_path = converted_pdf
+                converted_to_pdf = True
+                logger.info(f"Word 文档 {file_id} 同时转换为 PDF 用于预览")
+            except Exception as e:
+                logger.warning(f"Word 转 PDF 失败（不影响 Markdown）: {e}")
+                # PDF 转换失败不影响，Markdown 已经有了
+
+        except Exception as e:
+            logger.error(f"Word 转 Markdown 失败: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Word 文档转换失败: {str(e)}"
+            )
+
+    # 如果不是 PDF 也不是 docx，转换为 PDF
+    elif file_ext != "pdf":
+        try:
+            logger.info(f"上传的文件 {file_id} 不是 PDF 格式，开始转换...")
+            converted_path, _ = document_converter.convert_to_pdf(
+                file_path,
+                output_dir=settings.UPLOAD_DIR
+            )
+            pdf_path = converted_path
+            converted_to_pdf = True
+            logger.info(f"文件 {file_id} 转换成功: {pdf_path}")
+        except Exception as e:
+            logger.error(f"文件 {file_id} 转换失败: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"文件转换失败: {str(e)}。请尝试上传 PDF 格式。"
+            )
+
     # 创建文档记录
     file_size = os.path.getsize(file_path)
     doc_data = DocumentCreate(
@@ -67,7 +145,16 @@ async def upload_document(
         folderId=folderId,
     )
 
-    doc = storage.create_document(doc_data, file_path)
+    # 如果已经生成了 Markdown，标记为已解析
+    if markdown_content:
+        doc = storage.create_document_with_markdown(
+            doc_data,
+            file_path,
+            pdf_path if converted_to_pdf else None,
+            markdown_content
+        )
+    else:
+        doc = storage.create_document(doc_data, file_path, pdf_path if converted_to_pdf else None)
 
     # 更新知识库时间戳
     update_folder_timestamp(folderId)
@@ -107,8 +194,29 @@ async def parse_document(document_id: str):
     async def parse_task():
         """解析任务"""
         try:
+            # 如果文件不是 PDF，先转换为 PDF
+            actual_file_path = file_path
+            file_ext = Path(file_path).suffix.lower()
+
+            if file_ext != ".pdf":
+                logger.info(f"文档 {document_id} 不是 PDF 格式，开始转换...")
+                try:
+                    pdf_path, _ = document_converter.convert_to_pdf(
+                        file_path,
+                        output_dir=settings.UPLOAD_DIR
+                    )
+                    actual_file_path = pdf_path
+                    logger.info(f"文档 {document_id} 转换成功: {pdf_path}")
+                except Exception as e:
+                    logger.error(f"文档 {document_id} 转换失败: {e}")
+                    storage.update_parse_status(
+                        document_id, ParseStatus.ERROR, error_message=f"文件转换失败: {str(e)}"
+                    )
+                    return
+
+            # 使用 PDF 文件进行解析
             markdown_content, error_message, images = await mineru_service.parse_pdf(
-                file_path, document_id
+                actual_file_path, document_id
             )
 
             if error_message:
@@ -270,10 +378,12 @@ async def download_document(
         )
 
     elif format == "pdf":
-        # 预览或下载原始 PDF 文件
-        file_path = doc.get("filePath")
+        # 预览或下载 PDF 文件
+        # 优先使用转换后的 PDF，如果不存在则使用原始文件
+        file_path = doc.get("pdfPath") or doc.get("filePath")
+
         if not file_path or not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail="文件不存在")
+            raise HTTPException(status_code=404, detail="PDF 文件不存在")
 
         # 设置 Content-Disposition
         content_disposition = "inline" if disposition == "inline" else "attachment"
@@ -286,10 +396,15 @@ async def download_document(
                 headers={"Content-Disposition": "inline"}
             )
         else:
+            # 如果是转换的 PDF，使用原文件名但加上 .pdf 后缀
+            filename = doc.get("fileName", "document.pdf")
+            if not filename.endswith(".pdf"):
+                filename = Path(filename).stem + ".pdf"
+
             return FileResponse(
                 file_path,
                 media_type="application/pdf",
-                filename=doc["fileName"]
+                filename=filename
             )
 
     else:
@@ -305,9 +420,11 @@ async def get_pdf_base64(document_id: str):
     if not doc:
         raise HTTPException(status_code=404, detail="文档不存在")
 
-    file_path = doc.get("filePath")
+    # 优先使用转换后的 PDF，如果不存在则使用原始文件
+    file_path = doc.get("pdfPath") or doc.get("filePath")
+
     if not file_path or not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="文件不存在")
+        raise HTTPException(status_code=404, detail="PDF 文件不存在")
 
     # 读取PDF文件并转换为base64
     with open(file_path, "rb") as f:
@@ -324,7 +441,7 @@ async def get_pdf_base64(document_id: str):
 @router.get("/{document_id}/images/{image_name}")
 async def get_document_image(document_id: str, image_name: str):
     """
-    获取文档解析后的图片
+    获取文档解析后的图片（MinerU 生成的图片）
     """
     doc = storage.get_document(document_id)
     if not doc:
@@ -367,6 +484,34 @@ async def get_document_image(document_id: str, image_name: str):
         media_type = "image/png"
     elif ext == ".gif":
         media_type = "image/gif"
+
+    return FileResponse(
+        image_path,
+        media_type=media_type
+    )
+
+
+@router.get("/images/{image_name}")
+async def get_word_extracted_image(image_name: str):
+    """
+    获取从 Word 文档中提取的图片
+    """
+    # 图片保存在 backend/data/images/
+    image_dir = os.path.join(os.path.dirname(__file__), "../../data/images")
+    image_path = os.path.join(image_dir, image_name)
+
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail=f"图片不存在: {image_name}")
+
+    # 根据文件扩展名确定媒体类型
+    ext = Path(image_path).suffix.lower()
+    media_type = "image/jpeg"
+    if ext == ".png":
+        media_type = "image/png"
+    elif ext == ".gif":
+        media_type = "image/gif"
+    elif ext == ".webp":
+        media_type = "image/webp"
 
     return FileResponse(
         image_path,

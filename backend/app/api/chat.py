@@ -4,9 +4,10 @@
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from typing import List, Optional
+import uuid
 
 from app.models.conversation import conversation_storage
-from app.services.rag import rag_service
+from app.services.rag import rag_service, task_manager
 from app.models.document import storage
 
 router = APIRouter()
@@ -18,6 +19,7 @@ class QuestionRequest(BaseModel):
     documentId: Optional[str] = Field(None, description="文档ID（已弃用，使用folderId）")
     folderId: Optional[str] = Field(None, description="知识库ID")
     conversationId: Optional[str] = Field(None, description="对话ID")
+    taskId: Optional[str] = Field(None, description="任务ID，用于停止生成")
 
 
 class AnswerResponse(BaseModel):
@@ -33,6 +35,10 @@ async def ask_question(request: QuestionRequest):
 
     基于知识库内容回答问题，使用 RAG 技术检索相关资料并生成回答
     """
+    # 创建任务
+    task_id = request.taskId or str(uuid.uuid4())
+    task_manager.create_task(task_id)
+
     try:
         # 获取对话历史
         conversation_history = None
@@ -47,7 +53,8 @@ async def ask_question(request: QuestionRequest):
             document_id=request.documentId,
             document_ids=get_document_ids(request.folderId),
             conversation_id=request.conversationId,
-            conversation_history=conversation_history
+            conversation_history=conversation_history,
+            task_id=task_id
         )
 
         # 如果有对话ID，保存消息
@@ -89,6 +96,7 @@ class CreateConversationRequest(BaseModel):
     """创建对话请求"""
     folderId: str = Field(..., description="知识库ID")
     firstQuestion: str = Field(..., description="第一个问题")
+    taskId: Optional[str] = Field(None, description="任务ID，用于停止生成")
 
 
 @router.post("/conversations")
@@ -98,6 +106,10 @@ async def create_conversation(request: CreateConversationRequest):
 
     创建新的对话并自动回答第一个问题
     """
+    # 创建任务
+    task_id = request.taskId or str(uuid.uuid4())
+    task_manager.create_task(task_id)
+
     try:
         # 创建对话（使用第一个问题作为标题）
         first_message = {
@@ -116,7 +128,8 @@ async def create_conversation(request: CreateConversationRequest):
             query=request.firstQuestion,
             document_ids=get_document_ids(request.folderId),
             conversation_id=conversation["id"],
-            conversation_history=None
+            conversation_history=None,
+            task_id=task_id
         )
 
         # 保存助手回答
@@ -198,3 +211,31 @@ async def delete_conversation(conversation_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"删除对话失败: {str(e)}")
+
+
+class StopGenerationRequest(BaseModel):
+    """停止生成请求"""
+    taskId: str = Field(..., description="任务ID")
+
+
+@router.post("/stop")
+async def stop_generation(request: StopGenerationRequest):
+    """
+    停止生成任务
+
+    停止指定的问答生成任务并释放资源
+    """
+    try:
+        success = task_manager.stop_task(request.taskId)
+        if success:
+            return {"message": "任务已停止", "taskId": request.taskId}
+        else:
+            # 任务不存在可能表示：1) 任务已完成 2) 任务还没开始 3) 任务ID错误
+            # 无论是哪种情况，都返回成功，因为任务已经不在运行了
+            return {"message": "任务已停止或已完成", "taskId": request.taskId}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"停止任务失败: {str(e)}")
+

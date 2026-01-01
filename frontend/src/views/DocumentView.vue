@@ -9,16 +9,6 @@
       >
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <n-text strong style="font-size: 14px;">文档项目</n-text>
-          <n-button
-            size="small"
-            type="primary"
-            @click="handleCreateNew"
-          >
-            <template #icon>
-              <n-icon :component="AddIcon" />
-            </template>
-            新建
-          </n-button>
         </div>
 
         <n-spin :show="isLoadingProjects" style="flex: 1; overflow: hidden;">
@@ -73,18 +63,38 @@
         <div style="flex-shrink: 0; margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <n-text strong>文档大纲</n-text>
-            <n-button
-              v-if="outline.length > 0"
-              :type="outlineLocked ? 'warning' : 'primary'"
-              size="tiny"
-              @click="handleToggleLock"
-            >
-              {{ outlineLocked ? '解锁大纲' : '确认并锁定' }}
-            </n-button>
+            <n-space>
+              <n-button
+                size="tiny"
+                @click="showUploadDrawer = true"
+                :disabled="outlineLocked || isParsed"
+              >
+                <template #icon>
+                  <n-icon :component="UploadIcon" />
+                </template>
+                上传文档
+              </n-button>
+              <n-button
+                v-if="outline.length > 0"
+                :type="outlineLocked ? 'warning' : 'primary'"
+                size="tiny"
+                @click="handleToggleLock"
+              >
+                {{ outlineLocked ? '解锁大纲' : '确认并锁定' }}
+              </n-button>
+            </n-space>
           </div>
 
           <n-alert v-if="outline.length === 0" type="info" size="small">
-            在底部对话框输入需求开始生成
+            <template #header>
+              <n-space align="center">
+                <n-text>开始创建纲要</n-text>
+              </n-space>
+            </template>
+            <n-space vertical>
+              <n-text>方式1：在底部输入框输入需求，AI 生成大纲</n-text>
+              <n-text>方式2：右侧"上传文档"，导入Word中的大纲</n-text>
+            </n-space>
           </n-alert>
           <n-alert v-else-if="!outlineLocked" type="info" size="small">
             大纲未锁定，可编辑调整
@@ -131,10 +141,8 @@
             <n-button
               type="primary"
               @click="startGenerating"
-              :loading="isGeneratingAll"
-              :disabled="isGeneratingAll"
             >
-              {{ isGeneratingAll ? '生成中...' : '继续生成' }}
+              {{ isGeneratingAll ? '停止生成' : '继续生成' }}
             </n-button>
             <n-button
               @click="handleExportWord"
@@ -176,10 +184,8 @@
                 <n-button
                   type="primary"
                   @click="startGenerating"
-                  :loading="isGeneratingAll"
-                  :disabled="isGeneratingAll"
                 >
-                  {{ isGeneratingAll ? '生成中...' : '开始生成全部内容' }}
+                  {{ isGeneratingAll ? '停止生成' : '开始生成全部内容' }}
                 </n-button>
                 <n-button
                   @click="handleExportWord"
@@ -438,6 +444,65 @@
       </template>
     </n-modal>
 
+    <!-- Word 文档上传抽屉 -->
+    <n-drawer v-model:show="showUploadDrawer" :width="500" placement="right">
+      <n-drawer-content title="上传 Word 文档" closable>
+        <n-space vertical size="large">
+          <n-alert type="info" :closable="false">
+            上传 Word 文档后，系统会自动解析文档结构，提取大纲和正文内容到左侧编辑区。如果不上传，可直接在底部输入框输入需求生成文档。
+          </n-alert>
+
+          <n-spin :show="isUploading || isParsing">
+            <n-upload
+              :custom-request="handleWordUpload"
+              :show-file-list="false"
+              accept=".doc,.docx"
+              :max="1"
+              :disabled="isParsing"
+            >
+              <n-upload-dragger>
+                <div style="margin-bottom: 12px">
+                  <n-icon size="48" :depth="3">
+                    <CloudUploadIcon />
+                  </n-icon>
+                </div>
+                <n-text style="font-size: 16px">
+                  点击或拖拽 Word 文档到此区域上传
+                </n-text>
+                <n-p depth="3" style="margin: 8px 0 0 0">
+                  支持 .doc、.docx 格式
+                </n-p>
+              </n-upload-dragger>
+            </n-upload>
+          </n-spin>
+
+          <div v-if="uploadedDocument" style="margin-top: 12px;">
+            <n-text>已上传: {{ uploadedDocument.fileName }}</n-text>
+            <n-divider />
+            <n-space>
+              <n-button
+                type="primary"
+                @click="confirmUploadDocument"
+                :loading="isParsing"
+                :disabled="isParsed"
+              >
+                {{ isParsed ? '已导入' : '确认导入' }}
+              </n-button>
+              <n-button @click="clearUpload" :disabled="isParsing">
+                清除
+              </n-button>
+            </n-space>
+          </div>
+
+          <n-divider />
+
+          <n-text depth="3" style="font-size: 12px;">
+            提示：不上传文档也可在底部输入框中输入需求来生成文档
+          </n-text>
+        </n-space>
+      </n-drawer-content>
+    </n-drawer>
+
     <!-- 来源查看抽屉 -->
     <n-drawer v-model:show="showSourceDrawer" :width="700" placement="right">
       <n-drawer-content title="原文片段" closable>
@@ -497,12 +562,26 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick, h, watch } from 'vue'
 import { useMessage, useDialog, NText, NScrollbar } from 'naive-ui'
+import type { UploadFileInfo, UploadCustomRequestOptions } from 'naive-ui'
 import { documentApi } from '@/api/document'
 import { documentProjectApi, type OutlineNode, type Source } from '@/api/documentProject'
-import { AddOutline as AddIcon, TrashOutline as TrashIcon } from '@vicons/ionicons5'
+import {
+  AddOutline as AddIcon,
+  TrashOutline as TrashIcon,
+  DocumentOutline as DocumentIcon,
+  CloudUploadOutline as CloudUploadIcon,
+  CloudUploadOutline as UploadIcon
+} from '@vicons/ionicons5'
 
 const message = useMessage()
 const dialog = useDialog()
+
+// Word 文档上传相关
+const showUploadDrawer = ref(false)
+const uploadedDocument = ref<any>(null)
+const isUploading = ref(false)
+const isParsing = ref(false)
+const isParsed = ref(false)
 
 // 项目列表相关
 const projects = ref<any[]>([])
@@ -672,7 +751,10 @@ async function handleGenerate() {
     console.log('选择的知识库详情:', selectedFolderIds.value.map(id => getFolderName(id)))
 
     // 1. 创建项目
-    const project = await documentProjectApi.create(topic, selectedFolderIds.value)
+    const project = await documentProjectApi.create({
+      title: topic,
+      folderIds: selectedFolderIds.value
+    })
     currentProjectId.value = project.id
     console.log('项目创建成功，ID:', project.id)
 
@@ -807,6 +889,13 @@ function flattenOutline(nodes: OutlineNode[], parentPath: string[] = []): any[] 
 
 // 开始生成全部内容
 async function startGenerating() {
+  // 如果正在生成，则是停止操作
+  if (isGeneratingAll.value) {
+    isGeneratingAll.value = false
+    message.success('已停止生成')
+    return
+  }
+
   if (!currentProjectId.value) return
 
   const allSections = flattenOutline(outline.value)
@@ -815,13 +904,23 @@ async function startGenerating() {
 
   // 逐个生成
   for (const section of allSections) {
+    // 检查是否被停止
+    if (!isGeneratingAll.value) {
+      message.info('生成已停止')
+      break
+    }
     await generateSection(section)
     // 添加小延迟，避免请求过于频繁
     await new Promise(resolve => setTimeout(resolve, 500))
   }
 
+  // 检查是否正常完成
+  const completed = isGeneratingAll.value
   isGeneratingAll.value = false
-  message.success('全部内容生成完成')
+
+  if (completed) {
+    message.success('全部内容生成完成')
+  }
 
   // 刷新项目列表
   await loadProjects()
@@ -1263,7 +1362,216 @@ function handleCreateNew() {
   selectedKeys.value = []
   selectedNode.value = null
   selectedKey.value = ''
-  // 不显示提示消息，因为这只是切换到新建模式
+
+  // 清除上传状态
+  uploadedDocument.value = null
+  isParsed.value = false
+
+  // 显示上传抽屉
+  showUploadDrawer.value = true
+}
+
+// 清除上传
+function clearUpload() {
+  uploadedDocument.value = null
+  isParsed.value = false
+}
+
+// 处理 Word 文档上传
+async function handleWordUpload(options: UploadCustomRequestOptions) {
+  const { file, onProgress, onFinish, onError } = options
+
+  isUploading.value = true
+
+  try {
+    const formData = new FormData()
+    formData.append('file', file.file as File)
+    formData.append('folderId', 'root')
+
+    const response = await fetch('/api/documents/upload', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error('上传失败')
+    }
+
+    const result = await response.json()
+    uploadedDocument.value = result
+
+    onProgress({ percent: 100 })
+    onFinish()
+
+    message.success('上传成功！点击"确认导入"解析文档内容')
+  } catch (error: any) {
+    message.error(`上传失败: ${error.message}`)
+    onError()
+  } finally {
+    isUploading.value = false
+  }
+}
+
+// 确认导入文档
+async function confirmUploadDocument() {
+  if (!uploadedDocument.value) return
+
+  isParsing.value = true
+
+  try {
+    message.info('正在处理文档，请稍候...')
+
+    // Word 文档上传时已经转换为 Markdown，直接获取即可
+    const doc = await documentApi.get(uploadedDocument.value.documentId)
+
+    // 检查是否已经有 Markdown
+    if (!doc.markdownContent) {
+      // 如果没有 Markdown（比如 PDF），需要调用解析
+      await documentApi.parse(uploadedDocument.value.documentId)
+
+      // 轮询检查解析状态
+      let parsed = false
+      for (let i = 0; i < 60; i++) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        const updatedDoc = await documentApi.get(uploadedDocument.value.documentId)
+        if (updatedDoc.parsed && updatedDoc.markdownContent) {
+          updatedDoc.markdownContent
+          parsed = true
+          break
+        }
+      }
+
+      if (!parsed) {
+        throw new Error('文档解析超时，请稍后重试')
+      }
+    }
+
+    // 获取 Markdown 内容
+    const markdown = doc.markdownContent
+
+    // 解析 Markdown 提取大纲和内容
+    const { outline: extractedOutline, sections: extractedSections } = parseMarkdownToOutline(markdown)
+
+    // 设置标题
+    topicInput.value = doc.title
+
+    // 设置大纲
+    outline.value = extractedOutline
+    outlineLocked.value = false // 允许用户编辑调整大纲
+    outlineGenerated.value = true
+
+    // 设置正文内容
+    generatedSections.value = extractedSections
+
+    // 展开所有大纲节点
+    if (extractedOutline.length > 0) {
+      expandedKeys.value = extractedOutline.map((node: OutlineNode) => node.key)
+    }
+
+    isParsed.value = true
+
+    message.success('文档导入成功！大纲和内容已填充到编辑区')
+
+    // 自动创建项目
+    try {
+      const project = await documentProjectApi.create({
+        title: doc.title,
+        outline: extractedOutline,
+        content: extractedSections
+      })
+      currentProjectId.value = project.id
+      await loadProjects()
+    } catch (error) {
+      // 创建项目失败不影响导入
+      console.warn('自动创建项目失败:', error)
+    }
+
+    // 关闭抽屉
+    showUploadDrawer.value = false
+  } catch (error: any) {
+    message.error(`导入失败: ${error.message || error.response?.data?.detail}`)
+    console.error(error)
+  } finally {
+    isParsing.value = false
+  }
+}
+
+// 解析 Markdown 提取大纲和内容
+function parseMarkdownToOutline(markdown: string) {
+  const lines = markdown.split('\n')
+  const outline: OutlineNode[] = []
+  const sections: any[] = []
+
+  let currentSection: any = null
+  let currentContent: string[] = []
+  const nodeStack: OutlineNode[] = []
+
+  lines.forEach((line, index) => {
+    // 匹配标题
+    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/)
+    if (headingMatch) {
+      const level = headingMatch[1].length
+      const title = headingMatch[2].trim()
+
+      // 保存上一节的内容
+      if (currentSection) {
+        currentSection.paragraphs = [{
+          content: currentContent.join('\n').trim(),
+          sources: []
+        }]
+        sections.push(currentSection)
+      }
+
+      // 创建新节点
+      const node: OutlineNode = {
+        id: `section-${index}`,
+        label: title,
+        key: `section-${index}`,
+        children: [],
+        level
+      }
+
+      // 调整树结构
+      while (nodeStack.length > 0 && nodeStack[nodeStack.length - 1].level >= level) {
+        nodeStack.pop()
+      }
+
+      if (nodeStack.length > 0) {
+        nodeStack[nodeStack.length - 1].children!.push(node)
+      } else {
+        outline.push(node)
+      }
+
+      nodeStack.push(node)
+
+      // 创建对应的内容节
+      currentSection = {
+        sectionId: `section-${index}`,
+        title: title,
+        paragraphs: []
+      }
+      currentContent = []
+    } else {
+      // 普通内容
+      if (line.trim()) {
+        currentContent.push(line)
+      }
+    }
+  })
+
+  // 保存最后一节
+  if (currentSection) {
+    currentSection.paragraphs = [{
+      content: currentContent.join('\n').trim(),
+      sources: []
+    }]
+    sections.push(currentSection)
+  }
+
+  return {
+    outline,
+    sections
+  }
 }
 
 // 删除项目

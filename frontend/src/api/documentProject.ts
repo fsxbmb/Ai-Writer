@@ -53,11 +53,13 @@ export interface ProjectListResponse {
 // 文档项目 API
 export const documentProjectApi = {
   // 创建项目
-  create: async (title: string, folderIds: string[]): Promise<DocumentProject> => {
-    const response = await apiClient.post<DocumentProject>('/document-projects', {
-      title,
-      folderIds,
-    })
+  create: async (data: {
+    title: string
+    folderIds?: string[]
+    outline?: OutlineNode[]
+    content?: SectionContent[]
+  }): Promise<DocumentProject> => {
+    const response = await apiClient.post<DocumentProject>('/document-projects', data)
     return response
   },
 

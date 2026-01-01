@@ -35,7 +35,12 @@ export interface Conversation {
 // 问答API
 export const chatApi = {
   // 提问
-  ask: async (question: string, folderId: string, conversationId?: string): Promise<{
+  ask: async (
+    question: string,
+    folderId: string,
+    conversationId: string | undefined,
+    taskId?: string
+  ): Promise<{
     answer: string
     sources: Source[]
   }> => {
@@ -45,13 +50,22 @@ export const chatApi = {
     }>('/chat/ask', {
       question,
       folderId,
-      conversationId
+      conversationId,
+      taskId
+    })
+    return response
+  },
+
+  // 停止生成
+  stopGeneration: async (taskId: string): Promise<{ message: string; taskId: string }> => {
+    const response = await apiClient.post<{ message: string; taskId: string }>('/chat/stop', {
+      taskId
     })
     return response
   },
 
   // 创建对话（并发送第一个问题）
-  createConversation: async (folderId: string, firstQuestion: string): Promise<{
+  createConversation: async (folderId: string, firstQuestion: string, taskId?: string): Promise<{
     conversationId: string
     answer: string
     sources: Source[]
@@ -62,7 +76,8 @@ export const chatApi = {
       sources: Source[]
     }>('/chat/conversations', {
       folderId,
-      firstQuestion
+      firstQuestion,
+      taskId
     })
     return response
   },
@@ -92,3 +107,4 @@ export const chatApi = {
     await apiClient.delete(`/chat/conversations/${conversationId}`)
   }
 }
+

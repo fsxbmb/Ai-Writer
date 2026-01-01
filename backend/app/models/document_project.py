@@ -37,17 +37,29 @@ class DocumentProjectStorage:
         self,
         title: str,
         folder_ids: List[str],
+        outline: Optional[List[Dict]] = None,
+        content: Optional[List[Dict]] = None,
     ) -> Dict:
         """创建项目"""
         projects = self._load_projects()
+
+        # 初始化 sections
+        sections = {}
+
+        # 如果传入了 content，填充到 sections
+        if content:
+            for section_data in content:
+                section_id = section_data.get("sectionId")
+                if section_id:
+                    sections[section_id] = section_data
 
         project = {
             "id": str(uuid.uuid4()),
             "title": title,
             "folderIds": folder_ids,
-            "outline": None,  # 大纲（树形结构）
+            "outline": outline,  # 大纲（树形结构）
             "outlineLocked": False,  # 大纲是否已锁定
-            "sections": {},  # 章节 ID -> 章节内容（包含段落和版本）
+            "sections": sections,  # 章节 ID -> 章节内容（包含段落和版本）
             "createdAt": datetime.now().isoformat(),
             "updatedAt": datetime.now().isoformat(),
         }
