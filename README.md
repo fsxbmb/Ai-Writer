@@ -1,124 +1,280 @@
 # AI Writer - 智能写作助手
 
-一个类似 Gemini 风格的 AI 写手 Web 应用，集成了 MinerU 文档解析功能。
+一个类似 Gemini 风格的 AI 写手 Web 应用，集成了 MinerU 文档解析、RAG 知识问答和智能文档生成功能。
 
-## 功能特性
+## ✨ 功能特性
 
-- **知识库管理**（核心功能）
-  - PDF 文档上传和管理
-  - MinerU 智能解析
-  - Markdown 编辑和预览
-  - 标签分类和搜索
+### 📚 知识库管理
+- **PDF 文档上传和管理**
+  - 支持拖拽上传
+  - 文件类型验证和大小限制
+  - 文档元数据管理（标题、标签、描述）
 
-- **知识问答** - 开发中
-- **文档生成** - 开发中
-- **历史案例** - 开发中
+- **MinerU 智能解析**
+  - 高精度 PDF 解析
+  - 保留文档原始格式
+  - 支持表格、公式、图片等复杂内容
+  - 异步任务处理，实时进度反馈
 
-## 技术栈
+- **Markdown 编辑和预览**
+  - 在线 Markdown 编辑器
+  - 实时预览
+  - 语法高亮
+  - 导出功能
+
+- **标签分类和搜索**
+  - 自定义标签管理
+  - 全文搜索
+  - 多条件筛选
+
+### 🤖 知识问答 (RAG)
+- **向量检索**
+  - 基于 Milvus 的向量存储
+  - 文档智能分块
+  - 语义相似度搜索
+
+- **智能问答**
+  - 结合 LLM 进行知识问答
+  - 支持上下文对话
+  - 引用来源标注
+  - 对话历史管理
+
+### 📝 文档生成
+- **AI 辅助写作**
+  - 基于知识库生成文档
+  - 多种写作模板
+  - 自定义生成参数
+  - 实时生成预览
+
+- **项目管理**
+  - 文档项目创建和管理
+  - 生成历史记录
+  - 版本对比
+  - 导出多种格式
+
+### 📄 PDF 在线预览
+- **PDF.js 集成**
+  - 浏览器原生 PDF 预览
+  - 无需下载即可查看
+  - 支持缩放、翻页
+  - 全屏模式
+
+## 🛠 技术栈
 
 ### 前端
-- Vue 3 + TypeScript + Vite
-- Naive UI (组件库)
-- Pinia (状态管理)
-- Vue Router (路由)
+- **框架**: Vue 3 + TypeScript + Vite
+- **UI 库**: Naive UI
+- **状态管理**: Pinia
+- **路由**: Vue Router
+- **HTTP 客户端**: Axios
+- **PDF 预览**: PDF.js + vue-pdf-embed
+- **Markdown**: markdown-it + highlight.js
 
 ### 后端
-- Python FastAPI
-- MinerU (PDF 解析)
+- **框架**: Python FastAPI
+- **PDF 解析**: MinerU
+- **向量数据库**: Milvus
+- **文本嵌入**: sentence-transformers
+- **文档处理**: aiofiles, python-multipart
 
-## 项目结构
+### 基础设施
+- **容器化**: Docker + Docker Compose
+- **反向代理**: Nginx (可选)
+- **进程管理**: PM2 (可选)
+
+## 📁 项目结构
 
 ```
 AI_Writer/
-├── frontend/          # Vue 3 前端项目
+├── frontend/                # Vue 3 前端项目
 │   ├── src/
-│   │   ├── api/              # API 客户端
-│   │   ├── components/       # 组件
-│   │   ├── layouts/          # 布局
-│   │   ├── router/           # 路由
-│   │   ├── stores/           # Pinia 状态
-│   │   ├── types/            # TypeScript 类型
-│   │   └── views/            # 页面
+│   │   ├── api/            # API 客户端
+│   │   │   ├── chat.ts     # 聊天 API
+│   │   │   ├── document.ts # 文档 API
+│   │   │   └── documentProject.ts # 文档项目 API
+│   │   ├── components/     # 组件
+│   │   │   ├── common/     # 通用组件
+│   │   │   └── knowledge/  # 知识库组件
+│   │   ├── layouts/        # 布局
+│   │   │   └── MainLayout.vue
+│   │   ├── router/         # 路由
+│   │   │   └── index.ts
+│   │   ├── stores/         # Pinia 状态
+│   │   │   ├── app.ts      # 应用状态
+│   │   │   └── document.ts # 文档状态
+│   │   ├── types/          # TypeScript 类型
+│   │   ├── views/          # 页面
+│   │   │   ├── ChatView.vue        # 知识问答页面
+│   │   │   ├── DocumentView.vue    # 文档生成页面
+│   │   │   ├── DocumentPreview.vue # 文档预览页面
+│   │   │   └── KnowledgeView.vue   # 知识库管理页面
+│   │   ├── App.vue
+│   │   └── main.ts
 │   ├── package.json
 │   └── vite.config.ts
 │
-├── backend/           # Python FastAPI 后端
+├── backend/                # Python FastAPI 后端
 │   ├── app/
-│   │   ├── api/             # API 路由
-│   │   ├── core/            # 配置
-│   │   ├── models/          # 数据模型
-│   │   ├── schemas/         # Pydantic schemas
-│   │   └── services/        # 业务逻辑
+│   │   ├── api/           # API 路由
+│   │   │   ├── chat.py            # 聊天 API
+│   │   │   ├── document_projects.py # 文档项目 API
+│   │   │   ├── documents.py       # 文档管理 API
+│   │   │   └── folders.py         # 文件夹 API
+│   │   ├── core/          # 配置
+│   │   │   └── config.py
+│   │   ├── models/        # 数据模型
+│   │   │   ├── conversation.py    # 对话模型
+│   │   │   ├── document.py        # 文档模型
+│   │   │   └── document_project.py # 文档项目模型
+│   │   ├── schemas/       # Pydantic schemas
+│   │   ├── services/      # 业务逻辑
+│   │   │   ├── chunker.py         # 文档分块
+│   │   │   ├── document_generator.py # 文档生成
+│   │   │   ├── embedding.py       # 文本嵌入
+│   │   │   ├── mineru_parser.py   # MinerU 解析
+│   │   │   ├── mineru_service.py  # MinerU 服务
+│   │   │   ├── rag.py            # RAG 服务
+│   │   │   ├── task_manager.py   # 任务管理
+│   │   │   └── vector_store.py   # 向量存储
+│   │   ├── main.py        # 应用入口
+│   │   └── data/          # 数据文件
 │   ├── requirements.txt
-│   └── main.py
+│   └── .env.example
 │
-└── MinerU/            # MinerU 文档解析器
+├── milvus/                # Milvus 向量数据库配置
+│   └── docker-compose.yml
+│
+├── DEPLOYMENT.md          # WSL2 部署指南
+└── README.md             # 本文件
 ```
 
-## 快速开始
+## 🚀 快速开始
 
-### 前提条件
+### 环境要求
 
-- Node.js 18+
-- Python 3.10+
-- MinerU 已安装（在项目 MinerU 目录）
+- **Node.js** 18+
+- **Python** 3.10+
+- **Docker** (可选，用于 Milvus)
 
-### 后端启动
+### 快速安装
 
-1. 进入后端目录：
+#### 1. 克隆项目
+```bash
+git clone https://github.com/fsxbmb/Ai-Writer.git
+cd Ai-Writer
+```
+
+#### 2. 后端安装
 ```bash
 cd backend
-```
 
-2. 安装 Python 依赖：
-```bash
+# 安装依赖
 pip install -r requirements.txt
-```
 
-3. 复制环境变量配置：
-```bash
+# 配置环境变量
 cp .env.example .env
-```
 
-4. 启动后端服务：
-```bash
+# 创建必要目录
+mkdir -p uploads parsed_output parsed_data
+
+# 启动后端
 python -m app.main
 ```
 
 后端将运行在 `http://localhost:8000`
 
-API 文档：`http://localhost:8000/docs`
-
-### 前端启动
-
-1. 进入前端目录：
+#### 3. 前端安装
 ```bash
 cd frontend
-```
 
-2. 安装依赖：
-```bash
+# 安装依赖
 npm install
-```
 
-3. 启动开发服务器：
-```bash
+# 启动开发服务器
 npm run dev
 ```
 
 前端将运行在 `http://localhost:5173`
 
-## 使用说明
+#### 4. (可选) 启动 Milvus 向量数据库
+
+如果需要使用 RAG 知识问答功能：
+
+```bash
+cd milvus
+docker compose up -d
+```
+
+### 完整部署指南
+
+查看 [DEPLOYMENT.md](DEPLOYMENT.md) 获取详细的 WSL2 部署指南，包括：
+- Windows + WSL2 环境配置
+- 笔记本电脑性能优化
+- 常见问题解决方案
+- 生产环境部署
+
+## 📖 使用说明
 
 ### 知识库管理
 
-1. 点击"上传文档"按钮，或拖拽 PDF 文件到上传区域
-2. 上传完成后，文档会出现在列表中
-3. 点击"解析"按钮，调用 MinerU 进行 PDF 解析
-4. 解析完成后，可以预览和编辑 Markdown 内容
-5. 使用标签和搜索功能管理文档
+1. **上传文档**
+   - 点击"上传文档"按钮或拖拽 PDF 文件到上传区域
+   - 填写文档元信息（标题、标签、描述）
+   - 点击上传
 
-### API 端点
+2. **解析文档**
+   - 在文档列表中找到已上传的文档
+   - 点击"解析"按钮开始 MinerU 解析
+   - 等待解析完成（可在任务列表查看进度）
+
+3. **预览和编辑**
+   - 解析完成后点击"预览"查看 PDF 原文
+   - 点击"编辑"修改 Markdown 内容
+   - 使用标签和搜索功能管理文档
+
+### 知识问答
+
+1. **启用向量搜索**
+   - 确保 Milvus 服务已启动
+   - 在后端配置向量数据库连接
+
+2. **发起问答**
+   - 进入"知识问答"页面
+   - 选择要查询的文档范围
+   - 输入问题并提交
+   - 查看 AI 生成的回答和相关引用
+
+3. **对话管理**
+   - 查看历史对话记录
+   - 创建新对话
+   - 删除不需要的对话
+
+### 文档生成
+
+1. **创建文档项目**
+   - 进入"文档生成"页面
+   - 点击"新建项目"
+   - 配置生成参数（主题、风格、长度等）
+
+2. **生成文档**
+   - 选择参考文档（来自知识库）
+   - 输入生成要求
+   - 点击"生成"开始 AI 写作
+   - 实时预览生成结果
+
+3. **管理项目**
+   - 查看所有文档项目
+   - 编辑生成的内容
+   - 导出为多种格式
+
+## 🔌 API 文档
+
+启动后端服务后，访问以下地址查看完整的 API 文档：
+
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+### 主要 API 端点
 
 #### 文档管理
 - `POST /api/documents/upload` - 上传文档
@@ -129,31 +285,159 @@ npm run dev
 - `DELETE /api/documents/{id}` - 删除文档
 - `GET /api/documents/{id}/download` - 下载文档
 
-## 开发计划
+#### 文件夹管理
+- `GET /api/folders` - 获取文件夹列表
+- `POST /api/folders` - 创建文件夹
+- `PUT /api/folders/{id}` - 更新文件夹
+- `DELETE /api/folders/{id}` - 删除文件夹
+
+#### 聊天和问答
+- `POST /api/chat` - 发送聊天消息
+- `GET /api/chat/conversations` - 获取对话列表
+- `GET /api/chat/conversations/{id}` - 获取对话详情
+- `DELETE /api/chat/conversations/{id}` - 删除对话
+
+#### 文档生成
+- `POST /api/document-projects/generate` - 生成文档
+- `GET /api/document-projects` - 获取文档项目列表
+- `GET /api/document-projects/{id}` - 获取文档项目详情
+- `PUT /api/document-projects/{id}` - 更新文档项目
+- `DELETE /api/document-projects/{id}` - 删除文档项目
+
+## 🎯 功能开发进度
 
 - [x] 前后端项目结构搭建
 - [x] MinerU 服务集成
 - [x] 文档上传和解析 API
 - [x] 知识库管理界面
-- [ ] PDF 在线预览
-- [ ] Markdown 编辑器增强
-- [ ] 知识问答页面
-- [ ] 文档生成页面
-- [ ] 历史案例页面
+- [x] PDF 在线预览
+- [x] Markdown 编辑器
+- [x] 文档分块和嵌入
+- [x] 向量数据库集成
+- [x] RAG 知识问答功能
+- [x] 文档生成功能
+- [x] 对话历史管理
+- [x] 文档项目管理
+- [x] 异步任务处理
+- [ ] 用户认证和权限管理
+- [ ] 多用户协作功能
+- [ ] 导出为 Word/PDF
+- [ ] 模板系统
+- [ ] API 限流和安全加固
 
-## 常见问题
+## 🔧 常见问题
 
-### MinerU 未安装
+### MinerU 未安装或无法使用
 
 如果 MinerU 未正确安装，后端会使用模拟解析器。要使用真实的 MinerU：
 
-1. 确保 MinerU 已安装在 `../MinerU` 目录
-2. 检查 Python 路径是否包含 MinerU
+```bash
+# 安装 MinerU
+pip install mineru
+
+# 或从源码安装
+git clone https://github.com/opendatalab/MinerU.git
+cd MinerU
+pip install -e .
+```
 
 ### CORS 错误
 
-如果遇到 CORS 错误，检查后端 `.env` 文件中的 `CORS_ORIGINS` 配置。
+如果遇到 CORS 错误，检查后端 `.env` 文件中的 `CORS_ORIGINS` 配置：
 
-## 许可证
+```env
+CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
+```
 
-MIT
+### Milvus 连接失败
+
+确保 Milvus 服务已启动：
+
+```bash
+cd milvus
+docker compose ps
+docker compose logs -f standalone
+```
+
+### 性能问题
+
+对于笔记本电脑用户，建议：
+- 使用基础模式（不启动 Milvus）
+- 减少并发任务数量
+- 使用 Python 虚拟环境隔离依赖
+- 定期清理系统缓存
+
+详见 [DEPLOYMENT.md](DEPLOYMENT.md) 的性能优化章节。
+
+## 📝 开发指南
+
+### 前端开发
+
+```bash
+cd frontend
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 预览生产构建
+npm run preview
+```
+
+### 后端开发
+
+```bash
+cd backend
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动开发服务器
+python -m app.main
+
+# 运行测试（如果有）
+pytest
+```
+
+### 代码规范
+
+- **前端**: ESLint + TypeScript
+- **后端**: PEP 8 + Black (可选)
+- **提交信息**: 使用约定式提交
+
+## 🤝 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'feat: add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 🙏 致谢
+
+- [MinerU](https://github.com/opendatalab/MinerU) - PDF 文档解析工具
+- [FastAPI](https://fastapi.tiangolo.com/) - 现代化的 Python Web 框架
+- [Vue 3](https://vuejs.org/) - 渐进式 JavaScript 框架
+- [Naive UI](https://www.naiveui.com/) - Vue 3 UI 组件库
+- [Milvus](https://milvus.io/) - 开源向量数据库
+
+## 📞 技术支持
+
+- **GitHub Issues**: https://github.com/fsxbmb/Ai-Writer/issues
+- **部署文档**: [DEPLOYMENT.md](DEPLOYMENT.md)
+- **API 文档**: http://localhost:8000/docs
+
+---
+
+**Made with ❤️ by fsxbmb**
