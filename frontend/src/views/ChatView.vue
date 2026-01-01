@@ -67,15 +67,21 @@
       </n-layout-sider>
 
       <!-- 中间：对话内容展示 -->
-      <n-layout content-style="padding: 16px;">
-        <n-card v-if="selectedFolder" size="small" style="margin-bottom: 16px;">
-          <n-text strong>{{ selectedFolder.name }}</n-text>
-          <n-text depth="3" style="margin-left: 12px">({{ documentCount}} 个文档)</n-text>
-        </n-card>
+      <n-layout content-style="display: flex; flex-direction: column; height: 100%; overflow: hidden;">
+        <!-- 顶部知识库信息（固定） -->
+        <div v-if="selectedFolder" style="flex-shrink: 0; padding: 16px 16px 0 16px;">
+          <n-card size="small">
+            <n-text strong>{{ selectedFolder.name }}</n-text>
+            <n-text depth="3" style="margin-left: 12px">({{ documentCount}} 个文档)</n-text>
+          </n-card>
+        </div>
 
-        <n-empty v-else description="请先选择一个知识库进行对话" style="margin-top: 100px" />
+        <div v-else style="flex-shrink: 0; padding: 16px;">
+          <n-empty description="请先选择一个知识库进行对话" />
+        </div>
 
-        <div v-if="selectedFolder" class="messages-container">
+        <!-- 消息滚动区域 -->
+        <div v-if="selectedFolder" id="messages-container" style="flex: 1; overflow-y: auto; padding: 16px;">
           <div v-if="messages.length === 0 && !isLoadingAnswer">
             <n-empty description="开始提问吧" />
           </div>
@@ -128,7 +134,8 @@
           </div>
         </div>
 
-        <div v-if="selectedFolder" style="margin-top: 16px;">
+        <!-- 底部输入框（固定） -->
+        <div v-if="selectedFolder" style="flex-shrink: 0; padding: 16px; border-top: 1px solid var(--n-border-color); background: var(--n-color);">
           <div style="display: flex; gap: 8px; width: 100%;">
             <n-input
               v-model:value="inputQuestion"
@@ -382,7 +389,7 @@ async function handleDeleteConversation(conv: Conversation) {
 }
 
 function scrollToBottom() {
-  const container = document.querySelector('.messages-container')
+  const container = document.querySelector('#messages-container')
   if (container) {
     container.scrollTop = container.scrollHeight
   }

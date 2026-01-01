@@ -1,6 +1,6 @@
 <template>
   <div class="document-view">
-    <n-layout has-sider style="height: calc(100vh - 64px)">
+    <n-layout has-sider style="height: calc(100vh - 120px)">
       <!-- 左侧：文档项目标签列表 -->
       <n-layout-sider
         bordered
