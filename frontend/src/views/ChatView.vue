@@ -1,6 +1,6 @@
 <template>
   <div class="chat-view">
-    <n-layout has-sider style="height: calc(100vh - 64px)">
+    <n-layout has-sider style="height: calc(100vh - 120px)">
       <!-- 左侧：知识库和对话列表 -->
       <n-layout-sider bordered :width="320" content-style="padding: 16px;">
         <n-card size="small" style="margin-bottom: 16px">
@@ -38,21 +38,27 @@
             <n-list-item
               v-for="conv in conversations"
               :key="conv.id"
+              :class="{ 'is-active': currentConversationId === conv.id }"
               @click="handleSelectConversation(conv)"
             >
-              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <n-text style="flex: 1;">{{ conv.title }}</n-text>
-                <n-button
-                  text
-                  type="error"
-                  size="tiny"
-                  @click.stop="handleDeleteConversation(conv)"
-                  style="margin-left: 8px;"
-                >
-                  <template #icon>
-                    <n-icon :component="TrashIcon" />
-                  </template>
-                </n-button>
+              <div style="width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <n-text style="flex: 1;">{{ conv.title }}</n-text>
+                  <n-button
+                    text
+                    type="error"
+                    size="tiny"
+                    @click.stop="handleDeleteConversation(conv)"
+                    style="margin-left: 8px;"
+                  >
+                    <template #icon>
+                      <n-icon :component="TrashIcon" />
+                    </template>
+                  </n-button>
+                </div>
+                <n-text depth="3" style="font-size: 11px; margin-top: 4px;">
+                  {{ formatConversationTime(conv.updatedAt || conv.createdAt) }}
+                </n-text>
               </div>
             </n-list-item>
           </n-list>
@@ -61,10 +67,10 @@
       </n-layout-sider>
 
       <!-- 中间：对话内容展示 -->
-      <n-layout content-style="display: flex; flex-direction: column; height: 100%;">
-        <n-card v-if="selectedFolder" size="small">
+      <n-layout content-style="padding: 16px;">
+        <n-card v-if="selectedFolder" size="small" style="margin-bottom: 16px;">
           <n-text strong>{{ selectedFolder.name }}</n-text>
-          <n-text depth="3" style="margin-left: 12px">({{ documentCount }} 个文档)</n-text>
+          <n-text depth="3" style="margin-left: 12px">({{ documentCount}} 个文档)</n-text>
         </n-card>
 
         <n-empty v-else description="请先选择一个知识库进行对话" style="margin-top: 100px" />
@@ -122,7 +128,7 @@
           </div>
         </div>
 
-        <div v-if="selectedFolder" style="padding: 16px;">
+        <div v-if="selectedFolder" style="margin-top: 16px;">
           <div style="display: flex; gap: 8px; width: 100%;">
             <n-input
               v-model:value="inputQuestion"
@@ -253,6 +259,18 @@ function handleNewChat() {
   message.success('已创建新对话')
 }
 
+// 格式化对话时间
+function formatConversationTime(timestamp: string) {
+  const date = new Date(timestamp)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hour = String(date.getHours()).padStart(2, '0')
+  const minute = String(date.getMinutes()).padStart(2, '0')
+
+  return `${year}.${month}.${day} ${hour}h${minute}`
+}
+
 async function loadConversations() {
   if (!selectedFolder.value) return
 
@@ -381,9 +399,27 @@ onMounted(() => {
   height: 100%;
 }
 
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
+/* 对话列表项选中高亮 */
+.chat-view :deep(.n-list-item) {
+  position: relative;
+  transition: all 0.2s;
+}
+
+.chat-view :deep(.n-list-item.is-active) {
+  background-color: var(--n-color-modal) !important;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-view :deep(.n-list-item.is-active::before) {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--n-color-target);
+  border-radius: 8px 0 0 8px;
 }
 </style>

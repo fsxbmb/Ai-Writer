@@ -5,7 +5,7 @@
       bordered
       show-trigger
       :collapsed-width="64"
-      :width="280"
+      :width="187"
       :collapsed="appStore.sidebarCollapsed"
       @collapse="appStore.setSidebarCollapsed(true)"
       @expand="appStore.setSidebarCollapsed(false)"
@@ -41,7 +41,7 @@
                 </n-icon>
               </template>
               <span v-if="!appStore.sidebarCollapsed">
-                {{ appStore.isDark ? '浅色主题' : '深色主题' }}
+                {{ appStore.isDark ? '浅色' : '深色' }}
               </span>
             </n-button>
           </template>
@@ -51,8 +51,8 @@
     </n-layout-sider>
 
     <!-- 主内容区 -->
-    <n-layout>
-      <n-layout-header bordered style="height: 60px; padding: 0 24px; display: flex; align-items: center;">
+    <n-layout style="height: 100vh; overflow: hidden;">
+      <n-layout-header bordered style="height: 60px; padding: 0 24px; display: flex; align-items: center; flex-shrink: 0;">
         <n-space align="center">
           <n-breadcrumb>
             <n-breadcrumb-item>{{ currentRouteMeta?.title || '首页' }}</n-breadcrumb-item>
@@ -60,7 +60,7 @@
         </n-space>
       </n-layout-header>
 
-      <n-layout-content content-style="padding: 24px;">
+      <n-layout-content style="padding: 24px; overflow: hidden;">
         <router-view />
       </n-layout-content>
     </n-layout>

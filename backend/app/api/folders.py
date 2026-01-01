@@ -12,6 +12,25 @@ from datetime import datetime
 router = APIRouter()
 
 
+def update_folder_timestamp(folder_id: str):
+    """
+    更新文件夹的时间戳
+
+    当文件夹内的文档发生变化时（上传、删除、更新等），调用此函数更新 updatedAt
+    """
+    import json
+
+    for i, folder in enumerate(storage.folders):
+        if folder["id"] == folder_id:
+            folder["updatedAt"] = datetime.now().isoformat()
+            storage.folders[i] = folder
+
+            # 保存到文件
+            with open(storage.folders_file, "w", encoding="utf-8") as f:
+                json.dump(storage.folders, f, ensure_ascii=False, indent=2)
+            return
+
+
 @router.get("", response_model=List[FolderResponse])
 async def list_folders():
     """
@@ -38,6 +57,7 @@ async def create_folder(data: FolderCreate):
         "name": data.name,
         "parentId": data.parentId,
         "createdAt": datetime.now().isoformat(),
+        "updatedAt": datetime.now().isoformat(),
     }
 
     # 保存到存储

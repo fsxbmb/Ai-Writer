@@ -30,18 +30,23 @@
               <template #prefix>
                 <n-icon :component="FolderIcon" />
               </template>
-              <n-space justify="space-between" align="center" style="width: 100%">
-                <n-text>{{ folder.name }}</n-text>
-                <n-button
-                  size="tiny"
-                  quaternary
-                  type="error"
-                  @click.stop="handleDeleteFolder(folder)"
-                >
-                  <template #icon>
-                    <n-icon :component="TrashIcon" />
-                  </template>
-                </n-button>
+              <n-space vertical :size="4" style="width: 100%">
+                <n-space justify="space-between" align="center">
+                  <n-text>{{ folder.name }}</n-text>
+                  <n-button
+                    size="tiny"
+                    quaternary
+                    type="error"
+                    @click.stop="handleDeleteFolder(folder)"
+                  >
+                    <template #icon>
+                      <n-icon :component="TrashIcon" />
+                    </template>
+                  </n-button>
+                </n-space>
+                <n-text depth="3" style="font-size: 11px">
+                  {{ formatFolderTime(folder.createdAt) }}
+                </n-text>
               </n-space>
             </n-list-item>
           </n-list>
@@ -76,16 +81,37 @@
             </n-space>
 
             <n-space>
-              <n-button
-                type="primary"
-                :disabled="!currentFolderId"
-                @click="handleUploadClick"
-              >
-                <template #icon>
-                  <n-icon :component="UploadIcon" />
+              <n-tooltip :disabled="!!currentFolderId" placement="bottom">
+                <template #trigger>
+                  <n-button
+                    type="info"
+                    :disabled="!currentFolderId"
+                    :loading="batchVectorizingFolders.includes(currentFolderId || '')"
+                    @click="showBatchVectorizeModal = true"
+                  >
+                    <template #icon>
+                      <n-icon :component="GridIcon" />
+                    </template>
+                    批量向量化
+                  </n-button>
                 </template>
-                上传文档
-              </n-button>
+                请先选择一个知识库
+              </n-tooltip>
+              <n-tooltip :disabled="!!currentFolderId" placement="bottom">
+                <template #trigger>
+                  <n-button
+                    type="primary"
+                    :disabled="!currentFolderId"
+                    @click="handleUploadClick"
+                  >
+                    <template #icon>
+                      <n-icon :component="UploadIcon" />
+                    </template>
+                    上传文档
+                  </n-button>
+                </template>
+                请先选择一个知识库
+              </n-tooltip>
             </n-space>
           </n-space>
 
@@ -217,6 +243,62 @@
       </n-space>
     </n-modal>
 
+    <!-- 批量向量化模式选择对话框 -->
+    <n-modal v-model:show="showBatchVectorizeModal" preset="card" title="批量向量化" style="width: 500px">
+      <n-space vertical size="large">
+        <n-alert type="info" :closable="false">
+          知识库：<strong>{{ currentFolder?.name }}</strong>
+        </n-alert>
+
+        <n-text>请选择批量向量化的处理模式：</n-text>
+
+        <n-space vertical :size="16">
+          <div
+            class="mode-option"
+            :class="{ 'is-selected': batchVectorizeMode === 'incremental' }"
+            @click="batchVectorizeMode = 'incremental'"
+          >
+            <n-radio :checked="batchVectorizeMode === 'incremental'" @update:checked="batchVectorizeMode = 'incremental'">
+              <n-space vertical :size="4">
+                <n-text strong>增量处理（推荐）</n-text>
+                <n-text depth="3" style="font-size: 12px">
+                  只处理未向量化的文档，保留已完成的处理结果
+                </n-text>
+              </n-space>
+            </n-radio>
+          </div>
+
+          <div
+            class="mode-option"
+            :class="{ 'is-selected': batchVectorizeMode === 'full' }"
+            @click="batchVectorizeMode = 'full'"
+          >
+            <n-radio :checked="batchVectorizeMode === 'full'" @update:checked="batchVectorizeMode = 'full'">
+              <n-space vertical :size="4">
+                <n-text strong>清空重建</n-text>
+                <n-text depth="3" style="font-size: 12px">
+                  删除所有现有的分块和向量化结果，重新处理所有文档
+                </n-text>
+              </n-space>
+            </n-radio>
+          </div>
+        </n-space>
+
+        <n-alert v-if="batchVectorizeMode === 'full'" type="warning" :closable="false">
+          警告：清空重建将删除所有现有的分块和向量化结果，此操作不可恢复！
+        </n-alert>
+      </n-space>
+
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="showBatchVectorizeModal = false">取消</n-button>
+          <n-button type="primary" @click="handleBatchVectorizeCurrentFolder">
+            开始处理
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
+
     <!-- 文档详情抽屉 -->
     <n-drawer v-model:show="showDocumentDrawer" :width="1200" placement="right">
       <template #header>
@@ -307,6 +389,7 @@ import {
   AddOutline as AddIcon,
   DocumentOutline as FileIcon,
   TrashOutline as TrashIcon,
+  GridOutline as GridIcon,
 } from '@vicons/ionicons5'
 import FileUploader from '@/components/knowledge/FileUploader.vue'
 
@@ -324,6 +407,9 @@ const isLoading = ref(false)
 const isUploading = ref(false)
 const showDocumentDrawer = ref(false)
 const selectedDocument = ref<Document | null>(null)
+const batchVectorizingFolders = ref<string[]>([])
+const showBatchVectorizeModal = ref(false)
+const batchVectorizeMode = ref<'incremental' | 'full'>('incremental')
 
 const folders = computed(() => documentStore.folders.filter((f) => f.id !== 'root'))
 const currentFolder = computed(() =>
@@ -341,6 +427,17 @@ function getFolderName(folderId: string | null) {
   return folder?.name || ''
 }
 
+function formatFolderTime(timestamp: string) {
+  const date = new Date(timestamp)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hour = String(date.getHours()).padStart(2, '0')
+  const minute = String(date.getMinutes()).padStart(2, '0')
+
+  return `${year}.${month}.${day} ${hour}h${minute}`
+}
+
 function formatTime(timestamp: string) {
   const date = new Date(timestamp)
   const now = new Date()
@@ -356,10 +453,10 @@ function formatTime(timestamp: string) {
   return date.toLocaleDateString('zh-CN')
 }
 
-function selectFolder(folderId: string) {
+async function selectFolder(folderId: string) {
   currentFolderId.value = folderId
   documentStore.setCurrentFolder(folderId)
-  loadDocuments()
+  await loadDocuments()
 }
 
 function handleSearch(query: string) {
@@ -534,6 +631,49 @@ async function handleDeleteFolder(folder: Folder) {
   }
 }
 
+async function handleBatchVectorizeCurrentFolder() {
+  if (!currentFolderId.value) {
+    message.warning('请先选择一个知识库')
+    return
+  }
+
+  const folder = folders.value.find(f => f.id === currentFolderId.value)
+  if (!folder) return
+
+  try {
+    // 关闭对话框
+    showBatchVectorizeModal.value = false
+
+    // 添加到正在向量化的列表
+    batchVectorizingFolders.value = [...batchVectorizingFolders.value, folder.id]
+
+    const result = await documentApi.batchVectorizeFolder(folder.id, batchVectorizeMode.value)
+
+    message.success(result.message || '批量向量化任务已启动')
+
+    // 重置模式选择
+    batchVectorizeMode.value = 'incremental'
+
+    // 10秒后移除loading状态（任务已在后台进行）
+    setTimeout(() => {
+      batchVectorizingFolders.value = batchVectorizingFolders.value.filter(id => id !== folder.id)
+    }, 10000)
+
+    // 定时刷新文档列表
+    const refreshInterval = setInterval(async () => {
+      await loadDocuments()
+    }, 5000) // 每5秒刷新一次
+
+    // 30秒后停止自动刷新
+    setTimeout(() => {
+      clearInterval(refreshInterval)
+    }, 30000)
+  } catch (error) {
+    message.error('批量向量化失败：' + (error as Error).message)
+    batchVectorizingFolders.value = batchVectorizingFolders.value.filter(id => id !== folder.id)
+  }
+}
+
 onMounted(() => {
   loadFolders()
 })
@@ -544,9 +684,27 @@ onMounted(() => {
   height: 100%;
 }
 
+.knowledge-view :deep(.n-list-item) {
+  position: relative;
+  transition: all 0.2s;
+}
+
 .is-active {
-  background-color: var(--n-color-modal);
+  background-color: var(--n-color-modal) !important;
   border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--n-color-target);
+  border-radius: 8px 0 0 8px;
 }
 
 .empty-state {
@@ -610,4 +768,25 @@ onMounted(() => {
 .document-item:hover .delete-btn {
   opacity: 0.8;
 }
+
+/* 批量向量化模式选择样式 */
+.mode-option {
+  padding: 12px;
+  border: 1px solid var(--n-border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-option:hover {
+  background-color: var(--n-color-hover);
+  border-color: var(--n-color-target);
+}
+
+.mode-option.is-selected {
+  background-color: var(--n-color-modal);
+  border-color: var(--n-color-target);
+  border-width: 2px;
+}
+
 </style>

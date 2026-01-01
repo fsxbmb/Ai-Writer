@@ -10,14 +10,14 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
           <n-text strong style="font-size: 14px;">文档项目</n-text>
           <n-button
-            text
-            type="primary"
             size="small"
+            type="primary"
             @click="handleCreateNew"
           >
             <template #icon>
-              <span style="font-size: 18px;">+</span>
+              <n-icon :component="AddIcon" />
             </template>
+            新建
           </n-button>
         </div>
 
@@ -42,15 +42,20 @@
                   >
                     {{ project.title }}
                   </n-text>
+                  <n-text depth="3" style="font-size: 11px; margin-top: 2px;">
+                    {{ formatProjectTime(project.updatedAt || project.createdAt) }}
+                  </n-text>
                 </div>
                 <n-button
-                  text
+                  quaternary
                   size="tiny"
                   type="error"
-                  style="margin-left: 4px; flex-shrink: 0; opacity: 0.6;"
+                  style="margin-left: 4px; flex-shrink: 0;"
                   @click.stop="handleDeleteProject(project)"
                 >
-                  ×
+                  <template #icon>
+                    <n-icon :component="TrashIcon" />
+                  </template>
                 </n-button>
               </div>
             </div>
@@ -63,35 +68,35 @@
       <n-layout-sider
         bordered
         :width="380"
-        content-style="padding: 16px; display: flex; flex-direction: column;"
+        content-style="display: flex; flex-direction: column; height: 100%; overflow: hidden; padding: 16px;"
       >
-        <n-card size="small" style="margin-bottom: 16px; flex-shrink: 0;">
-          <template #header>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <n-text strong>文档大纲</n-text>
-              <n-button
-                v-if="outline.length > 0"
-                :type="outlineLocked ? 'warning' : 'primary'"
-                size="tiny"
-                @click="handleToggleLock"
-              >
-                {{ outlineLocked ? '解锁大纲' : '确认并锁定' }}
-              </n-button>
-            </div>
-          </template>
+        <div style="flex-shrink: 0; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <n-text strong>文档大纲</n-text>
+            <n-button
+              v-if="outline.length > 0"
+              :type="outlineLocked ? 'warning' : 'primary'"
+              size="tiny"
+              @click="handleToggleLock"
+            >
+              {{ outlineLocked ? '解锁大纲' : '确认并锁定' }}
+            </n-button>
+          </div>
 
           <n-alert v-if="outline.length === 0" type="info" size="small">
             在底部对话框输入需求开始生成
           </n-alert>
-          <n-alert v-else-if="!outlineLocked" type="info" size="small" style="margin-bottom: 12px">
+          <n-alert v-else-if="!outlineLocked" type="info" size="small">
             大纲未锁定，可编辑调整
           </n-alert>
-          <n-alert v-else type="success" size="small" style="margin-bottom: 12px">
+          <n-alert v-else type="success" size="small">
             大纲已锁定
           </n-alert>
+        </div>
 
-          <!-- 大纲树 -->
-          <div v-if="outline.length > 0" style="max-height: calc(100vh - 320px); overflow-y: auto;">
+        <!-- 大纲树可滚动区域 -->
+        <div style="flex: 1; overflow-y: auto;">
+          <div v-if="outline.length > 0">
             <n-tree
               :data="normalizedOutline"
               :show-line="true"
@@ -106,21 +111,49 @@
               @update:expanded-keys="expandedKeys = $event as string[]"
             />
           </div>
+        </div>
 
-          <!-- 编辑按钮（未锁定时显示） -->
-          <template v-if="outline.length > 0 && !outlineLocked" #action>
-            <n-space>
-              <n-button size="tiny" @click="handleAddNode">添加节点</n-button>
-              <n-button size="tiny" @click="handleDeleteNode" :disabled="!selectedNode">删除</n-button>
-              <n-button size="tiny" @click="openRenameModal" :disabled="!selectedNode">重命名</n-button>
-            </n-space>
-          </template>
-        </n-card>
+        <!-- 编辑按钮固定在底部 -->
+        <div v-if="outline.length > 0 && !outlineLocked" style="flex-shrink: 0; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--n-border-color);">
+          <n-space>
+            <n-button size="tiny" @click="handleAddNode">添加节点</n-button>
+            <n-button size="tiny" @click="handleDeleteNode" :disabled="!selectedNode">删除</n-button>
+            <n-button size="tiny" @click="openRenameModal" :disabled="!selectedNode">重命名</n-button>
+          </n-space>
+        </div>
       </n-layout-sider>
 
       <!-- 右侧：内容生成区 -->
-      <n-layout content-style="display: flex; flex-direction: column; height: 100%;">
-        <div style="flex: 1; padding: 24px; overflow-y: auto;" id="content-area">
+      <n-layout content-style="display: flex; flex-direction: column; height: 100%; overflow: hidden;">
+        <!-- 顶部操作按钮固定区域 -->
+        <div v-if="generatedSections.length > 0" style="flex-shrink: 0; padding: 16px 24px; border-bottom: 1px solid var(--n-border-color);">
+          <n-space>
+            <n-button
+              type="primary"
+              @click="startGenerating"
+              :loading="isGeneratingAll"
+              :disabled="isGeneratingAll"
+            >
+              {{ isGeneratingAll ? '生成中...' : '继续生成' }}
+            </n-button>
+            <n-button
+              @click="handleExportWord"
+              :disabled="isExporting"
+              :loading="isExporting"
+            >
+              {{ isExporting ? '导出中...' : '导出 Word' }}
+            </n-button>
+            <n-button
+              @click="previewMode = !previewMode"
+              :disabled="!currentProjectId"
+            >
+              {{ previewMode ? '编辑模式' : '预览模式' }}
+            </n-button>
+          </n-space>
+        </div>
+
+        <!-- 内容滚动区域 -->
+        <div style="flex: 1; overflow-y: auto; padding: 24px;">
           <!-- 未锁定且未生成内容时的提示 -->
           <n-card v-if="!outlineLocked && generatedSections.length === 0 && outline.length > 0" size="small">
             <n-space vertical>
@@ -157,33 +190,6 @@
               </n-space>
             </n-space>
           </n-card>
-
-          <!-- 已有内容时显示导出按钮 -->
-          <div v-if="generatedSections.length > 0" style="margin-bottom: 16px;">
-            <n-space>
-              <n-button
-                type="primary"
-                @click="startGenerating"
-                :loading="isGeneratingAll"
-                :disabled="isGeneratingAll"
-              >
-                {{ isGeneratingAll ? '生成中...' : '继续生成' }}
-              </n-button>
-              <n-button
-                @click="handleExportWord"
-                :disabled="isExporting"
-                :loading="isExporting"
-              >
-                {{ isExporting ? '导出中...' : '导出 Word' }}
-              </n-button>
-              <n-button
-                @click="previewMode = !previewMode"
-                :disabled="!currentProjectId"
-              >
-                {{ previewMode ? '编辑模式' : '预览模式' }}
-              </n-button>
-            </n-space>
-          </div>
 
           <!-- 内容显示 -->
           <div v-if="!previewMode">
@@ -340,13 +346,13 @@
             <iframe
               v-if="currentProjectId"
               :src="documentProjectApi.getPreviewHtmlUrl(currentProjectId)"
-              style="width: 100%; height: calc(100vh - 300px); border: 1px solid var(--n-border-color); border-radius: 4px;"
+              style="width: 100%; height: 600px; border: 1px solid var(--n-border-color); border-radius: 4px;"
             ></iframe>
           </div>
         </div>
 
-        <!-- 底部：研究主题对话框 -->
-        <div style="border-top: 1px solid var(--n-border-color); padding: 16px; background: var(--n-color);">
+        <!-- 底部：研究主题对话框（固定不滚动） -->
+        <div style="border-top: 1px solid var(--n-border-color); padding: 16px; background: var(--n-color); flex-shrink: 0;">
           <!-- 知识库选择区域 -->
           <div style="margin-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -493,6 +499,7 @@ import { ref, computed, onMounted, nextTick, h, watch } from 'vue'
 import { useMessage, useDialog, NText, NScrollbar } from 'naive-ui'
 import { documentApi } from '@/api/document'
 import { documentProjectApi, type OutlineNode, type Source } from '@/api/documentProject'
+import { AddOutline as AddIcon, TrashOutline as TrashIcon } from '@vicons/ionicons5'
 
 const message = useMessage()
 const dialog = useDialog()
@@ -1166,6 +1173,18 @@ function updateOutlineNodeTitle(nodeId: string, newTitle: string) {
   updateNode(outline.value)
 }
 
+// 格式化项目时间
+function formatProjectTime(timestamp: string) {
+  const date = new Date(timestamp)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hour = String(date.getHours()).padStart(2, '0')
+  const minute = String(date.getMinutes()).padStart(2, '0')
+
+  return `${year}.${month}.${day} ${hour}h${minute}`
+}
+
 // 加载项目列表
 async function loadProjects() {
   try {
@@ -1498,9 +1517,22 @@ onMounted(() => {
 }
 
 .project-tab.active {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.project-tab.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
   background-color: var(--n-color-target);
-  color: white;
-  border-color: var(--n-color-target);
+  border-radius: 8px 0 0 8px;
 }
 
 [contenteditable] {

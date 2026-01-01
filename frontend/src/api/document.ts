@@ -190,6 +190,26 @@ export const documentApi = {
     })
     return response
   },
+
+  // 批量向量化知识库
+  batchVectorizeFolder: async (folderId: string, mode: 'incremental' | 'full' = 'incremental'): Promise<{
+    taskId: string
+    folderId: string
+    totalCount: number
+    alreadyVectorized: number
+    pendingVectorization: number
+    message: string
+  }> => {
+    const response = await apiClient.post<{
+      taskId: string
+      folderId: string
+      totalCount: number
+      alreadyVectorized: number
+      pendingVectorization: number
+      message: string
+    }>(`/documents/folders/${folderId}/batch-vectorize`, { mode })
+    return response
+  },
 }
 
 // 类型定义

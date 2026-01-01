@@ -29,6 +29,12 @@
           </template>
           分块
         </n-button>
+        <n-button @click="handleViewChunks" :disabled="!document || !document.chunked">
+          <template #icon>
+            <n-icon :component="GridIcon" />
+          </template>
+          查看分块结果
+        </n-button>
         <n-button v-if="!isPreviewMode" type="primary" @click="handleSave" :loading="isSaving">
           <template #icon>
             <n-icon :component="SaveIcon" />
@@ -339,6 +345,29 @@ async function handleChunk() {
   }
 }
 
+async function handleViewChunks() {
+  if (!document.value) return
+
+  try {
+    // 显示加载状态
+    isChunking.value = true
+
+    // 获取分块结果
+    const chunksResult = await documentApi.chunk(document.value.id)
+    chunks.value = chunksResult.chunks || []
+
+    // 打开分块抽屉
+    showChunkDrawer.value = true
+
+    message.success(`加载了 ${chunks.value.length} 个分块`)
+  } catch (error) {
+    console.error('获取分块结果失败:', error)
+    message.error('获取分块结果失败：' + (error as Error).message)
+  } finally {
+    isChunking.value = false
+  }
+}
+
 // 轮询向量化状态
 function pollVectorizeStatus(hasCompleted: Ref<boolean>) {
   if (!document.value) return
@@ -505,7 +534,7 @@ watch(() => route.params.id, (newId) => {
 }
 
 .right-panel {
-  background-color: #fff;
+  background-color: var(--n-color);
 }
 
 .panel-header {

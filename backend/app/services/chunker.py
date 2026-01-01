@@ -28,11 +28,13 @@ class MarkdownChunker:
         self,
         max_chunk_size: int = 1000,  # 最大块大小（字符数）
         chunk_overlap: int = 100,     # 块之间的重叠字符数
-        min_chunk_size: int = 100     # 最小块大小
+        min_chunk_size: int = 100,    # 最小块大小
+        allow_oversize: float = 0.2   # 允许超出最大块大小的比例（20%）
     ):
         self.max_chunk_size = max_chunk_size
         self.chunk_overlap = chunk_overlap
         self.min_chunk_size = min_chunk_size
+        self.allow_oversize = allow_oversize
 
     def chunk(self, markdown_content: str, doc_id: str) -> List[Chunk]:
         """
@@ -79,6 +81,36 @@ class MarkdownChunker:
 
         logger.info(f"文档分块完成：共 {len(chunks)} 个块")
         return chunks
+
+    def _ensure_sentence_boundary(self, text: str) -> str:
+        """
+        确保文本以完整句子结束
+
+        Args:
+            text: 输入文本
+
+        Returns:
+            以完整句子结束的文本（如果可能）
+        """
+        # 从后向前查找句子结束符
+        sentence_endings = ('。', '！', '？', '.', '!', '?', '》', '"', "'", '）', ')', '】', ']')
+
+        # 从末尾开始查找，但至少保留min_chunk_size的内容
+        min_search = max(self.min_chunk_size, len(text) // 2)
+
+        for i in range(len(text) - 1, min_search - 1, -1):
+            if text[i] in sentence_endings:
+                # 找到句子边界，截断到这里
+                return text[:i + 1]
+
+        # 如果找不到句子边界，尝试在标点符号处分割
+        secondary_marks = ('，', '、', ',', ';', '；', '：', ':', '（', '(', '【', '[')
+        for i in range(len(text) - 1, min_search - 1, -1):
+            if text[i] in secondary_marks:
+                return text[:i + 1]
+
+        # 实在找不到，返回原文本
+        return text
 
     def _split_section(self, section: Dict, doc_id: str) -> List[Chunk]:
         """
@@ -146,30 +178,70 @@ class MarkdownChunker:
                 current_chunk = ""
             else:
                 # 检查添加这个段落是否会超过最大块大小
-                if len(current_chunk) + len(para) + 2 <= self.max_chunk_size:
-                    # 添加重叠内容（如果有）
+                potential_length = len(current_chunk) + len(para) + 2
+
+                if potential_length <= self.max_chunk_size:
+                    # 可以完整添加这个段落
                     if current_chunk and self.chunk_overlap > 0:
                         overlap_text = current_chunk[-self.chunk_overlap:]
                         current_chunk = overlap_text + "\n\n" + para
                     else:
                         current_chunk = para if not current_chunk else current_chunk + "\n\n" + para
                 else:
-                    # 保存当前块，开始新块
-                    if current_chunk:
-                        chunks.append(self._create_chunk(
-                            doc_id, current_chunk, title, level,
-                            start_index + chunk_count
-                        ))
-                        chunk_count += 1
+                    # 会超出限制，检查是否可以略微超出以包含完整句子
+                    max_allowed = int(self.max_chunk_size * (1 + self.allow_oversize))
 
-                    current_chunk = para
+                    if potential_length <= max_allowed:
+                        # 允许略微超出，直接添加
+                        current_chunk = para if not current_chunk else current_chunk + "\n\n" + para
+
+                        # 保存当前块（确保以完整句子结束）
+                        if current_chunk:
+                            adjusted_chunk = self._ensure_sentence_boundary(current_chunk)
+                            chunks.append(self._create_chunk(
+                                doc_id, adjusted_chunk, title, level,
+                                start_index + chunk_count
+                            ))
+                            chunk_count += 1
+
+                            # 保存被截断的部分作为下一块的开始
+                            remaining = current_chunk[len(adjusted_chunk):].strip()
+                            current_chunk = remaining if remaining else ""
+                        else:
+                            current_chunk = ""
+                    else:
+                        # 超出太多，必须分割
+                        if current_chunk:
+                            # 确保当前块以完整句子结束
+                            adjusted_chunk = self._ensure_sentence_boundary(current_chunk)
+                            chunks.append(self._create_chunk(
+                                doc_id, adjusted_chunk, title, level,
+                                start_index + chunk_count
+                            ))
+                            chunk_count += 1
+
+                            # 保存被截断的部分
+                            remaining = current_chunk[len(adjusted_chunk):].strip()
+                            current_chunk = remaining + "\n\n" + para if remaining else para
+                        else:
+                            current_chunk = para
 
         # 处理最后一个块
         if current_chunk:
+            # 确保最后一个块也以完整句子结束
+            adjusted_chunk = self._ensure_sentence_boundary(current_chunk)
             chunks.append(self._create_chunk(
-                doc_id, current_chunk, title, level,
+                doc_id, adjusted_chunk, title, level,
                 start_index + chunk_count
             ))
+
+            # 保存被截断的部分（如果有）
+            remaining = current_chunk[len(adjusted_chunk):].strip()
+            if remaining:
+                chunks.append(self._create_chunk(
+                    doc_id, remaining, title, level,
+                    start_index + chunk_count + 1
+                ))
 
         return chunks
 
