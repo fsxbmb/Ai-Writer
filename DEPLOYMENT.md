@@ -1,6 +1,6 @@
 # AI Writer 项目部署指南 - WSL2 Ubuntu
 
-**适用于笔记本电脑的完整部署指南**
+**适用于笔记本电脑的完整部署指南 - 包含本地 LLM 配置**
 
 ---
 
@@ -8,9 +8,11 @@
 
 1. [快速开始](#快速开始) - 5分钟快速部署
 2. [完整部署步骤](#完整部署步骤) - 详细安装指南
-3. [WSL2 专用配置](#wsl2-专用配置)
-4. [笔记本性能优化](#笔记本性能优化)
-5. [常见问题解决](#常见问题解决)
+3. [Ollama 本地 LLM 配置](#ollama-本地-llm-配置) - 可选功能
+4. [WSL2 专用配置](#wsl2-专用配置)
+5. [笔记本性能优化](#笔记本性能优化)
+6. [功能说明](#功能说明)
+7. [常见问题解决](#常见问题解决)
 
 ---
 
@@ -18,20 +20,44 @@
 
 **适合已安装 WSL2 Ubuntu 的用户**
 
+### 基础模式（推荐新手）
+
 ```bash
 # 1. 克隆项目
 git clone https://github.com/fsxbmb/Ai-Writer.git
 cd Ai-Writer
 
-# 2. 一键安装依赖（跳过 MinerU 和 Milvus）
-cd backend && pip install -r requirements.txt && cp .env.example .env && cd ../frontend && npm install
+# 2. 安装后端依赖
+cd backend
+pip install -r requirements.txt
+cp .env.example .env
 
-# 3. 启动服务
+# 3. 安装前端依赖
+cd ../frontend
+npm install
+
+# 4. 启动服务
 # 终端1: cd backend && python -m app.main
 # 终端2: cd frontend && npm run dev
 
-# 4. 访问应用
+# 5. 访问应用
 # 浏览器打开: http://localhost:5173
+```
+
+### 完整模式（含 Ollama 和 Milvus）
+
+```bash
+# 额外步骤：安装 Ollama（用于本地 LLM）
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 启动 Ollama 服务
+ollama serve &
+
+# 下载模型（示例：Qwen2.5）
+ollama pull qwen2.5:7b
+
+# 启动 Milvus（用于向量搜索）
+cd milvus && docker compose up -d
 ```
 
 ---
@@ -43,7 +69,8 @@ cd backend && pip install -r requirements.txt && cp .env.example .env && cd ../f
 #### 1.1 检查系统要求
 - Windows 10 版本 2004 或更高（内部版本 19041 或更高）
 - 或 Windows 11
-- 至少 8GB RAM（推荐 16GB）
+- 至少 8GB RAM（推荐 16GB，使用本地 LLM 建议 32GB）
+- 至少 20GB 可用磁盘空间
 
 #### 1.2 安装 WSL2
 ```powershell
@@ -87,7 +114,19 @@ echo "npm: $(npm --version)"
 echo "Python: $(python3 --version)"
 ```
 
-#### 2.3 配置 Git（可选）
+#### 2.3 安装文档转换依赖（可选）
+
+如果需要使用文档导出功能：
+
+```bash
+# 安装 wkhtmltopdf（用于 HTML 转 PDF）
+sudo apt install -y wkhtmltopdf
+
+# 安装 Pandoc（用于文档格式转换）
+sudo apt install -y pandoc
+```
+
+#### 2.4 配置 Git（可选）
 ```bash
 git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
@@ -116,7 +155,54 @@ docker --version
 
 ---
 
-### 第四步：克隆项目
+### 第四步：安装 Ollama（可选，用于本地 LLM）
+
+**⚠️ 注意：Ollama 需要 GPU 支持（推荐）或充足的 CPU 资源**
+
+#### 4.1 安装 Ollama
+
+```bash
+# 官方安装脚本
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 验证安装
+ollama --version
+```
+
+#### 4.2 下载模型
+
+```bash
+# 启动 Ollama 服务
+ollama serve &
+
+# 等待服务启动后，下载模型
+# 小模型（适合 8-16GB RAM）
+ollama pull qwen2.5:3b
+
+# 中等模型（推荐，适合 16-32GB RAM）
+ollama pull qwen2.5:7b
+ollama pull qwen2.5:14b
+
+# 大模型（适合 32GB+ RAM）
+ollama pull qwen2.5:32b
+
+# 查看已安装的模型
+ollama list
+```
+
+#### 4.3 测试 Ollama
+
+```bash
+# 测试对话
+ollama run qwen2.5:7b "你好，请介绍一下自己"
+
+# 查看模型信息
+ollama show qwen2.5:7b
+```
+
+---
+
+### 第五步：克隆项目
 
 ```bash
 # 选择项目安装位置（推荐放在用户目录下）
@@ -132,9 +218,9 @@ ls -la
 
 ---
 
-### 第五步：安装项目依赖
+### 第六步：安装项目依赖
 
-#### 5.1 后端安装
+#### 6.1 后端安装
 
 ```bash
 # 进入后端目录
@@ -153,14 +239,58 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 # 安装 MinerU（可选，用于 PDF 解析）
 pip install mineru
 
+# 安装额外的向量搜索依赖（如果使用 Milvus）
+pip install pymilvus sentence-transformers
+
 # 配置环境变量
 cp .env.example .env
 
 # 创建必要目录
-mkdir -p uploads parsed_output parsed_data
+mkdir -p uploads parsed_output parsed_data images
 ```
 
-#### 5.2 前端安装
+#### 6.2 配置后端环境变量
+
+编辑 `.env` 文件：
+
+```bash
+nano .env
+```
+
+添加 Ollama 配置（如果已安装）：
+
+```env
+# FastAPI 配置
+APP_NAME=AI Writer Backend
+APP_VERSION=0.0.1
+DEBUG=True
+HOST=0.0.0.0
+PORT=8000
+
+# CORS 配置
+CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
+
+# 文件存储配置
+UPLOAD_DIR=./uploads
+PARSE_OUTPUT_DIR=./parsed_data
+MAX_UPLOAD_SIZE=104857600  # 100MB
+
+# MinerU 配置
+MINERU_BACKEND=pipeline
+MINERU_OUTPUT_DIR=./parsed_output
+MINERU_LANG=ch
+
+# Ollama 配置（如果使用本地 LLM）
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5:7b
+OLLAMA_TIMEOUT=120
+
+# Milvus 配置（如果使用向量搜索）
+MILVUS_HOST=localhost
+MILVUS_PORT=19530
+```
+
+#### 6.3 前端安装
 
 ```bash
 # 进入前端目录
@@ -179,11 +309,11 @@ rm -rf dist     # 删除测试构建
 
 ---
 
-### 第六步：启动应用
+### 第七步：启动应用
 
 #### 方式 A：基础模式（推荐新手）
 
-**仅启动前后端，不使用向量数据库**
+**仅启动前后端，使用模拟 LLM**
 
 ```bash
 # 终端 1 - 启动后端
@@ -201,17 +331,13 @@ npm run dev
 - 后端 API：http://localhost:8000
 - API 文档：http://localhost:8000/docs
 
-#### 方式 B：完整模式（含向量搜索）
+#### 方式 B：本地 LLM 模式
 
-**包含 Milvus 向量数据库，支持 RAG 知识问答**
+**使用 Ollama 本地模型**
 
 ```bash
-# 终端 1 - 启动 Milvus
-cd ~/Ai-Writer/milvus
-docker compose up -d
-
-# 等待 30-60 秒，检查状态
-docker compose ps
+# 终端 1 - 启动 Ollama
+ollama serve
 
 # 终端 2 - 启动后端
 cd ~/Ai-Writer/backend
@@ -221,6 +347,93 @@ python -m app.main
 # 终端 3 - 启动前端
 cd ~/Ai-Writer/frontend
 npm run dev
+```
+
+**特点**：
+- ✅ 完全离线运行
+- ✅ 数据隐私保护
+- ✅ 无需 API 费用
+- ⚠️ 需要较好的硬件配置
+
+#### 方式 C：完整模式（含向量搜索）
+
+**包含 Milvus 向量数据库，支持高级 RAG 功能**
+
+```bash
+# 终端 1 - 启动 Milvus
+cd ~/Ai-Writer/milvus
+docker compose up -d
+
+# 等待 30-60 秒，检查状态
+docker compose ps
+
+# 终端 2 - 启动 Ollama（可选）
+ollama serve
+
+# 终端 3 - 启动后端
+cd ~/Ai-Writer/backend
+source venv/bin/activate
+python -m app.main
+
+# 终端 4 - 启动前端
+cd ~/Ai-Writer/frontend
+npm run dev
+```
+
+---
+
+## 🤖 Ollama 本地 LLM 配置
+
+### 推荐模型
+
+根据硬件配置选择合适的模型：
+
+| RAM 配置 | 推荐模型 | 命令 | 说明 |
+|---------|---------|------|------|
+| 8GB | qwen2.5:3b | `ollama pull qwen2.5:3b` | 轻量级，速度最快 |
+| 16GB | qwen2.5:7b | `ollama pull qwen2.5:7b` | 平衡性能和速度 |
+| 32GB | qwen2.5:14b | `ollama pull qwen2.5:14b` | 更好的推理能力 |
+| 64GB+ | qwen2.5:32b | `ollama pull qwen2.5:32b` | 最佳性能 |
+
+### 模型管理
+
+```bash
+# 查看已安装模型
+ollama list
+
+# 删除模型
+ollama rm qwen2.5:3b
+
+# 更新模型
+ollama pull qwen2.5:7b
+
+# 查看模型信息
+ollama show qwen2.5:7b
+
+# 运行模型测试
+ollama run qwen2.5:7b
+```
+
+### 性能优化
+
+**GPU 加速（如果有 NVIDIA 显卡）**：
+
+```bash
+# 安装 NVIDIA CUDA 工具包
+sudo apt install -y nvidia-cuda-toolkit
+
+# 验证 GPU 识别
+nvidia-smi
+
+# Ollama 会自动使用 GPU
+```
+
+**CPU 模式优化**：
+
+```bash
+# 设置环境变量限制 CPU 使用
+export OLLAMA_NUM_GPU=0
+export OLLAMA_NUM_THREAD=4
 ```
 
 ---
@@ -306,7 +519,22 @@ nproc
 uvicorn app.main:app --workers 2  # 根据核心数调整
 ```
 
-### 3. 磁盘优化
+### 3. Ollama 性能调整
+
+**根据硬件选择合适的模型**：
+
+```bash
+# 8GB RAM - 使用小模型
+ollama pull qwen2.5:3b
+
+# 16GB RAM - 使用中等模型
+ollama pull qwen2.5:7b
+
+# 禁用 GPU（如果没有独立显卡）
+export OLLAMA_NUM_GPU=0
+```
+
+### 4. 磁盘优化
 
 **将依赖安装在虚拟环境中**，节省系统空间：
 ```bash
@@ -316,12 +544,63 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. 电源管理
+### 5. 电源管理
 
 **笔记本使用时建议**：
 - ✅ 接通电源运行开发环境
 - ✅ 使用"高性能"电源模式
 - ⚠️ 电池模式下可能性能下降
+- ⚠️ 使用 Ollama 时务必接通电源
+
+---
+
+## 📖 功能说明
+
+### 1. 知识库管理
+
+**基础功能**：
+- PDF 文档上传和管理
+- MinerU 智能解析（需要安装）
+- Markdown 编辑和预览
+- 标签分类和搜索
+
+**无需额外配置**，启动即可使用。
+
+### 2. 知识问答 (RAG)
+
+**两种模式**：
+
+**A. 模拟模式（无需额外配置）**
+- 使用简单的匹配算法
+- 快速响应
+- 适合测试和演示
+
+**B. 高级模式（需要 Milvus + Ollama）**
+- 向量语义搜索
+- LLM 智能回答
+- 需要更多资源
+- 更好的问答质量
+
+### 3. 文档生成
+
+**支持的模式**：
+
+**A. 模板生成（无需 LLM）**
+- 使用预设模板
+- 快速生成基础文档
+
+**B. AI 辅助生成（需要 Ollama）**
+- LLM 智能生成
+- 根据上下文写作
+- 支持多种风格
+
+### 4. 文档导出
+
+**支持的格式**：
+- Markdown (.md)
+- PDF (.pdf) - 需要 wkhtmltopdf
+- 纯文本 (.txt)
+- HTML (.html)
 
 ---
 
@@ -367,6 +646,7 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 # 查看占用端口的进程
 sudo lsof -i :8000  # 后端
 sudo lsof -i :5173  # 前端
+sudo lsof -i :11434 # Ollama
 
 # 杀死进程
 sudo kill -9 <PID>
@@ -429,29 +709,116 @@ hostname -I
 cd ~/Ai-Writer/milvus
 docker compose down
 
-# 2. 减少 worker 数量
+# 2. 使用更小的模型
+ollama pull qwen2.5:3b
+
+# 3. 减少 worker 数量
 # 修改后端启动，使用单进程
 python -m app.main
 
-# 3. 检查系统资源
+# 4. 检查系统资源
 htop  # 需要先安装: sudo apt install htop
 
-# 4. 清理系统缓存
+# 5. 清理系统缓存
 sudo apt clean
 sudo apt autoremove
+```
+
+### 问题 8：Ollama 无法连接
+
+**错误**：后端无法连接到 Ollama
+
+**解决方案**：
+```bash
+# 检查 Ollama 服务状态
+ps aux | grep ollama
+
+# 启动 Ollama 服务
+ollama serve &
+
+# 测试连接
+curl http://localhost:11434/api/tags
+
+# 检查后端配置
+cat backend/.env | grep OLLAMA
+```
+
+### 问题 9：Ollama 模型下载失败
+
+**错误**：模型下载缓慢或失败
+
+**解决方案**：
+```bash
+# 使用代理（如果有）
+export HTTP_PROXY=http://your-proxy:port
+export HTTPS_PROXY=http://your-proxy:port
+
+# 或手动下载模型文件
+# 参考：https://ollama.com/download
+```
+
+### 问题 10：文档导出失败
+
+**错误**：无法导出 PDF 或 Word
+
+**解决方案**：
+```bash
+# 安装必要的系统依赖
+sudo apt install -y wkhtmltopdf pandoc
+
+# 重新安装 Python 依赖
+pip install reportlab pdfkit
 ```
 
 ---
 
 ## 📝 日常使用
 
-### 启动应用（基础模式）
+### 启动应用（完整模式）
 
-创建启动脚本 `start.sh`：
+创建启动脚本 `start-full.sh`：
 
 ```bash
 # 在项目根目录创建
-cat > start.sh << 'EOF'
+cat > start-full.sh << 'EOF'
+#!/bin/bash
+
+# 启动 Milvus
+cd ~/Ai-Writer/milvus
+docker compose up -d
+
+# 等待 Milvus 启动
+sleep 30
+
+# 启动 Ollama
+ollama serve &
+sleep 5
+
+# 启动后端
+cd ~/Ai-Writer/backend
+source venv/bin/activate
+python -m app.main &
+
+# 启动前端
+cd ~/Ai-Writer/frontend
+npm run dev &
+
+echo "应用已启动（完整模式）"
+echo "前端: http://localhost:5173"
+echo "后端: http://localhost:8000"
+echo "Milvus: http://localhost:9091"
+EOF
+
+chmod +x start-full.sh
+./start-full.sh
+```
+
+### 启动应用（基础模式）
+
+创建启动脚本 `start-basic.sh`：
+
+```bash
+cat > start-basic.sh << 'EOF'
 #!/bin/bash
 
 # 启动后端
@@ -463,28 +830,28 @@ python -m app.main &
 cd ~/Ai-Writer/frontend
 npm run dev &
 
-echo "应用已启动"
+echo "应用已启动（基础模式）"
 echo "前端: http://localhost:5173"
 echo "后端: http://localhost:8000"
 EOF
 
-chmod +x start.sh
-./start.sh
+chmod +x start-basic.sh
+./start-basic.sh
 ```
 
 ### 停止应用
 
 ```bash
 # 查找并停止进程
-ps aux | grep "python -m app.main"
-kill <PID>
-
-ps aux | grep "vite"
-kill <PID>
-
-# 或使用 pkill
 pkill -f "python -m app.main"
 pkill -f "npm run dev"
+
+# 停止 Milvus
+cd ~/Ai-Writer/milvus
+docker compose down
+
+# 停止 Ollama
+pkill ollama
 ```
 
 ### 更新项目
@@ -501,6 +868,8 @@ pip install -r requirements.txt --upgrade
 # 更新前端
 cd ../frontend
 npm install
+
+# 重启服务
 ```
 
 ---
@@ -556,6 +925,9 @@ cp -r ~/Ai-Writer/backend/uploads ~/Ai-Writer-backup/
 - **GitHub Issues**: https://github.com/fsxbmb/Ai-Writer/issues
 - **API 文档**: http://localhost:8000/docs
 - **项目 README**: https://github.com/fsxbmb/Ai-Writer
+- **Ollama 文档**: https://ollama.com/docs
+- **MinerU 文档**: https://github.com/opendatalab/MinerU
+- **Milvus 文档**: https://milvus.io/docs
 
 ---
 
@@ -564,6 +936,7 @@ cp -r ~/Ai-Writer/backend/uploads ~/Ai-Writer-backup/
 ### 端口说明
 - **5173**: 前端开发服务器
 - **8000**: 后端 API 服务器
+- **11434**: Ollama API 服务
 - **19530**: Milvus 向量数据库
 - **9091**: Milvus 管理界面
 - **9001**: MinIO 控制台
@@ -574,7 +947,8 @@ Ai-Writer/
 ├── backend/         # Python FastAPI 后端
 │   ├── app/        # 应用代码
 │   ├── data/       # 数据文件
-│   └── uploads/    # 上传文件
+│   ├── uploads/    # 上传文件
+│   └── venv/       # 虚拟环境
 ├── frontend/       # Vue 3 前端
 │   └── src/       # 源代码
 ├── milvus/        # 向量数据库配置
@@ -589,11 +963,30 @@ cd backend && python -m app.main
 # 启动前端
 cd frontend && npm run dev
 
+# 启动 Ollama
+ollama serve
+
 # 启动 Milvus
 cd milvus && docker compose up -d
 
 # 查看日志
 tail -f backend/logs/*.log
+```
+
+### 环境变量参考
+
+```env
+# 后端 .env 配置
+DEBUG=True
+PORT=8000
+
+# Ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5:7b
+
+# Milvus
+MILVUS_HOST=localhost
+MILVUS_PORT=19530
 ```
 
 ---
