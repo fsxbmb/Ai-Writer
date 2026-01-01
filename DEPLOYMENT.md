@@ -1,78 +1,127 @@
-# 项目部署指南 - WSL2 Ubuntu
+# AI Writer 项目部署指南 - WSL2 Ubuntu
 
-从零开始在 WSL2 Ubuntu 环境中部署 AI Writer 项目。
-
-## 目录
-1. [环境准备](#环境准备)
-2. [克隆项目](#克隆项目)
-3. [安装依赖](#安装依赖)
-4. [配置环境](#配置环境)
-5. [启动服务](#启动服务)
-6. [常见问题](#常见问题)
+**适用于笔记本电脑的完整部署指南**
 
 ---
 
-## 环境准备
+## 📋 目录
 
-### 1. 更新系统
+1. [快速开始](#快速开始) - 5分钟快速部署
+2. [完整部署步骤](#完整部署步骤) - 详细安装指南
+3. [WSL2 专用配置](#wsl2-专用配置)
+4. [笔记本性能优化](#笔记本性能优化)
+5. [常见问题解决](#常见问题解决)
+
+---
+
+## 🚀 快速开始
+
+**适合已安装 WSL2 Ubuntu 的用户**
+
 ```bash
+# 1. 克隆项目
+git clone https://github.com/fsxbmb/Ai-Writer.git
+cd Ai-Writer
+
+# 2. 一键安装依赖（跳过 MinerU 和 Milvus）
+cd backend && pip install -r requirements.txt && cp .env.example .env && cd ../frontend && npm install
+
+# 3. 启动服务
+# 终端1: cd backend && python -m app.main
+# 终端2: cd frontend && npm run dev
+
+# 4. 访问应用
+# 浏览器打开: http://localhost:5173
+```
+
+---
+
+## 📦 完整部署步骤
+
+### 第一步：在 Windows 上安装 WSL2
+
+#### 1.1 检查系统要求
+- Windows 10 版本 2004 或更高（内部版本 19041 或更高）
+- 或 Windows 11
+- 至少 8GB RAM（推荐 16GB）
+
+#### 1.2 安装 WSL2
+```powershell
+# 在 PowerShell (管理员) 中运行
+wsl --install
+
+# 重启计算机后，WSL 会自动安装 Ubuntu
+# 设置用户名和密码
+```
+
+#### 1.3 更新 WSL2（可选但推荐）
+```powershell
+wsl --update
+```
+
+---
+
+### 第二步：配置 WSL2 Ubuntu
+
+#### 2.1 更新系统
+```bash
+# 进入 WSL2 Ubuntu
 sudo apt update && sudo apt upgrade -y
 ```
 
-### 2. 安装基础工具
+#### 2.2 安装基础工具
 ```bash
-# 安装 curl, git, wget 等
-sudo apt install -y curl git wget build-essential
+# 安装必要工具
+sudo apt install -y curl git wget build-essential vim
 
 # 安装 Python 3 和 pip
 sudo apt install -y python3 python3-pip python3-venv
 
-# 安装 Node.js 18+ (使用 NodeSource)
+# 安装 Node.js 18+
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # 验证安装
-node --version  # 应该显示 v18.x.x
-npm --version
-python3 --version
+echo "Node.js: $(node --version)"
+echo "npm: $(npm --version)"
+echo "Python: $(python3 --version)"
 ```
 
-### 3. 安装 Docker 和 Docker Compose
+#### 2.3 配置 Git（可选）
 ```bash
-# 安装 Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# 将当前用户添加到 docker 组（避免每次 sudo）
-sudo usermod -aG docker $USER
-
-# 安装 Docker Compose
-sudo apt install -y docker-compose-plugin
-
-# 重新登录以使 docker 组生效
-# 或者执行：newgrp docker
-
-# 验证安装
-docker --version
-docker compose version
-```
-
-### 4. 安装 MinerU（可选但推荐）
-```bash
-# 方法 1: 使用 pip 安装（推荐）
-pip install mineru
-
-# 方法 2: 从源码安装
-git clone https://github.com/opendatalab/MinerU.git
-cd MinerU
-pip install -e .
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
 ```
 
 ---
 
-## 克隆项目
+### 第三步：安装 Docker（可选，用于 Milvus）
+
+**⚠️ 注意：Docker 会占用较多资源，如果不需要向量搜索功能可以跳过**
 
 ```bash
+# 安装 Docker
+curl -fsSL https://get.docker.com | sudo sh
+
+# 将当前用户添加到 docker 组
+sudo usermod -aG docker $USER
+
+# 重新登录 WSL 使配置生效
+# 在 PowerShell 中运行: wsl --shutdown
+# 然后重新打开 WSL
+
+# 验证安装
+docker --version
+```
+
+---
+
+### 第四步：克隆项目
+
+```bash
+# 选择项目安装位置（推荐放在用户目录下）
+cd ~
+
 # 克隆项目
 git clone https://github.com/fsxbmb/Ai-Writer.git
 cd Ai-Writer
@@ -83,356 +132,472 @@ ls -la
 
 ---
 
-## 安装依赖
+### 第五步：安装项目依赖
 
-### 1. 后端依赖
+#### 5.1 后端安装
 
 ```bash
 # 进入后端目录
 cd backend
 
-# (可选) 创建 Python 虚拟环境
+# 创建 Python 虚拟环境（推荐）
 python3 -m venv venv
-source venv/bin/activate  # 激活虚拟环境
+source venv/bin/activate
 
-# 安装依赖
-pip install -r requirements.txt
+# 升级 pip
+pip install --upgrade pip
 
-# 如果需要向量搜索功能，安装额外的包
-pip install pymilvus sentence-transformers
-```
+# 安装依赖（使用国内镜像加速）
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-### 2. 前端依赖
+# 安装 MinerU（可选，用于 PDF 解析）
+pip install mineru
 
-```bash
-# 返回项目根目录
-cd ..
-
-# 进入前端目录
-cd frontend
-
-# 安装依赖（如果网络慢，可以使用国内镜像）
-npm install
-
-# 或使用淘宝镜像加速
-npm install --registry=https://registry.npmmirror.com
-```
-
----
-
-## 配置环境
-
-### 1. 后端环境变量
-
-```bash
-# 进入后端目录
-cd backend
-
-# 复制环境变量示例文件
+# 配置环境变量
 cp .env.example .env
 
-# 编辑 .env 文件（可选，使用默认配置也可以）
-nano .env
-```
-
-`.env` 文件主要配置项：
-```env
-# FastAPI 配置
-APP_NAME=AI Writer Backend
-APP_VERSION=0.0.1
-DEBUG=True
-HOST=0.0.0.0
-PORT=8000
-
-# CORS 配置（如果前端地址不同，需要修改）
-CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
-
-# 文件存储配置
-UPLOAD_DIR=./uploads
-PARSE_OUTPUT_DIR=./parsed_data
-MAX_UPLOAD_SIZE=104857600  # 100MB
-
-# MinerU 配置
-MINERU_BACKEND=pipeline
-MINERU_OUTPUT_DIR=./parsed_output
-MINERU_LANG=ch
-```
-
-### 2. 创建必要的目录
-
-```bash
-# 在 backend 目录下创建所需目录
+# 创建必要目录
 mkdir -p uploads parsed_output parsed_data
 ```
 
+#### 5.2 前端安装
+
+```bash
+# 进入前端目录
+cd ../frontend
+
+# 配置 npm 使用国内镜像
+npm config set registry https://registry.npmmirror.com
+
+# 安装依赖
+npm install
+
+# 验证安装
+npm run build  # 测试编译是否成功
+rm -rf dist     # 删除测试构建
+```
+
 ---
 
-## 启动服务
+### 第六步：启动应用
 
-### 方式一：完整启动（包含 Milvus 向量数据库）
+#### 方式 A：基础模式（推荐新手）
 
-如果你需要使用向量搜索和 RAG 功能，需要先启动 Milvus 数据库：
-
-#### 1. 启动 Milvus（可选）
+**仅启动前后端，不使用向量数据库**
 
 ```bash
-# 从项目根目录进入 milvus 目录
-cd milvus
-
-# 启动 Milvus 服务
-docker compose up -d
-
-# 查看服务状态
-docker compose ps
-
-# 等待服务启动（约 30-60 秒）
-# 可以查看日志确认启动成功
-docker compose logs -f standalone
-# 看到 "successfully started and ready to serve" 即启动成功
-```
-
-Milvus 服务端口：
-- 19530: Milvus 服务端口
-- 9091: 管理界面
-- 9001: MinIO 控制台
-
-#### 2. 启动后端
-
-```bash
-# 打开新终端，进入 backend 目录
-cd Ai-Writer/backend
-
-# 如果使用了虚拟环境，激活它
-source venv/bin/activate
-
-# 启动后端服务
-python -m app.main
-
-# 后端将运行在 http://localhost:8000
-# API 文档：http://localhost:8000/docs
-```
-
-#### 3. 启动前端
-
-```bash
-# 打开新终端，进入 frontend 目录
-cd Ai-Writer/frontend
-
-# 启动开发服务器
-npm run dev
-
-# 前端将运行在 http://localhost:5173
-```
-
-### 方式二：简化启动（不使用向量数据库）
-
-如果不需要 RAG 知识问答功能，可以跳过 Milvus，直接启动后端和前端：
-
-```bash
-# 终端 1: 启动后端
-cd Ai-Writer/backend
+# 终端 1 - 启动后端
+cd ~/Ai-Writer/backend
 source venv/bin/activate  # 如果使用虚拟环境
 python -m app.main
 
-# 终端 2: 启动前端
-cd Ai-Writer/frontend
+# 终端 2 - 启动前端
+cd ~/Ai-Writer/frontend
+npm run dev
+```
+
+**访问地址**：
+- 前端：http://localhost:5173
+- 后端 API：http://localhost:8000
+- API 文档：http://localhost:8000/docs
+
+#### 方式 B：完整模式（含向量搜索）
+
+**包含 Milvus 向量数据库，支持 RAG 知识问答**
+
+```bash
+# 终端 1 - 启动 Milvus
+cd ~/Ai-Writer/milvus
+docker compose up -d
+
+# 等待 30-60 秒，检查状态
+docker compose ps
+
+# 终端 2 - 启动后端
+cd ~/Ai-Writer/backend
+source venv/bin/activate
+python -m app.main
+
+# 终端 3 - 启动前端
+cd ~/Ai-Writer/frontend
 npm run dev
 ```
 
 ---
 
-## 访问应用
+## 🔧 WSL2 专用配置
 
-启动成功后，在浏览器中访问：
+### 网络访问配置
 
-- **前端应用**: http://localhost:5173
-- **后端 API**: http://localhost:8000
-- **API 文档**: http://localhost:8000/docs
-- **Milvus 管理界面** (可选): http://localhost:9091
+WSL2 使用虚拟网络，在 Windows 浏览器访问时：
+
+```bash
+# 方式 1: 使用 localhost（推荐）
+# WSL2 会自动转发 localhost 端口
+# http://localhost:5173
+
+# 方式 2: 使用 WSL2 IP 地址
+hostname -I  # 获取 WSL2 IP
+# http://172.x.x.x:5173
+```
+
+### 文件访问
+
+**Windows 访问 WSL2 文件**：
+```powershell
+# 在文件资源管理器中
+\\wsl$\Ubuntu\home\你的用户名\Ai-Writer
+```
+
+**WSL2 访问 Windows 文件**：
+```bash
+cd /mnt/c/Users/你的用户名/
+```
+
+### 性能优化
+
+**将项目放在 WSL2 文件系统中**：
+```bash
+# ✅ 推荐：放在 WSL2 文件系统
+cd ~
+git clone https://github.com/fsxbmb/Ai-Writer.git
+
+# ❌ 不推荐：放在 /mnt/c（性能差）
+cd /mnt/c/Users/
+git clone https://github.com/fsxbmb/Ai-Writer.git
+```
 
 ---
 
-## 常见问题
+## 💻 笔记本电脑性能优化
 
-### 1. MinerU 未安装或不可用
+### 1. 内存优化
 
-**问题**: 后端启动时提示 MinerU 未找到
-
-**解决方案**:
+**检查内存使用**：
 ```bash
-# 方案 1: 安装 MinerU
-pip install mineru
-
-# 方案 2: 如果已安装但路径不对，创建符号链接
-ln -s /path/to/MinerU ../MinerU
+free -h
 ```
 
-### 2. Docker 权限问题
-
-**问题**: 运行 docker 命令时提示 permission denied
-
-**解决方案**:
+**限制 Docker 内存占用**：
 ```bash
-# 将用户添加到 docker 组
-sudo usermod -aG docker $USER
+# 编辑 Docker 配置
+sudo vim /etc/docker/daemon.json
 
-# 重新登录或执行
-newgrp docker
+# 添加以下内容（根据笔记本内存调整）
+{
+  "memory": "4g",
+  "memory-swap": "4g"
+}
+
+# 重启 Docker
+sudo systemctl restart docker
 ```
 
-### 3. Milvus 启动失败
+### 2. CPU 优化
 
-**问题**: Milvus 容器启动失败或无法连接
-
-**解决方案**:
+**检查 CPU 核心数**：
 ```bash
-# 查看容器日志
-docker compose -f milvus/docker-compose.yml logs
-
-# 重启服务
-docker compose -f milvus/docker-compose.yml restart
-
-# 完全清理后重新启动
-docker compose -f milvus/docker-compose.yml down -v
-docker compose -f milvus/docker-compose.yml up -d
+nproc
 ```
 
-### 4. 端口被占用
-
-**问题**: 端口 8000、5173 或 19530 已被占用
-
-**解决方案**:
+**限制后端 worker 数量**：
 ```bash
-# 查看端口占用情况
-sudo lsof -i :8000
-sudo lsof -i :5173
-sudo lsof -i :19530
-
-# 杀死占用进程
-sudo kill -9 <PID>
-
-# 或者修改配置文件中的端口号
+# 编辑 backend 启动命令
+uvicorn app.main:app --workers 2  # 根据核心数调整
 ```
 
-### 5. npm install 速度慢或失败
+### 3. 磁盘优化
 
-**解决方案**:
+**将依赖安装在虚拟环境中**，节省系统空间：
+```bash
+# 使用 Python 虚拟环境
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 4. 电源管理
+
+**笔记本使用时建议**：
+- ✅ 接通电源运行开发环境
+- ✅ 使用"高性能"电源模式
+- ⚠️ 电池模式下可能性能下降
+
+---
+
+## 🔍 常见问题解决
+
+### 问题 1：npm install 失败
+
+**错误**：`ECONNREFUSED` 或网络超时
+
+**解决方案**：
 ```bash
 # 使用国内镜像
 npm config set registry https://registry.npmmirror.com
+npm config set disturl https://npmmirror.com/mirrors/node/
 
-# 或安装时指定镜像
-npm install --registry=https://registry.npmmirror.com
+# 重新安装
+rm -rf node_modules package-lock.json
+npm install
 ```
 
-### 6. Python 依赖安装失败
+### 问题 2：Python 依赖安装失败
 
-**解决方案**:
+**错误**：`pip install` 速度慢或失败
+
+**解决方案**：
 ```bash
 # 升级 pip
 pip install --upgrade pip
 
-# 使用国内镜像
+# 使用清华镜像
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 或者逐个安装，查看具体错误
+# 或者永久配置
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### 7. CORS 错误
+### 问题 3：端口被占用
 
-**问题**: 前端无法连接后端，浏览器提示 CORS 错误
+**错误**：`Address already in use`
 
-**解决方案**:
-检查 `backend/.env` 文件中的 `CORS_ORIGINS` 配置：
-```env
-# 确保包含前端地址
-CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
-```
-
-### 8. WSL2 网络访问问题
-
-**问题**: Windows 浏览器无法访问 WSL2 中的服务
-
-**解决方案**:
+**解决方案**：
 ```bash
-# 获取 WSL2 的 IP 地址
+# 查看占用端口的进程
+sudo lsof -i :8000  # 后端
+sudo lsof -i :5173  # 前端
+
+# 杀死进程
+sudo kill -9 <PID>
+
+# 或者修改端口
+# 编辑 backend/.env: PORT=8001
+# 编辑 frontend/vite.config.ts: server.port: 5174
+```
+
+### 问题 4：Docker 权限错误
+
+**错误**：`permission denied while trying to connect to the Docker daemon`
+
+**解决方案**：
+```bash
+# 添加用户到 docker 组
+sudo usermod -aG docker $USER
+
+# 重新登录 WSL
+# 在 PowerShell 运行：wsl --shutdown
+# 然后重新打开 WSL
+```
+
+### 问题 5：MinerU 无法使用
+
+**错误**：MinerU 相关错误
+
+**解决方案**：
+```bash
+# 方案 1: 安装 MinerU
+pip install mineru
+
+# 方案 2: 跳过 MinerU，项目会使用模拟解析器
+# 不影响其他功能使用
+```
+
+### 问题 6：WSL2 网络无法访问
+
+**错误**：Windows 浏览器无法打开 localhost:5173
+
+**解决方案**：
+```bash
+# 检查 WSL2 服务是否运行
+cd ~/Ai-Writer/frontend
+npm run dev
+
+# 在 Windows PowerShell 中检查防火墙
+# 或尝试使用 WSL2 IP 地址
 hostname -I
+# 使用返回的 IP 访问，如：http://172.30.144.1:5173
+```
 
-# 在 Windows 浏览器中使用 WSL2 的 IP 访问
-# 例如：http://172.x.x.x:5173
+### 问题 7：笔记本性能不足
 
-# 或者使用 localhost（WSL2 会自动转发）
-# 确保没有防火墙拦截
+**表现**：应用运行缓慢，卡顿
+
+**解决方案**：
+```bash
+# 1. 关闭 Milvus（如果不需要向量搜索）
+cd ~/Ai-Writer/milvus
+docker compose down
+
+# 2. 减少 worker 数量
+# 修改后端启动，使用单进程
+python -m app.main
+
+# 3. 检查系统资源
+htop  # 需要先安装: sudo apt install htop
+
+# 4. 清理系统缓存
+sudo apt clean
+sudo apt autoremove
 ```
 
 ---
 
-## 开发模式 vs 生产模式
+## 📝 日常使用
 
-### 开发模式（当前配置）
-- 前端：`npm run dev` - Vite 开发服务器，支持热更新
-- 后端：`python -m app.main` - FastAPI 开发模式，显示详细错误信息
+### 启动应用（基础模式）
 
-### 生产模式（推荐）
+创建启动脚本 `start.sh`：
 
-#### 前端构建
 ```bash
-cd frontend
-npm run build
-# 生成 dist/ 目录，包含静态文件
+# 在项目根目录创建
+cat > start.sh << 'EOF'
+#!/bin/bash
+
+# 启动后端
+cd ~/Ai-Writer/backend
+source venv/bin/activate
+python -m app.main &
+
+# 启动前端
+cd ~/Ai-Writer/frontend
+npm run dev &
+
+echo "应用已启动"
+echo "前端: http://localhost:5173"
+echo "后端: http://localhost:8000"
+EOF
+
+chmod +x start.sh
+./start.sh
 ```
 
-#### 后端启动（使用 uvicorn）
+### 停止应用
+
 ```bash
-cd backend
-# 生产模式配置
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+# 查找并停止进程
+ps aux | grep "python -m app.main"
+kill <PID>
+
+ps aux | grep "vite"
+kill <PID>
+
+# 或使用 pkill
+pkill -f "python -m app.main"
+pkill -f "npm run dev"
 ```
 
----
-
-## 性能优化建议
-
-1. **使用虚拟环境**: Python 项目建议使用虚拟环境隔离依赖
-2. **PM2 管理进程**: 使用 PM2 管理 Node.js 和 Python 进程
-   ```bash
-   npm install -g pm2
-   pm2 start "npm run dev" --name ai-writer-frontend
-   ```
-3. **Nginx 反向代理**: 生产环境建议使用 Nginx
-4. **数据库优化**: 大量数据时考虑使用 PostgreSQL 替代 JSON 文件
-
----
-
-## 更新项目
+### 更新项目
 
 ```bash
-# 拉取最新代码
+cd ~/Ai-Writer
 git pull origin main
 
-# 更新后端依赖
+# 更新后端
 cd backend
+source venv/bin/activate
 pip install -r requirements.txt --upgrade
 
-# 更新前端依赖
+# 更新前端
 cd ../frontend
 npm install
-
-# 重启服务
 ```
 
 ---
 
-## 技术支持
+## 🎯 开发建议
 
-如有问题，请查看：
-- GitHub Issues: https://github.com/fsxbmb/Ai-Writer/issues
-- API 文档: http://localhost:8000/docs
-- MinerU 文档: https://github.com/opendatalab/MinerU
-- Milvus 文档: https://milvus.io/docs
+### 1. 使用 VS Code 远程开发
+
+```bash
+# 在 WSL2 中安装 VS Code Server
+code .
+
+# 或在 Windows VS Code 中安装 "WSL" 扩展
+# 然后在 WSL 终端运行: code .
+```
+
+### 2. 使用 PM2 管理进程
+
+```bash
+# 安装 PM2
+npm install -g pm2
+
+# 启动后端
+cd ~/Ai-Writer/backend
+pm2 start "python -m app.main" --name ai-writer-backend
+
+# 启动前端
+cd ~/Ai-Writer/frontend
+pm2 start "npm run dev" --name ai-writer-frontend
+
+# 查看状态
+pm2 status
+
+# 查看日志
+pm2 logs
+
+# 停止所有
+pm2 stop all
+```
+
+### 3. 数据备份
+
+```bash
+# 备份重要数据
+cp -r ~/Ai-Writer/backend/data ~/Ai-Writer-backup/
+cp -r ~/Ai-Writer/backend/uploads ~/Ai-Writer-backup/
+```
 
 ---
 
-## 许可证
+## 📚 技术支持
 
-MIT
+- **GitHub Issues**: https://github.com/fsxbmb/Ai-Writer/issues
+- **API 文档**: http://localhost:8000/docs
+- **项目 README**: https://github.com/fsxbmb/Ai-Writer
+
+---
+
+## ⚡ 快速参考
+
+### 端口说明
+- **5173**: 前端开发服务器
+- **8000**: 后端 API 服务器
+- **19530**: Milvus 向量数据库
+- **9091**: Milvus 管理界面
+- **9001**: MinIO 控制台
+
+### 目录结构
+```
+Ai-Writer/
+├── backend/         # Python FastAPI 后端
+│   ├── app/        # 应用代码
+│   ├── data/       # 数据文件
+│   └── uploads/    # 上传文件
+├── frontend/       # Vue 3 前端
+│   └── src/       # 源代码
+├── milvus/        # 向量数据库配置
+└── DEPLOYMENT.md  # 本文件
+```
+
+### 常用命令
+```bash
+# 启动后端
+cd backend && python -m app.main
+
+# 启动前端
+cd frontend && npm run dev
+
+# 启动 Milvus
+cd milvus && docker compose up -d
+
+# 查看日志
+tail -f backend/logs/*.log
+```
+
+---
+
+## 📄 许可证
+
+MIT License
