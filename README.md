@@ -441,3 +441,13 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 ---
 
 **Made with ❤️ by fsxbmb**
+
+# 启动方式
+## 后端
+
+cd ~/AI_Writer/backend
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+## 前端
+cd ~/AI_Writer/frontend
+npm run dev

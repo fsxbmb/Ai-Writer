@@ -1,19 +1,227 @@
 """
 文档项目相关 API 路由
 """
-from fastapi import APIRouter, HTTPException, Query
-from fastapi.responses import StreamingResponse, HTMLResponse
+from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.responses import StreamingResponse, HTMLResponse, Response
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn  # 用于设置字体
+from docx.oxml import OxmlElement
 import io
+import re
 from urllib.parse import quote
+import markdown
+from bs4 import BeautifulSoup
+import logging
 
 from app.models.document_project import document_project_storage
 from app.services.document_generator import document_generator_service
+
+logger = logging.getLogger(__name__)
+
+
+def convert_quotes_to_chinese(text):
+    """
+    将英文引号转换为中文引号
+    如果引号内的文本包含中文字符，使用中文引号
+    """
+    def replace_double_quotes(match):
+        content = match.group(1)
+        # 如果内容包含中文字符，使用中文引号
+        if any('\u4e00' <= char <= '\u9fff' for char in content):
+            return '\u201c' + content + '\u201d'  # 中文引号 U+201C U+201D
+        else:
+            return match.group(0)  # 保持原样（英文引号）
+
+    def replace_single_quotes(match):
+        content = match.group(1)
+        # 如果内容包含中文字符，使用中文引号
+        if any('\u4e00' <= char <= '\u9fff' for char in content):
+            return '\u2018' + content + '\u2019'  # 中文引号 U+2018 U+2019
+        else:
+            return match.group(0)  # 保持原样（英文引号）
+
+    # 处理双引号 "..."
+    text = re.sub(r'"([^"]+)"', replace_double_quotes, text)
+    # 处理单引号 '...'
+    text = re.sub(r"'([^']+)'", replace_single_quotes, text)
+
+    return text
+
+
+def add_markdown_to_paragraph(paragraph, md_text):
+    """
+    将 Markdown 文本添加到段落，保留格式（粗体、斜体、代码、公式等）
+    中文引号使用宋体，英文内容使用Times New Roman
+    """
+    # 先将英文引号转换为中文引号
+    md_text = convert_quotes_to_chinese(md_text)
+
+    # 使用占位符保存格式化文本
+    placeholders = {}
+    placeholder_count = [0]
+
+    def get_placeholder():
+        placeholder_count[0] += 1
+        return f"__PLACEHOLDER_{placeholder_count[0]}__"
+
+    # 第零步：处理数学公式（最优先处理，避免被其他规则干扰）
+    def replace_math_block(text):
+        # 块级公式 $$...$$ (使用DOTALL匹配跨行)
+        pattern = r'\$\$([^\$]+?)\$\$'
+        def replacement(match):
+            key = get_placeholder()
+            placeholders[key] = (match.group(1), 'math-block')
+            return key
+        return re.sub(pattern, replacement, text, flags=re.DOTALL)
+
+    def replace_math_inline(text):
+        # 行内公式 $...$ (必须在同一行内，避免跨块级公式匹配)
+        # 匹配同一行内的$...$模式
+        pattern = r'([^\n$]+?)\$'  # 这个模式会先匹配非$的字符，然后是$，但实际上我们需要更精确的模式
+        # 修正：使用负向前瞻确保匹配的不是$$的一部分
+        # 更好的方法：按行处理，每行单独匹配$...$
+        lines = text.split('\n')
+        result_lines = []
+        for line in lines:
+            # 对每一行，替换$...$为占位符
+            def replace_inline_in_line(match):
+                key = get_placeholder()
+                placeholders[key] = (match.group(1), 'math-inline')
+                return key
+            line = re.sub(r'\$([^$]+?)\$', replace_inline_in_line, line)
+            result_lines.append(line)
+        return '\n'.join(result_lines)
+
+    # 第一步：处理粗体 **text**
+    def replace_bold(text):
+        pattern = r'\*\*(.+?)\*\*'
+        def replacement(match):
+            key = get_placeholder()
+            placeholders[key] = (match.group(1), 'bold')
+            return key
+        return re.sub(pattern, replacement, text)
+
+    # 第二步：处理斜体 *text*（避免匹配 **）
+    def replace_italic(text):
+        pattern = r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)'
+        def replacement(match):
+            key = get_placeholder()
+            placeholders[key] = (match.group(1), 'italic')
+            return key
+        return re.sub(pattern, replacement, text)
+
+    # 第三步：处理代码 `text`
+    def replace_code(text):
+        pattern = r'`(.+?)`'
+        def replacement(match):
+            key = get_placeholder()
+            placeholders[key] = (match.group(1), 'code')
+            return key
+        return re.sub(pattern, replacement, text)
+
+    # 按顺序替换（公式优先）
+    result = replace_math_block(md_text)  # 块级公式优先
+    result = replace_math_inline(result)  # 然后行内公式
+    result = replace_bold(result)
+    result = replace_italic(result)
+    result = replace_code(result)
+
+    # 还原并添加到段落
+    parts = re.split(r'(__PLACEHOLDER_\d+__)', result)
+
+    # 中文引号字符列表（使用Unicode编码）
+    chinese_quotes = ['\u201c', '\u201d', '\u2018', '\u2019', '\u300c', '\u300d', '\u300e', '\u300f']
+
+    for part in parts:
+        if part in placeholders:
+            text, fmt_type = placeholders[part]
+
+            # 特殊处理：数学公式
+            if fmt_type in ['math-inline', 'math-block']:
+                # 强制使用 latex2word 渲染所有公式
+                try:
+                    from latex2word import LatexToWordElement
+
+                    # Debug: 记录LaTeX内容
+                    logger.debug(f"处理公式: {fmt_type}")
+                    logger.debug(f"LaTeX (repr): {repr(text)}")
+                    logger.debug(f"LaTeX长度: {len(text)}")
+
+                    # 创建 LaTeX 到 Word 的转换对象
+                    latex_to_word = LatexToWordElement(text)
+
+                    if fmt_type == 'math-block':
+                        # 块级公式：创建新段落并居中
+                        from docx.oxml import OxmlElement
+
+                        para_element = paragraph._element
+                        body = para_element.getparent()
+                        if body is None:
+                            latex_to_word.add_latex_to_paragraph(paragraph)
+                        else:
+                            # 创建新段落元素
+                            new_para_element = OxmlElement('w:p')
+                            body.insert(body.index(para_element) + 1, new_para_element)
+
+                            # 创建段落对象并添加公式
+                            from docx.text.paragraph import Paragraph
+                            formula_para = Paragraph(new_para_element, paragraph._parent)
+                            formula_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+                            # 设置段落间距，避免多余的空行
+                            formula_para.paragraph_format.space_before = Pt(0)
+                            formula_para.paragraph_format.space_after = Pt(0)
+                            formula_para.paragraph_format.line_spacing = 1.5
+
+                            latex_to_word.add_latex_to_paragraph(formula_para)
+                    else:
+                        # 行内公式：直接插入当前段落
+                        latex_to_word.add_latex_to_paragraph(paragraph)
+                        logger.debug(f"行内公式已添加到段落")
+
+                except Exception as e:
+                    # 如果 latex2word 失败，记录错误
+                    import traceback
+                    logger.error(f"LaTeX 公式转换失败: {e}\nLaTeX: {text[:50]}...\nTraceback: {traceback.format_exc()}")
+                continue
+
+            # 普通格式化文本
+            for char in text:
+                run = paragraph.add_run(char)
+
+                # 如果是中文引号，设置为宋体
+                if char in chinese_quotes:
+                    run.font.name = '宋体'
+                    run.font.size = Pt(12)
+                    run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+                else:
+                    # 普通文本设置格式
+                    if fmt_type == 'bold':
+                        run.bold = True
+                    elif fmt_type == 'italic':
+                        run.italic = True
+                    elif fmt_type == 'code':
+                        run.font.name = 'Courier New'
+                        run.font.size = Pt(10)
+
+        else:
+            # 普通文本，逐个字符处理
+            if part:
+                for char in part:
+                    run = paragraph.add_run(char)
+
+                    # 如果是中文引号，设置为宋体
+                    if char in chinese_quotes:
+                        run.font.name = '宋体'
+                        run.font.size = Pt(12)
+                        run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+
+
+
 
 router = APIRouter()
 
@@ -234,13 +442,17 @@ async def generate_section_content(project_id: str, request: GenerateContentRequ
             documents, _ = doc_storage.list_documents(folder=folder_id)
             document_ids.extend([doc["id"] for doc in documents])
 
+        # 获取完整大纲（用于上下文）
+        outline = project.get("outline", [])
+
         # 生成内容
         result = document_generator_service.generate_section_content(
             section_title=request.sectionTitle,
             section_id=request.sectionId,
             document_ids=document_ids,
             context_sections=request.contextSections if request.contextSections else None,
-            custom_prompt=request.customPrompt if request.customPrompt else None
+            custom_prompt=request.customPrompt if request.customPrompt else None,
+            full_outline=outline  # 传递完整大纲
         )
 
         # 保存到项目
@@ -296,13 +508,17 @@ async def regenerate_paragraph(project_id: str, request: RegenerateParagraphRequ
             # 获取已有的历史版本
             existing_versions = current_paragraph.get("versions", [])
 
+        # 获取完整大纲（用于上下文）
+        outline = project.get("outline", [])
+
         # 重新生成
         new_paragraph_data = document_generator_service.regenerate_paragraph(
             section_title=request.sectionTitle,
             section_id=request.sectionId,
             document_ids=document_ids,
             context_sections=request.contextSections if request.contextSections else None,
-            custom_prompt=request.customPrompt if request.customPrompt else None
+            custom_prompt=request.customPrompt if request.customPrompt else None,
+            full_outline=outline  # 传递完整大纲
         )
 
         # 如果有当前段落，保存到版本历史
@@ -404,11 +620,18 @@ async def restore_paragraph_version(project_id: str, request: RestoreParagraphVe
 
 
 @router.get("/{project_id}/export-word")
-async def export_word(project_id: str):
+async def export_word(
+    project_id: str,
+    title: str = Query(default="文档", description="导出文件名")
+):
     """
     导出为 Word 文档
 
     将项目的大纲和内容导出为 Word 文档
+
+    Args:
+        project_id: 项目ID
+        title: 导出文件名（不含扩展名）
     """
     try:
         project = document_project_storage.get_project(project_id)
@@ -504,33 +727,51 @@ async def export_word(project_id: str):
                         current_para = paragraphs[-1]
                         content = current_para.get("content", "")
 
-                        if content.strip():
-                            # 将内容按双换行符分割为多个段落
-                            content_paragraphs = content.split('\n\n')
+                        # 调试：打印内容的前200个字符
+                        print(f"\n[DEBUG] 导出章节: {label}")
+                        print(f"[DEBUG] 内容前200字符: {repr(content[:200])}")
+                        print(f"[DEBUG] 内容长度: {len(content)}")
+                        print(f"[DEBUG] 包含 ** : {'**' in content}")
+                        print(f"[DEBUG] 包含 * : {'*' in content}")
 
-                            for para_text in content_paragraphs:
+                        if content.strip():
+                            # 直接按双换行符分割内容，每个逻辑段落单独处理
+                            import re
+                            paragraphs_text = re.split(r'\n\s*\n', content)
+
+                            for para_text in paragraphs_text:
                                 para_text = para_text.strip()
                                 if not para_text:
                                     continue
 
-                                # 添加段落
-                                para = doc.add_paragraph(para_text)
+                                # 添加段落并处理 Markdown 格式
+                                para = doc.add_paragraph()
 
-                                # 设置段落两端对齐
+                                # 设置段落格式
                                 para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                                para.paragraph_format.first_line_indent = Inches(0.32)  # 首行缩进
+                                para.paragraph_format.line_spacing = 1.5  # 1.5倍行距
+                                para.paragraph_format.space_before = Pt(0)
+                                para.paragraph_format.space_after = Pt(0)
 
-                                # 设置正文字体
+                                # 将 Markdown 内容添加到段落（保留格式）
+                                # add_markdown_to_paragraph函数内部会处理所有公式（包括行内和块级）
+                                add_markdown_to_paragraph(para, para_text)
+
+                                # 设置所有 run 的字体（跳过已经是宋体的中文引号和代码块）
                                 for run in para.runs:
+                                    # 跳过代码块和已经是宋体的中文引号
+                                    if run.font.name == 'Courier New':
+                                        continue
+                                    if run.font.name == '宋体':
+                                        # 中文引号已经是宋体，只需设置字体大小
+                                        run.font.size = font_size_small4
+                                        continue
+
+                                    # 其他文本设置为Times New Roman
                                     run.font.size = font_size_small4
-                                    # 使用 qn 设置字体
                                     run.font.name = 'Times New Roman'
                                     run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
-
-                                # 设置段落格式：首行缩进两字符（约0.8厘米），行距1.5倍，段前段后0行
-                                para.paragraph_format.first_line_indent = Inches(0.32)  # 首行缩进两字符
-                                para.paragraph_format.line_spacing = 1.5  # 1.5倍行距
-                                para.paragraph_format.space_before = Pt(0)  # 段前0行
-                                para.paragraph_format.space_after = Pt(0)  # 段后0行
 
                 # 递归处理子节点
                 children = node.get("children", [])
@@ -546,9 +787,8 @@ async def export_word(project_id: str):
         doc.save(file_stream)
         file_stream.seek(0)
 
-        # 生成文件名（使用项目标题，URL 编码以支持中文）
-        project_title = project.get("title", "文档")
-        filename = f"{project_title}.docx"
+        # 生成文件名（使用传递的 title 参数）
+        filename = f"{title}.docx"
         encoded_filename = quote(filename)
 
         # 返回文件流
@@ -567,13 +807,16 @@ async def export_word(project_id: str):
 
 
 @router.get("/{project_id}/preview-html")
-async def preview_html(project_id: str):
+async def preview_html(project_id: str, request: Request):
     """
     生成HTML预览
 
     生成项目内容的HTML预览，用于PDF导出
     """
     try:
+        # 获取后端基础 URL
+        backend_base_url = f"{request.url.scheme}://{request.url.netloc}"
+
         project = document_project_storage.get_project(project_id)
         if not project:
             raise HTTPException(status_code=404, detail="项目不存在")
@@ -582,12 +825,47 @@ async def preview_html(project_id: str):
         outline = project.get("outline", [])
         sections = project.get("sections", {})
 
+        # 用于存储提取的公式
+        extracted_formulas = []
+        formula_counter = [0]  # 使用列表以便在嵌套函数中修改
+
+        def protect_formulas(content: str) -> str:
+            """保护 LaTeX 公式，防止被 Markdown 处理"""
+            # 先提取块级公式
+            content = re.sub(
+                r'\$\$([^\$]+?)\$\$',
+                lambda m: _extract_formula(m.group(1), 'block'),
+                content,
+                flags=re.DOTALL
+            )
+            # 再提取行内公式
+            content = re.sub(
+                r'\$([^\$\n]+?)\$',
+                lambda m: _extract_formula(m.group(1), 'inline'),
+                content
+            )
+            return content
+
+        def _extract_formula(latex: str, fmt_type: str) -> str:
+            """提取公式并返回占位符"""
+            idx = formula_counter[0]
+            formula_counter[0] += 1
+            extracted_formulas.append({
+                'index': idx,
+                'latex': latex.strip(),
+                'type': fmt_type
+            })
+            # 使用特殊占位符，Markdown 不会处理
+            return f"MATHFORMULA{idx}PLACEHOLDER"
+
         # 生成HTML
         html_content = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>{title}</title>
+    <!-- KaTeX CSS - 先加载 KaTeX 样式 -->
+    <link rel="stylesheet" href="{backend_base_url}/static/katex/katex.min.css">
     <style>
         * {{
             margin: 0;
@@ -615,6 +893,11 @@ async def preview_html(project_id: str):
             margin: 20mm auto;
             padding: 20mm;
             background: white;
+        }}
+
+        /* 中文引号使用宋体 */
+        .chinese-quote {{
+            font-family: '宋体', serif;
         }}
 
         h1, h2, h3 {{
@@ -660,6 +943,35 @@ async def preview_html(project_id: str):
                 padding: 0 !important;
             }}
         }}
+
+        /* KaTeX 公式样式 - 完全重置间距，使用最高优先级 */
+        html body .katex-display,
+        html body div.katex-display,
+        body > .katex-display {{
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+            line-height: 1.5 !important;
+        }}
+
+        html body .katex-display > .katex,
+        html body .katex {{
+            line-height: 1.5 !important;
+        }}
+
+        html body .katex-display > .katex,
+        html body .katex-display > .katex-display {{
+            display: inline-block;
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+
+        /* 确保公式容器没有额外间距 */
+        html body .katex-display > .katex > .katex-html,
+        html body .katex-display > .katex > .katex-html > .base {{
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
     </style>
 </head>
 <body>
@@ -691,16 +1003,43 @@ async def preview_html(project_id: str):
                         content = current_para.get("content", "")
 
                         if content.strip():
-                            # 将双换行符分割为段落
-                            content_paragraphs = content.split('\n\n')
-                            for para_text in content_paragraphs:
-                                para_text = para_text.strip()
-                                if para_text:
-                                    # 转义HTML特殊字符
-                                    para_text = para_text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-                                    # 将换行符转为<br>
-                                    para_text = para_text.replace('\n', '<br>')
-                                    html += f"<p>{para_text}</p>"
+                            # 先将英文引号转换为中文引号
+                            content = convert_quotes_to_chinese(content)
+
+                            # 然后将中文引号包裹在span中（使用Unicode编码）
+                            content = re.sub(
+                                r'([\u201c\u201d\u2018\u2019\u300c\u300d\u300e\u300f])',
+                                r'<span class="chinese-quote">\1</span>',
+                                content
+                            )
+
+                            # 保护 LaTeX 公式，防止被 Markdown 处理
+                            content = protect_formulas(content)
+
+                            # 将 Markdown 转换为 HTML
+                            md_html = markdown.markdown(
+                                content,
+                                extensions=[
+                                    'extra',          # 额外功能（表格、列表等）
+                                    'nl2br',          # 换行符转 <br>
+                                    'sane_lists',     # 更好的列表支持
+                                ]
+                            )
+
+                            # 将占位符替换回 LaTeX 公式（供 KaTeX auto-render 处理）
+                            for formula in extracted_formulas:
+                                idx = formula['index']
+                                latex = formula['latex']
+                                fmt_type = formula['type']
+                                if fmt_type == 'block':
+                                    placeholder = f"MATHFORMULA{idx}PLACEHOLDER"
+                                    replacement = f"$${latex}$$"
+                                else:
+                                    placeholder = f"MATHFORMULA{idx}PLACEHOLDER"
+                                    replacement = f"${latex}$"
+                                md_html = md_html.replace(placeholder, replacement)
+
+                            html += md_html
 
                 # 递归处理子节点
                 children = node.get("children", [])
@@ -712,18 +1051,61 @@ async def preview_html(project_id: str):
         if outline:
             html_content += add_outline_html(outline)
 
-        html_content += """    <script>
-        // 页面加载完成后自动触发打印对话框
-        window.onload = function() {
-            setTimeout(function() {
-                window.print();
-            }, 500);
-        };
+        html_content += f"""    <script>
+        // 动态加载 KaTeX 资源（确保加载顺序）
+        (function() {{
+            const backendUrl = '{backend_base_url}';
+
+            // 加载 KaTeX 核心库
+            const katexScript = document.createElement('script');
+            katexScript.src = backendUrl + '/static/katex/katex.min.js';
+            katexScript.onload = function() {{
+                console.log('✓ KaTeX 核心库已加载');
+
+                // KaTeX 核心库加载完成后，再加载 auto-render 插件
+                const autoRenderScript = document.createElement('script');
+                autoRenderScript.src = backendUrl + '/static/katex/contrib/auto-render.min.js';
+                autoRenderScript.onload = function() {{
+                    console.log('✓ KaTeX auto-render 已加载');
+
+                    // auto-render 加载完成后，立即渲染公式
+                    try {{
+                        renderMathInElement(document.body, {{
+                            delimiters: [
+                                {{left: '$$', right: '$$', display: true}},
+                                {{left: '$', right: '$', display: false}}
+                            ],
+                            throwOnError: false
+                        }});
+                        console.log('✓ KaTeX 公式渲染完成');
+                    }} catch (e) {{
+                        console.error('KaTeX 渲染失败:', e);
+                    }}
+
+                    // 渲染完成后延迟触发打印
+                    setTimeout(function() {{
+                        window.print();
+                    }}, 1000);
+                }};
+                autoRenderScript.onerror = function() {{
+                    console.error('✗ KaTeX auto-render 加载失败');
+                }};
+                document.head.appendChild(autoRenderScript);
+            }};
+            katexScript.onerror = function() {{
+                console.error('✗ KaTeX 核心库加载失败，请检查后端静态文件服务');
+            }};
+            document.head.appendChild(katexScript);
+        }})();
     </script>
 </body>
 </html>"""
 
-        return HTMLResponse(content=html_content)
+        # 使用 Response 而不是 HTMLResponse，避免 Content-Length 计算错误
+        return Response(
+            content=html_content,
+            media_type="text/html; charset=utf-8"
+        )
 
     except HTTPException:
         raise

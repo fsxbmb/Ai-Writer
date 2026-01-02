@@ -450,7 +450,8 @@ class DocumentGeneratorService:
         section_id: str,
         document_ids: List[str],
         context_sections: List[str] = None,
-        custom_prompt: str = None
+        custom_prompt: str = None,
+        full_outline: List[Dict] = None
     ) -> Dict:
         """
         生成章节内容
@@ -461,6 +462,7 @@ class DocumentGeneratorService:
             document_ids: 知识库文档ID列表
             context_sections: 上下文章节（父级章节标题列表）
             custom_prompt: 自定义生成需求
+            full_outline: 完整大纲结构（用于上下文理解）
 
         Returns:
             生成的内容和引用
@@ -497,7 +499,7 @@ class DocumentGeneratorService:
                     logger.info(f"找到 {len(chunks)} 个相关片段，使用最相关的1个")
 
             # 3. 构建提示词
-            prompt = self._build_content_prompt(section_title, sources, context_sections, custom_prompt)
+            prompt = self._build_content_prompt(section_title, sources, context_sections, custom_prompt, full_outline)
 
             # 4. 调用 LLM 生成内容
             response = self.client.post(
@@ -548,7 +550,8 @@ class DocumentGeneratorService:
         section_id: str,
         document_ids: List[str],
         context_sections: List[str] = None,
-        custom_prompt: str = None
+        custom_prompt: str = None,
+        full_outline: List[Dict] = None
     ) -> Dict:
         """
         重新生成段落（用于段落重新生成功能）
@@ -560,7 +563,8 @@ class DocumentGeneratorService:
             section_id=section_id,
             document_ids=document_ids,
             context_sections=context_sections,
-            custom_prompt=custom_prompt
+            custom_prompt=custom_prompt,
+            full_outline=full_outline
         )
 
     def _build_content_prompt(
@@ -568,7 +572,8 @@ class DocumentGeneratorService:
         section_title: str,
         sources: List[Dict],
         context_sections: List[str] = None,
-        custom_prompt: str = None
+        custom_prompt: str = None,
+        full_outline: List[Dict] = None
     ) -> str:
         """构建内容生成提示词"""
         # 构建上下文路径
@@ -591,22 +596,30 @@ class DocumentGeneratorService:
         else:
             reference = "参考资料：无（请基于通用知识撰写）"
 
+        # 构建完整大纲文本（用于上下文）
+        outline_text = ""
+        if full_outline:
+            outline_text = "\n完整文档大纲：\n" + self._format_outline_for_prompt(full_outline)
+            logger.info(f"为章节生成提供完整大纲，共 {self._count_outline_nodes(full_outline)} 个章节")
+
         # 基础要求
         requirements = """1. 内容要详实、准确、有条理
 2. 如果有参考资料，请充分参考资料内容
 3. 使用清晰的段落结构
 4. 字数控制在 500-1000 字
-5. 不要包含章节标题本身"""
+5. 不要包含章节标题本身
+6. 【重要】如果内容中需要引用其他章节，请严格参考上述"完整文档大纲"，只引用实际存在的章节
+7. 【重要】不要编造或引用不存在的章节号或章节名"""
 
         # 如果有自定义需求，添加到要求中
         if custom_prompt and custom_prompt.strip():
             requirements = f"""{requirements}
-6. 特殊要求：{custom_prompt.strip()}"""
+8. 特殊要求：{custom_prompt.strip()}"""
 
         prompt = f"""请为文档的以下章节撰写内容：
 
 章节路径：{context_path}
-
+{outline_text}
 {reference}
 
 要求：
@@ -615,6 +628,19 @@ class DocumentGeneratorService:
 请撰写内容："""
 
         return prompt
+
+    def _format_outline_for_prompt(self, outline: List[Dict], indent: int = 0) -> str:
+        """将大纲格式化为提示词文本"""
+        lines = []
+        for node in outline:
+            prefix = "  " * indent
+            label = node.get("label", "无标题")
+            lines.append(f"{prefix}- {label}")
+
+            if node.get("children"):
+                lines.append(self._format_outline_for_prompt(node["children"], indent + 1))
+
+        return "\n".join(lines)
 
 
 # 全局服务实例

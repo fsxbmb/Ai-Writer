@@ -3,8 +3,10 @@ AI Writer Backend - FastAPI 主入口
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import uvicorn
+from pathlib import Path
 
 from app.api import documents, folders, chat, document_projects, ollama
 from app.core.config import settings
@@ -44,6 +46,14 @@ app.include_router(folders.router, prefix="/api/folders", tags=["folders"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(document_projects.router, prefix="/api/document-projects", tags=["document-projects"])
 app.include_router(ollama.router, prefix="/api/ollama", tags=["ollama"])
+
+# 挂载静态文件服务（用于 KaTeX 等本地资源）
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    print(f"✓ 静态文件服务已挂载: {static_dir}")
+else:
+    print(f"⚠ 静态文件目录不存在: {static_dir}")
 
 
 @app.get("/")

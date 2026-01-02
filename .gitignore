@@ -75,3 +75,17 @@ backend/data/images/
 
 # Vector database volumes
 milvus/volumes/
+
+# Test and debug scripts
+backend/test_*.py
+backend/check_*.py
+backend/find_*.py
+backend/list_*.py
+
+# Static and temporary data
+backend/static/
+data/
+
+# Root level package files (should be in frontend/)
+package-lock.json
+package.json

@@ -10,11 +10,13 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@types/markdown-it": "^14.1.2",
     "@vicons/ionicons5": "^0.13.0",
     "@vueuse/core": "^10.7.0",
     "axios": "^1.6.0",
     "file-saver": "^2.0.5",
     "highlight.js": "^11.9.0",
+    "katex": "^0.16.27",
     "markdown-it": "^14.0.0",
     "naive-ui": "^2.38.0",
     "pdfjs-dist": "^3.11.174",

@@ -1,17 +1,22 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
+import HomeView from '@/views/HomeView.vue'
 import KnowledgeView from '@/views/KnowledgeView.vue'
 import DocumentPreview from '@/views/DocumentPreview.vue'
 
 const routes: RouteRecordRaw[] = [
+  // 首页 - 独立显示，不带侧边栏
+  {
+    path: '/',
+    name: 'Home',
+    component: HomeView,
+    meta: { title: '首页' },
+  },
+  // 其他页面 - 使用 MainLayout（带侧边栏）
   {
     path: '/',
     component: MainLayout,
     children: [
-      {
-        path: '',
-        redirect: '/knowledge',
-      },
       {
         path: 'knowledge',
         name: 'Knowledge',

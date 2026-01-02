@@ -266,24 +266,13 @@
                     :key="paraInfo.key"
                     style="margin-bottom: 16px;"
                   >
-                    <div
+                    <MarkdownParagraph
                       :ref="el => setParagraphRef(el, section.sectionId, idx)"
-                      :contenteditable="paraInfo.isCurrent"
+                      :content="paraInfo.content"
+                      :isEditing="paraInfo.isCurrent"
+                      :backgroundColor="paraInfo.isCurrent ? 'var(--n-color)' : 'var(--n-color-modal)'"
                       @blur="paraInfo.isCurrent ? handleParagraphEdit(section, paraInfo, $event) : null"
-                      :style="{
-                        padding: '12px',
-                        border: '1px solid var(--n-border-color)',
-                        borderRadius: '4px',
-                        minHeight: '60px',
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: '1.8',
-                        backgroundColor: paraInfo.isCurrent ? 'var(--n-color)' : 'var(--n-color-modal)',
-                        opacity: paraInfo.isCurrent ? 1 : 0.7,
-                        cursor: paraInfo.isCurrent ? 'text' : 'default'
-                      }"
-                    >
-                      {{ paraInfo.content }}
-                    </div>
+                    />
 
                     <!-- 版本信息和操作按钮 -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
@@ -339,8 +328,8 @@
           </div>
 
           <!-- 预览模式 -->
-          <div v-else>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div v-else style="display: flex; flex-direction: column; height: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0;">
               <n-text>PDF 预览（打印或保存为 PDF）</n-text>
               <n-button
                 type="primary"
@@ -349,11 +338,13 @@
                 打印/导出 PDF
               </n-button>
             </div>
-            <iframe
-              v-if="currentProjectId"
-              :src="documentProjectApi.getPreviewHtmlUrl(currentProjectId)"
-              style="width: 100%; height: 600px; border: 1px solid var(--n-border-color); border-radius: 4px;"
-            ></iframe>
+            <div style="flex: 1; min-height: 0;">
+              <iframe
+                v-if="currentProjectId"
+                :src="documentProjectApi.getPreviewHtmlUrl(currentProjectId)"
+                style="width: 100%; height: 100%; border: 1px solid var(--n-border-color); border-radius: 4px;"
+              ></iframe>
+            </div>
           </div>
         </div>
 
@@ -572,6 +563,7 @@ import {
   CloudUploadOutline as CloudUploadIcon,
   CloudUploadOutline as UploadIcon
 } from '@vicons/ionicons5'
+import MarkdownParagraph from '@/components/MarkdownParagraph.vue'
 
 const message = useMessage()
 const dialog = useDialog()

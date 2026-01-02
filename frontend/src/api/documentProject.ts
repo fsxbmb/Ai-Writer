@@ -200,6 +200,7 @@ export const documentProjectApi = {
   // 导出为 Word 文档
   exportWord: async (projectId: string, title: string = '文档'): Promise<void> => {
     const response = await apiClient.get(`/document-projects/${projectId}/export-word`, {
+      params: { title },  // 将 title 作为查询参数传递
       responseType: 'blob'
     })
 
