@@ -54,7 +54,8 @@ def convert_quotes_to_chinese(text):
 
 def add_markdown_to_paragraph(paragraph, md_text):
     """
-    将 Markdown 文本添加到段落，保留格式（粗体、斜体、代码、公式等）
+    将 Markdown 文本添加到段落，保留格式（粗体、斜体、代码、行内公式等）
+    块级公式不在此函数中处理
     中文引号使用宋体，英文内容使用Times New Roman
     """
     # 先将英文引号转换为中文引号
@@ -68,22 +69,9 @@ def add_markdown_to_paragraph(paragraph, md_text):
         placeholder_count[0] += 1
         return f"__PLACEHOLDER_{placeholder_count[0]}__"
 
-    # 第零步：处理数学公式（最优先处理，避免被其他规则干扰）
-    def replace_math_block(text):
-        # 块级公式 $$...$$ (使用DOTALL匹配跨行)
-        pattern = r'\$\$([^\$]+?)\$\$'
-        def replacement(match):
-            key = get_placeholder()
-            placeholders[key] = (match.group(1), 'math-block')
-            return key
-        return re.sub(pattern, replacement, text, flags=re.DOTALL)
-
+    # 第零步：处理行内公式 $...$
     def replace_math_inline(text):
-        # 行内公式 $...$ (必须在同一行内，避免跨块级公式匹配)
-        # 匹配同一行内的$...$模式
-        pattern = r'([^\n$]+?)\$'  # 这个模式会先匹配非$的字符，然后是$，但实际上我们需要更精确的模式
-        # 修正：使用负向前瞻确保匹配的不是$$的一部分
-        # 更好的方法：按行处理，每行单独匹配$...$
+        # 行内公式 $...$
         lines = text.split('\n')
         result_lines = []
         for line in lines:
@@ -123,9 +111,8 @@ def add_markdown_to_paragraph(paragraph, md_text):
             return key
         return re.sub(pattern, replacement, text)
 
-    # 按顺序替换（公式优先）
-    result = replace_math_block(md_text)  # 块级公式优先
-    result = replace_math_inline(result)  # 然后行内公式
+    # 按顺序替换（行内公式优先）
+    result = replace_math_inline(md_text)
     result = replace_bold(result)
     result = replace_italic(result)
     result = replace_code(result)
@@ -140,53 +127,16 @@ def add_markdown_to_paragraph(paragraph, md_text):
         if part in placeholders:
             text, fmt_type = placeholders[part]
 
-            # 特殊处理：数学公式
-            if fmt_type in ['math-inline', 'math-block']:
-                # 强制使用 latex2word 渲染所有公式
+            # 特殊处理：行内公式
+            if fmt_type == 'math-inline':
                 try:
                     from latex2word import LatexToWordElement
-
-                    # Debug: 记录LaTeX内容
-                    logger.debug(f"处理公式: {fmt_type}")
-                    logger.debug(f"LaTeX (repr): {repr(text)}")
-                    logger.debug(f"LaTeX长度: {len(text)}")
-
-                    # 创建 LaTeX 到 Word 的转换对象
                     latex_to_word = LatexToWordElement(text)
-
-                    if fmt_type == 'math-block':
-                        # 块级公式：创建新段落并居中
-                        from docx.oxml import OxmlElement
-
-                        para_element = paragraph._element
-                        body = para_element.getparent()
-                        if body is None:
-                            latex_to_word.add_latex_to_paragraph(paragraph)
-                        else:
-                            # 创建新段落元素
-                            new_para_element = OxmlElement('w:p')
-                            body.insert(body.index(para_element) + 1, new_para_element)
-
-                            # 创建段落对象并添加公式
-                            from docx.text.paragraph import Paragraph
-                            formula_para = Paragraph(new_para_element, paragraph._parent)
-                            formula_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-                            # 设置段落间距，避免多余的空行
-                            formula_para.paragraph_format.space_before = Pt(0)
-                            formula_para.paragraph_format.space_after = Pt(0)
-                            formula_para.paragraph_format.line_spacing = 1.5
-
-                            latex_to_word.add_latex_to_paragraph(formula_para)
-                    else:
-                        # 行内公式：直接插入当前段落
-                        latex_to_word.add_latex_to_paragraph(paragraph)
-                        logger.debug(f"行内公式已添加到段落")
-
+                    latex_to_word.add_latex_to_paragraph(paragraph)
+                    logger.debug(f"行内公式已添加到段落")
                 except Exception as e:
-                    # 如果 latex2word 失败，记录错误
                     import traceback
-                    logger.error(f"LaTeX 公式转换失败: {e}\nLaTeX: {text[:50]}...\nTraceback: {traceback.format_exc()}")
+                    logger.error(f"行内公式转换失败: {e}\nLaTeX: {text[:50]}...\nTraceback: {traceback.format_exc()}")
                 continue
 
             # 普通格式化文本
@@ -744,22 +694,75 @@ async def export_word(
                                 if not para_text:
                                     continue
 
-                                # 添加段落并处理 Markdown 格式
-                                para = doc.add_paragraph()
+                                # 将段落内的单换行符替换为空格，避免在Word中出现手动换行符
+                                para_text = re.sub(r'\n+', ' ', para_text)
 
-                                # 设置段落格式
-                                para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-                                para.paragraph_format.first_line_indent = Inches(0.32)  # 首行缩进
-                                para.paragraph_format.line_spacing = 1.5  # 1.5倍行距
-                                para.paragraph_format.space_before = Pt(0)
-                                para.paragraph_format.space_after = Pt(0)
+                                # 检查段落中是否包含块级公式 $$...$$
+                                block_formula_pattern = r'\$\$([^\$]+?)\$\$'
+                                block_formulas = list(re.finditer(block_formula_pattern, para_text, flags=re.DOTALL))
 
-                                # 将 Markdown 内容添加到段落（保留格式）
-                                # add_markdown_to_paragraph函数内部会处理所有公式（包括行内和块级）
-                                add_markdown_to_paragraph(para, para_text)
+                                # 收集所有需要设置字体的段落
+                                paragraphs_to_set_font = []
 
-                                # 设置所有 run 的字体（跳过已经是宋体的中文引号和代码块）
-                                for run in para.runs:
+                                if block_formulas:
+                                    # 如果包含块级公式，先分割文本和公式
+                                    last_end = 0
+                                    for match in block_formulas:
+                                        # 添加公式前的文本（如果有）
+                                        text_before = para_text[last_end:match.start()].strip()
+                                        if text_before:
+                                            para = doc.add_paragraph()
+                                            para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                                            para.paragraph_format.first_line_indent = Inches(0.32)
+                                            para.paragraph_format.line_spacing = 1.5
+                                            para.paragraph_format.space_before = Pt(0)
+                                            para.paragraph_format.space_after = Pt(0)
+                                            add_markdown_to_paragraph(para, text_before)
+                                            paragraphs_to_set_font.append(para)
+
+                                        # 添加块级公式
+                                        formula_latex = match.group(1).strip()
+                                        from latex2word import LatexToWordElement
+                                        formula_para = doc.add_paragraph()
+                                        formula_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                                        formula_para.paragraph_format.space_before = Pt(0)
+                                        formula_para.paragraph_format.space_after = Pt(0)
+                                        formula_para.paragraph_format.line_spacing = 1.5
+                                        latex_to_word = LatexToWordElement(formula_latex)
+                                        latex_to_word.add_latex_to_paragraph(formula_para)
+                                        # 块级公式段落不需要设置字体
+
+                                        last_end = match.end()
+
+                                    # 添加最后一个公式后的文本（如果有）
+                                    text_after = para_text[last_end:].strip()
+                                    if text_after:
+                                        para = doc.add_paragraph()
+                                        para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                                        para.paragraph_format.first_line_indent = Inches(0.32)
+                                        para.paragraph_format.line_spacing = 1.5
+                                        para.paragraph_format.space_before = Pt(0)
+                                        para.paragraph_format.space_after = Pt(0)
+                                        add_markdown_to_paragraph(para, text_after)
+                                        paragraphs_to_set_font.append(para)
+                                else:
+                                    # 没有块级公式，直接处理整个段落
+                                    para = doc.add_paragraph()
+
+                                    # 设置段落格式
+                                    para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                                    para.paragraph_format.first_line_indent = Inches(0.32)  # 首行缩进
+                                    para.paragraph_format.line_spacing = 1.5  # 1.5倍行距
+                                    para.paragraph_format.space_before = Pt(0)
+                                    para.paragraph_format.space_after = Pt(0)
+
+                                    # 将 Markdown 内容添加到段落（保留格式）
+                                    # add_markdown_to_paragraph函数内部会处理行内公式
+                                    add_markdown_to_paragraph(para, para_text)
+                                    paragraphs_to_set_font.append(para)
+
+                                # 设置所有普通段落的 run 的字体（跳过已经是宋体的中文引号和代码块）
+                                for para in paragraphs_to_set_font:
                                     # 跳过代码块和已经是宋体的中文引号
                                     if run.font.name == 'Courier New':
                                         continue

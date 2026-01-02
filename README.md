@@ -446,7 +446,7 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 ## 后端
 
 cd ~/AI_Writer/backend
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+nohup python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload > ~/backend.log 2>&1 &
 
 ## 前端
 cd ~/AI_Writer/frontend
