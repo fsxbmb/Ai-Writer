@@ -89,7 +89,10 @@
             <div v-for="msg in messages" :key="msg.id" style="margin-bottom: 20px">
               <n-card size="small">
                 <n-text depth="3">{{ msg.role === 'user' ? '用户' : 'AI' }}</n-text>
-                <n-p>{{ msg.content }}</n-p>
+                <div v-if="msg.role === 'user'" style="margin-top: 8px;">
+                  <n-p>{{ msg.content }}</n-p>
+                </div>
+                <MarkdownRenderer v-else :content="msg.content" />
                 <div v-if="msg.sources && msg.sources.length > 0" style="margin-top: 12px">
                   <n-divider style="margin: 8px 0" />
                   <n-text depth="3" style="font-size: 12px">引用来源：</n-text>
@@ -196,6 +199,7 @@ import { useMessage, useDialog } from 'naive-ui'
 import { documentApi } from '@/api/document'
 import { chatApi, type Conversation, type Message, type Source } from '@/api/chat'
 import { AddOutline as AddIcon, DocumentOutline as DocumentIcon, TrashOutline as TrashIcon } from '@vicons/ionicons5'
+import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
 
 const message = useMessage()
 const dialog = useDialog()

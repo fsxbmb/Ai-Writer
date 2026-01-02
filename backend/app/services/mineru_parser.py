@@ -9,8 +9,16 @@ import json
 import argparse
 from pathlib import Path
 
-# 添加 MinerU 路径
-mineru_path = "/data/songbinbin/Proj/Proj_051/AI_Writer/MinerU"
+# 添加 MinerU 路径（使用相对路径，支持跨平台部署）
+# 从当前文件位置向上查找项目根目录
+current_file = Path(__file__).resolve()
+project_root = current_file.parent.parent.parent.parent  # backend/app/services → AI_Writer
+mineru_path = str(project_root / "MinerU")
+
+# 支持环境变量覆盖（可选）
+if "MINERU_PATH" in os.environ:
+    mineru_path = os.environ["MINERU_PATH"]
+
 if mineru_path not in sys.path:
     sys.path.insert(0, mineru_path)
 
