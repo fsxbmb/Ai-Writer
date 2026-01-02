@@ -754,6 +754,153 @@ async def search_chunks(
         raise HTTPException(status_code=500, detail=f"搜索失败: {str(e)}")
 
 
+@router.post("/folders/{folder_id}/batch-parse")
+async def batch_parse_folder(folder_id: str, mode: dict = None):
+    """
+    批量解析知识库中的所有文档
+
+    对指定知识库下的所有未解析文档进行MinerU解析处理
+
+    mode参数:
+    - incremental: 增量处理，只处理未解析的文档（默认）
+    - full: 全部重新解析，包括已解析的文档
+    - failed: 只解析之前失败的文档
+    """
+    try:
+        # 解析模式
+        if mode is None:
+            mode = {}
+        process_mode = mode.get("mode", "incremental")  # 默认增量模式
+
+        # 获取知识库下的所有文档
+        documents, total = storage.list_documents(folder=folder_id, skip=0, limit=1000)
+
+        if total == 0:
+            return {
+                "folderId": folder_id,
+                "totalCount": 0,
+                "parsedCount": 0,
+                "skippedCount": 0,
+                "message": "知识库中没有文档"
+            }
+
+        # 统计
+        parse_count = 0
+        skipped_count = 0
+        already_parsed = 0
+        failed_count = 0
+
+        # 根据模式筛选需要解析的文档
+        docs_to_parse = []
+        for doc in documents:
+            doc_id = doc["id"]
+            parse_status = doc.get("parseStatus", "pending")
+
+            if process_mode == "full":
+                # 全部重新解析
+                docs_to_parse.append(doc)
+            elif process_mode == "failed":
+                # 只解析失败的
+                if parse_status in ["error", "failed"]:
+                    docs_to_parse.append(doc)
+                else:
+                    skipped_count += 1
+            else:  # incremental
+                # 只解析未解析的
+                if parse_status in ["pending", "error", "failed"]:
+                    docs_to_parse.append(doc)
+                else:
+                    already_parsed += 1
+
+        if not docs_to_parse:
+            return {
+                "folderId": folder_id,
+                "totalCount": total,
+                "alreadyParsed": already_parsed,
+                "pendingParse": 0,
+                "message": "没有需要解析的文档"
+            }
+
+        # 提交批量解析任务
+        task_id = f"batch_parse_{folder_id}"
+
+        async def batch_parse_task():
+            """批量解析任务"""
+            nonlocal parse_count, skipped_count, failed_count
+
+            for doc in docs_to_parse:
+                doc_id = doc["id"]
+                file_path = doc.get("filePath")
+
+                if not file_path:
+                    logger.warning(f"文档 {doc_id} 没有文件路径，跳过")
+                    skipped_count += 1
+                    continue
+
+                # 检查文件是否存在
+                if not os.path.exists(file_path):
+                    logger.warning(f"文档 {doc_id} 的文件不存在: {file_path}")
+                    storage.update_parse_status(doc_id, ParseStatus.ERROR)
+                    failed_count += 1
+                    continue
+
+                try:
+                    logger.info(f"开始批量解析文档 {doc_id}")
+
+                    # 更新状态为解析中
+                    storage.update_parse_status(doc_id, ParseStatus.PARSING)
+
+                    # 使用MinerU解析
+                    markdown_content, error, images = await mineru_service.parse_pdf(
+                        file_path, doc_id
+                    )
+
+                    if error:
+                        logger.error(f"文档 {doc_id} 解析失败: {error}")
+                        storage.update_parse_status(doc_id, ParseStatus.ERROR)
+                        failed_count += 1
+                    else:
+                        # 保存解析结果
+                        storage.save_parse_result(doc_id, markdown_content, images)
+                        storage.update_parse_status(doc_id, ParseStatus.COMPLETED)
+                        parse_count += 1
+                        logger.info(f"文档 {doc_id} 解析完成")
+
+                except Exception as e:
+                    logger.error(f"文档 {doc_id} 解析异常: {e}")
+                    storage.update_parse_status(doc_id, ParseStatus.ERROR)
+                    failed_count += 1
+                    import traceback
+                    traceback.print_exc()
+
+            # 更新知识库时间戳
+            update_folder_timestamp(folder_id)
+
+            logger.info(f"批量解析完成：解析 {parse_count} 个，已存在 {already_parsed} 个，失败 {failed_count} 个，跳过 {skipped_count} 个")
+
+        # 提交到后台任务管理器
+        from app.services.task_manager import task_manager
+        await task_manager.submit_task(task_id, batch_parse_task)
+
+        mode_text = {
+            "full": "全部重新解析",
+            "failed": "只解析失败文档",
+            "incremental": "增量解析"
+        }.get(process_mode, "增量解析")
+
+        return {
+            "taskId": task_id,
+            "folderId": folder_id,
+            "totalCount": total,
+            "alreadyParsed": already_parsed,
+            "pendingParse": len(docs_to_parse),
+            "message": f"{mode_text}任务已提交，共 {len(docs_to_parse)} 个文档需要处理"
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"批量解析失败: {str(e)}")
+
+
 @router.post("/folders/{folder_id}/batch-vectorize")
 async def batch_vectorize_folder(folder_id: str, mode: dict = None):
     """

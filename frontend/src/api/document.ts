@@ -192,7 +192,7 @@ export const documentApi = {
   },
 
   // 批量向量化知识库
-  batchVectorizeFolder: async (folderId: string, mode: 'incremental' | 'full' = 'incremental'): Promise<{
+  batchVectorizeFolder: async (folderId: string, mode: { mode: 'incremental' | 'full' }): Promise<{
     taskId: string
     folderId: string
     totalCount: number
@@ -207,7 +207,27 @@ export const documentApi = {
       alreadyVectorized: number
       pendingVectorization: number
       message: string
-    }>(`/documents/folders/${folderId}/batch-vectorize`, { mode })
+    }>(`/documents/folders/${folderId}/batch-vectorize`, mode)
+    return response
+  },
+
+  // 批量解析知识库
+  batchParseFolder: async (folderId: string, mode: { mode: 'incremental' | 'full' | 'failed' }): Promise<{
+    taskId: string
+    folderId: string
+    totalCount: number
+    alreadyParsed: number
+    pendingParse: number
+    message: string
+  }> => {
+    const response = await apiClient.post<{
+      taskId: string
+      folderId: string
+      totalCount: number
+      alreadyParsed: number
+      pendingParse: number
+      message: string
+    }>(`/documents/folders/${folderId}/batch-parse`, mode)
     return response
   },
 }

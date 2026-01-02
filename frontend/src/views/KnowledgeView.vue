@@ -243,16 +243,33 @@
       </n-space>
     </n-modal>
 
-    <!-- 批量向量化模式选择对话框 -->
-    <n-modal v-model:show="showBatchVectorizeModal" preset="card" title="批量向量化" style="width: 500px">
+    <!-- 批量处理模式选择对话框 -->
+    <n-modal v-model:show="showBatchVectorizeModal" preset="card" title="批量处理" style="width: 500px">
       <n-space vertical size="large">
         <n-alert type="info" :closable="false">
           知识库：<strong>{{ currentFolder?.name }}</strong>
         </n-alert>
 
-        <n-text>请选择批量向量化的处理模式：</n-text>
+        <n-text>请选择批量处理的模式：</n-text>
 
         <n-space vertical :size="16">
+          <div
+            class="mode-option"
+            :class="{ 'is-selected': batchVectorizeMode === 'parse' }"
+            @click="batchVectorizeMode = 'parse'"
+          >
+            <n-radio :checked="batchVectorizeMode === 'parse'" @update:checked="batchVectorizeMode = 'parse'">
+              <n-space vertical :size="4">
+                <n-text strong>批量解析（MinerU）</n-text>
+                <n-text depth="3" style="font-size: 12px">
+                  对文档进行 MinerU 解析，提取文本、表格、公式等内容
+                </n-text>
+              </n-space>
+            </n-radio>
+          </div>
+
+          <n-divider />
+
           <div
             class="mode-option"
             :class="{ 'is-selected': batchVectorizeMode === 'incremental' }"
@@ -260,7 +277,7 @@
           >
             <n-radio :checked="batchVectorizeMode === 'incremental'" @update:checked="batchVectorizeMode = 'incremental'">
               <n-space vertical :size="4">
-                <n-text strong>增量处理（推荐）</n-text>
+                <n-text strong>增量向量化（推荐）</n-text>
                 <n-text depth="3" style="font-size: 12px">
                   只处理未向量化的文档，保留已完成的处理结果
                 </n-text>
@@ -287,12 +304,15 @@
         <n-alert v-if="batchVectorizeMode === 'full'" type="warning" :closable="false">
           警告：清空重建将删除所有现有的分块和向量化结果，此操作不可恢复！
         </n-alert>
+        <n-alert v-if="batchVectorizeMode === 'parse'" type="success" :closable="false">
+          说明：批量解析只对未解析或解析失败的文档进行处理
+        </n-alert>
       </n-space>
 
       <template #footer>
         <n-space justify="end">
           <n-button @click="showBatchVectorizeModal = false">取消</n-button>
-          <n-button type="primary" @click="handleBatchVectorizeCurrentFolder">
+          <n-button type="primary" @click="handleBatchProcessCurrentFolder">
             开始处理
           </n-button>
         </n-space>
@@ -409,7 +429,7 @@ const showDocumentDrawer = ref(false)
 const selectedDocument = ref<Document | null>(null)
 const batchVectorizingFolders = ref<string[]>([])
 const showBatchVectorizeModal = ref(false)
-const batchVectorizeMode = ref<'incremental' | 'full'>('incremental')
+const batchVectorizeMode = ref<'parse' | 'incremental' | 'full'>('incremental')
 
 const folders = computed(() => documentStore.folders.filter((f) => f.id !== 'root'))
 const currentFolder = computed(() =>
@@ -631,7 +651,7 @@ async function handleDeleteFolder(folder: Folder) {
   }
 }
 
-async function handleBatchVectorizeCurrentFolder() {
+async function handleBatchProcessCurrentFolder() {
   if (!currentFolderId.value) {
     message.warning('请先选择一个知识库')
     return
@@ -644,12 +664,21 @@ async function handleBatchVectorizeCurrentFolder() {
     // 关闭对话框
     showBatchVectorizeModal.value = false
 
-    // 添加到正在向量化的列表
+    // 添加到正在处理的列表
     batchVectorizingFolders.value = [...batchVectorizingFolders.value, folder.id]
 
-    const result = await documentApi.batchVectorizeFolder(folder.id, batchVectorizeMode.value)
+    let result
 
-    message.success(result.message || '批量向量化任务已启动')
+    // 根据模式调用不同的API
+    if (batchVectorizeMode.value === 'parse') {
+      // 批量解析
+      result = await documentApi.batchParseFolder(folder.id, { mode: 'incremental' })
+      message.success(result.message || '批量解析任务已启动')
+    } else {
+      // 批量向量化
+      result = await documentApi.batchVectorizeFolder(folder.id, { mode: batchVectorizeMode.value })
+      message.success(result.message || '批量向量化任务已启动')
+    }
 
     // 重置模式选择
     batchVectorizeMode.value = 'incremental'
@@ -669,7 +698,8 @@ async function handleBatchVectorizeCurrentFolder() {
       clearInterval(refreshInterval)
     }, 30000)
   } catch (error) {
-    message.error('批量向量化失败：' + (error as Error).message)
+    const mode = batchVectorizeMode.value === 'parse' ? '批量解析' : '批量向量化'
+    message.error(`${mode}失败：` + (error as Error).message)
     batchVectorizingFolders.value = batchVectorizingFolders.value.filter(id => id !== folder.id)
   }
 }

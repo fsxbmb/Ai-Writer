@@ -1,21 +1,47 @@
-# FastAPI Web Framework
-# 使用兼容 mineru 环境的版本
+# ==========================================
+# AI Writer Backend - Python Dependencies
+# ==========================================
+
+# ============ Web Framework ============
 fastapi>=0.115.0
 uvicorn[standard]>=0.24.0
 python-multipart>=0.0.18
 
-# Data Validation
-# 兼容已有包的版本
+# ============ Data Validation ============
 pydantic>=2.9.0
 pydantic-settings>=2.2.0
 
-# Utilities
-aiofiles>=23.2.0
-python-dotenv>=1.0.1
+# ============ HTTP Client ============
+httpx>=0.24.0
 
-# Document Conversion
-Pillow>=10.0.0           # 图片处理
-img2pdf>=0.5.0           # 图片转 PDF
-reportlab>=4.0.0         # TXT/HTML 转 PDF
-markdown>=3.5.0          # Markdown 处理
-pdfkit>=1.0.0            # HTML 转 PDF（可选）
+# ============ Document Processing - Word ============
+python-docx>=1.1.0
+latex2word>=1.1.0
+
+# ============ Document Processing - PDF ============
+reportlab>=4.0.0
+img2pdf>=0.5.0
+pdfkit>=1.0.0
+pypdf>=3.0.0
+pikepdf>=8.0.0
+
+# ============ Document Processing - Other ============
+mammoth>=1.8.0
+markdown>=3.5.0
+markdownify>=1.1.0
+Pillow>=10.0.0
+
+# ============ Document Conversion ============
+# mineru - 已通过 conda 环境本地安装，无需 pip 安装
+
+# ============ Vector Database ============
+pymilvus>=2.3.0
+
+# ============ Utilities ============
+beautifulsoup4>=4.12.0
+numpy>=1.24.0
+
+# ============ Optional/Recommended ============
+# python-dotenv>=1.0.1  # 环境变量管理（如需要）
+# aiofiles>=23.2.0     # 异步文件操作（如需要）
+
